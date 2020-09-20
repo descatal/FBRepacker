@@ -1,4 +1,5 @@
-﻿using Microsoft.Win32;
+﻿using FBRepacker.PAC.Repack;
+using Microsoft.Win32;
 using Microsoft.WindowsAPICodePack.Dialogs;
 using System;
 using System.Buffers.Binary;
@@ -26,7 +27,7 @@ namespace FBRepacker
     public partial class MainWindow : Window
     {
         int fileNumber = 1;
-        string fileName = string.Empty, currDirectory = string.Empty, rootDirectory = string.Empty;
+        string filePath = string.Empty, currDirectory = string.Empty, rootDirectory = string.Empty;
         FileStream PAC;
 
         public MainWindow()
@@ -39,8 +40,8 @@ namespace FBRepacker
         private void init()
         {
             // Init settings for paths.
-            if(Properties.Settings.Default.Path == string.Empty || Properties.Settings.Default.Path == null)
-                Properties.Settings.Default.Path = Directory.GetCurrentDirectory();
+            if(Properties.Settings.Default.OpenExtractPath == string.Empty || Properties.Settings.Default.OpenExtractPath == null)
+                Properties.Settings.Default.OpenExtractPath = Directory.GetCurrentDirectory();
 
             if (Properties.Settings.Default.ExtractPath == string.Empty || Properties.Settings.Default.ExtractPath == null)
                 Properties.Settings.Default.ExtractPath = Directory.GetCurrentDirectory();
@@ -54,7 +55,7 @@ namespace FBRepacker
             RepackPath.Text = Properties.Settings.Default.RepackPath;
         }
 
-        private void OpenFileMenu_Click(object sender, RoutedEventArgs e)
+        private void OpenExtractFileMenu_Click(object sender, RoutedEventArgs e)
         {
             // Close the filestream if another file is opened.
             if (PAC != null)
@@ -62,13 +63,27 @@ namespace FBRepacker
 
             // Open file select dialog
             OpenFileDialog openFileDialog = new OpenFileDialog();
-            string filePath = Properties.Settings.Default.Path;
+            string filePath = Properties.Settings.Default.OpenExtractPath;
             openFileDialog.InitialDirectory = filePath;
             openFileDialog.RestoreDirectory = true;
             openFileDialog.ShowDialog();
             
-            fileName = openFileDialog.FileName;
-            Properties.Settings.Default.Path = File.Exists(fileName) ? System.IO.Path.GetDirectoryName(fileName) : Properties.Settings.Default.Path;
+            this.filePath = openFileDialog.FileName;
+            Properties.Settings.Default.OpenExtractPath = File.Exists(this.filePath) ? System.IO.Path.GetDirectoryName(this.filePath) : Properties.Settings.Default.OpenExtractPath;
+        }
+
+        private void OpenRepackFileMenu_Click(object sender, RoutedEventArgs e)
+        {
+            // Close the filestream if another file is opened.
+            if (PAC != null)
+                PAC.Close();
+
+            // Open file select dialog
+            string openRepackPath = openFolderDialog(Properties.Settings.Default.OpenRepackPath);
+
+            string filePath = openRepackPath;
+            if (Directory.Exists(filePath))
+                Properties.Settings.Default.OpenRepackPath = filePath;
         }
 
         private void OpenSettings_Click(object sender, RoutedEventArgs e)
@@ -99,11 +114,11 @@ namespace FBRepacker
             }
         }
 
-        private string openFolderDialog(string path)
+        private string openFolderDialog(string initialPath)
         {
             // Open folder select dialog
             CommonOpenFileDialog folderDialog = new CommonOpenFileDialog();
-            folderDialog.InitialDirectory = path;
+            folderDialog.InitialDirectory = initialPath;
             folderDialog.IsFolderPicker = true;
             if (folderDialog.ShowDialog() == CommonFileDialogResult.Ok)
             {
@@ -112,15 +127,20 @@ namespace FBRepacker
             return string.Empty;
         }
 
+        private void repackPAC_Click(object sender, RoutedEventArgs e)
+        {
+            new RepackPAC(Properties.Settings.Default.RepackPath).repackPAC();
+        }
+
         private void extract_Click(object sender, RoutedEventArgs e)
         {
-            if (fileName != string.Empty && fileName != null)
+            if (filePath != string.Empty && filePath != null)
             {
-                new extractPAC.ExtractPAC(fileName, PAC).extractPAC();
+                new PAC.Extract.ExtractPAC(filePath, PAC).extractPAC();
             }
         }
 
-        private void repack_Click(object sender, RoutedEventArgs e)
+        private void repackPsarc_Click(object sender, RoutedEventArgs e)
         {
             new RepackPsarc();
         }

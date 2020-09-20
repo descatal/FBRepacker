@@ -6,38 +6,48 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace FBRepacker.extractPAC
+namespace FBRepacker.PAC.Extract
 {
     class ExtractPAC : Internals
     {
-        string fileName = string.Empty;
+        string filePath = string.Empty;
+        bool duplicateLinkedFile = false;
 
-        public ExtractPAC(string fileName, FileStream PAC) : base(PAC)
+        public ExtractPAC(string filePath, FileStream PAC) : base()
         {
-            this.fileName = fileName;
+            changeStreamFile(PAC);
+            this.filePath = filePath;
         }
 
         public void extractPAC()
         {
             // Load the file into PAC filestream
-            if (PAC != null)
-                PAC.Close();
-            PAC = File.Open(fileName, FileMode.Open);
+            if (Stream != null)
+                Stream.Close();
+            Stream = File.Open(filePath, FileMode.Open);
 
-            currDirectory = Properties.Settings.Default.ExtractPath;
-            rootDirectory = Properties.Settings.Default.ExtractPath;
+            string extractPath = Properties.Settings.Default.ExtractPath + @"\" + Path.GetFileNameWithoutExtension(filePath);
+
+            Directory.CreateDirectory(extractPath);
+
+            currDirectory = extractPath;
+            rootDirectory = extractPath;
             initializePACInfoFileExtract();
 
+            appendPACInfo("--1--");
             // Read and check Header
             int Header = readIntBigEndian(0x00);
             switch (Header)
             {
                 case 0x46484D20: // FHM Header
+                    appendPACInfo("FHMOffset: 0");
+                    appendPACInfo("Header: fhm");
                     parseFHM();
                     extractEndFile();
                     break;
                 case 0x00020100: // Stream
-                    new STREAM(PAC, (int)PAC.Position - 0x04).extract();
+                    appendPACInfo("Header: STREAM");
+                    new STREAM(Stream, (int)Stream.Position - 0x04).extract();
                     //debugtxt.Text = "STREAM file detected!";
                     break;
                 default:
@@ -45,8 +55,8 @@ namespace FBRepacker.extractPAC
                     break;
             }
 
-            infoStream.Close();
-            PAC.Close();
+            infoStreamWrite.Close();
+            Stream.Close();
 
             resetVariables();
         }
@@ -54,25 +64,30 @@ namespace FBRepacker.extractPAC
         private void parseFHM()
         {
             // Get the FHM starting pos in the file, subtract by 4 for FHM header.
-            long FHMStartingPos = PAC.Position - 0x04;
+            long FHMStartingPos = Stream.Position - 0x04;
 
             // Current filestream position = after FHM header, a.k.a = 0x04.
-            int FHMSize = readIntBigEndian(PAC.Position + 0x08);
+            int FHMSize = readIntBigEndian(Stream.Position + 0x08);
 
             // Current filestream position = after FHMSize, so no offset needed.
-            int numberofFiles = readIntBigEndian(PAC.Position);
+            int numberofFiles = readIntBigEndian(Stream.Position);
 
             // Set the FHMFileNumber for the extracted FHMChunk
             int FHMFileNumber = fileNumber;
 
+            // Get the FHM Chunk Size by getting the first file offset.
+            int FHMChunkSize = readIntBigEndian(Stream.Position);
+            Stream.Seek(-0x04, SeekOrigin.Current);
+
             // Create a new directory for each FHM
-            string newFHMPath = currDirectory + @"\FHM " + fileNumber.ToString("000");
+            string newFHMPath = currDirectory + @"\" + fileNumber.ToString("000") + "-FHM";
             Directory.CreateDirectory(newFHMPath);
             currDirectory = newFHMPath;
 
             createFHMPACInfoTag(fileNumber, true);
-            appendPACInfo("Size: " + FHMSize.ToString());
+            appendPACInfo("Total file size: " + FHMSize.ToString());
             appendPACInfo("Number of files: " + numberofFiles.ToString());
+            appendPACInfo("FHM chunk size: " + FHMChunkSize.ToString());
 
             List<int> fileOffsets = new List<int>();
             List<int> fileSizes = new List<int>();
@@ -83,17 +98,18 @@ namespace FBRepacker.extractPAC
                 fileNumber++;
                 createFHMPACInfoTag(fileNumber, false);
 
-                int fileOffset = readIntBigEndian(PAC.Position); // The current fileOffset
-                int SizeOffset = numberofFiles * 0x04; // The offset of the size of the nth file
+                duplicateLinkedFile = false;
+                int fileOffset = readIntBigEndian(Stream.Position); // The current fileOffset
+                int sizeOffsetOffset = numberofFiles * 0x04; // The offset of the size of the nth file
 
                 // Reading FHM Offset, update the list
                 fileOffsets = writeFileOffsetInfo(fileOffsets, fileOffset);
 
                 // Save the next position to return to
-                long nextOffsetPosition = PAC.Position;
+                long nextOffsetPosition = Stream.Position;
 
                 // Reading Size of the file, update the list
-                int fileSize = readIntBigEndian(PAC.Position + SizeOffset - 0x04);
+                int fileSize = readIntBigEndian(Stream.Position + sizeOffsetOffset - 0x04);
                 fileSizes = writeFileSizeInfo(fileSizes, fileSize);
 
                 string header = identifyHeader(readIntBigEndian(FHMStartingPos + fileOffset));
@@ -109,13 +125,13 @@ namespace FBRepacker.extractPAC
                     parseFiles(header, fileSize);
                 }
 
-                PAC.Seek(nextOffsetPosition, SeekOrigin.Begin);
+                Stream.Seek(nextOffsetPosition, SeekOrigin.Begin);
             }
 
             int FHMEndFileOffset = fileOffsets.Count > 0 ? fileOffsets.Last() + fileSizes.Last() : 0x14;
             fileEndOffset.Add(FHMStartingPos + FHMEndFileOffset);
 
-            extractFHMChunk(fileOffsets, FHMFileNumber);
+            extractFHMChunk(fileOffsets, FHMFileNumber, FHMStartingPos);
 
             currDirectory = Directory.GetParent(currDirectory).FullName; // Navigate up 1 directory
         }
@@ -126,11 +142,10 @@ namespace FBRepacker.extractPAC
             {
                 int linkOffset = fileOffsets.FindIndex(off => off == fileOffset) + 1; // Find the Index of the first duplicate in FHM. 
                 appendPACInfo("Link FHMOffset: " + linkOffset.ToString()); // For repacking use. If link is present, use the same file. 
+                duplicateLinkedFile = true;
             }
-            else
-            {
-                fileOffsets.Add(fileOffset);
-            }
+
+            fileOffsets.Add(fileOffset);
             appendPACInfo("FHMOffset: " + fileOffset.ToString());
             return fileOffsets;
         }
@@ -147,10 +162,10 @@ namespace FBRepacker.extractPAC
             switch (header)
             {
                 case "NTP3": // Extract dds
-                    new NTP3(PAC, (int)PAC.Position - 0x04).extract();
+                    new NTP3(Stream, (int)Stream.Position - 0x04).extract();
                     break;
                 case "STREAM": // Extract STREAM (audio)
-                    new STREAM(PAC, (int)PAC.Position - 0x04).extract();
+                    new STREAM(Stream, (int)Stream.Position - 0x04).extract();
                     break;
                 default:
                     extractDefault(header, size);
@@ -158,13 +173,13 @@ namespace FBRepacker.extractPAC
             }
         }
 
-        private void extractFHMChunk(List<int> fileOffsets, int FHMFileNumber)
+        private void extractFHMChunk(List<int> fileOffsets, int FHMFileNumber, long startingPos)
         {
             // Extract whole FHMChunk
             int FHMChunkSize = fileOffsets.Count > 0 ? fileOffsets.First() : 0x14; // To cater for 0 file cases in FHM, the size is always 0x14
             byte[] FHMChunk = new byte[FHMChunkSize];
-            PAC.Seek(0x00, 0x00); // Seek to the start of the file
-            PAC.Read(FHMChunk, 0x00, FHMChunkSize); // Extract the chunk
+            Stream.Seek(startingPos, SeekOrigin.Begin); // Seek to the start of the file
+            Stream.Read(FHMChunk, 0x00, FHMChunkSize); // Extract the chunk
             createFile("fhm", FHMChunk, createExtractFilePath(FHMFileNumber));
         }
 
@@ -172,25 +187,36 @@ namespace FBRepacker.extractPAC
         {
             fileNumber++;
             long lastOffset = fileEndOffset.Count > 0 ? fileEndOffset.Max() : 0;
-            long EndFileSize = PAC.Length - lastOffset;
+            long EndFileSize = Stream.Length - lastOffset;
             byte[] EndFileChunk = new byte[EndFileSize];
-            PAC.Seek(lastOffset, SeekOrigin.Begin);
-            PAC.Read(EndFileChunk, 0x00, (int)EndFileSize); // Extract the chunk
+            Stream.Seek(lastOffset, SeekOrigin.Begin);
+            Stream.Read(EndFileChunk, 0x00, (int)EndFileSize); // Extract the chunk
             createFile("endfile", EndFileChunk, createExtractFilePath(fileNumber));
 
             createFHMPACInfoTag(fileNumber, false);
             appendPACInfo("Header: endfile");
             appendPACInfo("End File Offset: " + lastOffset);
             appendPACInfo("End File Size: " + EndFileSize);
+            appendPACInfo("");
+            appendPACInfo("//");
         }
 
         private void extractDefault(string extension, int size)
         {
             byte[] buffer = new byte[size];
             int seekstart = extension != "ALEO" ? -0x04 : -0x08;
-            PAC.Seek(seekstart, SeekOrigin.Current);
-            PAC.Read(buffer, 0, size);
-            createFile(extension, buffer, createExtractFilePath(fileNumber));
+            Stream.Seek(seekstart, SeekOrigin.Current);
+            Stream.Read(buffer, 0, size);
+
+            if (!duplicateLinkedFile)
+            {
+                createFile(extension, buffer, createExtractFilePath(fileNumber));
+            }
+            else
+            {
+                createFile(extension, new byte[0] { }, createExtractFilePath(fileNumber) + "-L");
+            }
+            
         }
 
         private string identifyHeader(int header)
@@ -230,9 +256,9 @@ namespace FBRepacker.extractPAC
                     break;
                 default:
                     // Since ALEO file has header at the 0x4 offset, we need to check this way.
-                    int ALEOHeader = readIntBigEndian(PAC.Position);
+                    int ALEOHeader = readIntBigEndian(Stream.Position);
                     identifiedHeader = ALEOHeader == 0x414C454F ? "ALEO" : "bin";
-                    PAC.Seek(-0x4, SeekOrigin.Current);
+                    Stream.Seek(-0x4, SeekOrigin.Current);
                     break;
             }
             return identifiedHeader;

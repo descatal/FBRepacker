@@ -10,7 +10,8 @@
     <WrapPanel>
         <Menu HorizontalAlignment="Left" Height="23" VerticalAlignment="Top" Width="792">
             <MenuItem Header="File">
-                <MenuItem Header="Open" Click="OpenFileMenu_Click"></MenuItem>
+                <MenuItem Header="Open Extract" Click="OpenExtractFileMenu_Click"></MenuItem>
+                <MenuItem Header="Open Repack" Click="OpenRepackFileMenu_Click"></MenuItem>
             </MenuItem>
             <MenuItem Header="Settings">
                 <MenuItem Header="Options" Click="OpenSettings_Click"></MenuItem>
@@ -68,7 +69,8 @@
             <StackPanel Grid.Row="1">
                 <TextBlock TextWrapping="Wrap" Text="debug" Name="debugmsg" Height="269"/>
                 <Button Content="Extract" Click="extract_Click"></Button>
-                <Button Content="Repack Psarc" Click="repack_Click"></Button>
+                <Button Content="Repack PAC" Click="repackPAC_Click"></Button>
+                <Button Content="Repack Psarc" Click="repackPsarc_Click"></Button>
             </StackPanel>
         </Grid>
     </WrapPanel>

@@ -7,14 +7,15 @@ using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace FBRepacker.extractPAC
+namespace FBRepacker.PAC.Extract
 {
     class STREAM : Internals
     {
         int audioEntries = 0, STREAMPosition = 0, STREAMHeaderChunkSize = 0, STREAMDataChunkSize = 0, audioTotalFileSize = 0, sampleRate = 0, audioDataSize = 0, audioFileNumber = 1;
 
-        public STREAM(FileStream PAC, int FHMOffset) : base(PAC)
+        public STREAM(FileStream PAC, int FHMOffset) : base()
         {
+            changeStreamFile(PAC);
             STREAMPosition = FHMOffset;
         }
 
@@ -26,10 +27,10 @@ namespace FBRepacker.extractPAC
 
         private void parseSTREAM()
         {
-            PAC.Seek(0x08, SeekOrigin.Current);
-            audioEntries = readIntBigEndian(PAC.Position);
-            STREAMHeaderChunkSize = readIntBigEndian(PAC.Position);
-            STREAMDataChunkSize = readIntBigEndian(PAC.Position);
+            Stream.Seek(0x08, SeekOrigin.Current);
+            audioEntries = readIntBigEndian(Stream.Position);
+            STREAMHeaderChunkSize = readIntBigEndian(Stream.Position);
+            STREAMDataChunkSize = readIntBigEndian(Stream.Position);
             
             //Write STREAM PAC Info
             appendPACInfo("Number of audio files: " + audioEntries.ToString());
@@ -37,7 +38,7 @@ namespace FBRepacker.extractPAC
             appendPACInfo("Total Data Chunk Size: " + STREAMDataChunkSize.ToString());
 
             extractSTREAM();
-            PAC.Seek(0x08, SeekOrigin.Current);
+            Stream.Seek(0x08, SeekOrigin.Current);
             parseAudioHeader();
         }
 
@@ -45,14 +46,14 @@ namespace FBRepacker.extractPAC
         {
             while (audioFileNumber <= audioEntries)
             {
-                int audioHeaderOffset = readIntBigEndian(PAC.Position);
+                int audioHeaderOffset = readIntBigEndian(Stream.Position);
 
                 // Save the next position to return to
-                long nextOffsetPosition = PAC.Position;
+                long nextOffsetPosition = Stream.Position;
 
-                PAC.Seek(audioHeaderOffset + STREAMPosition, SeekOrigin.Begin);
+                Stream.Seek(audioHeaderOffset + STREAMPosition, SeekOrigin.Begin);
 
-                switch (readIntBigEndian(PAC.Position))
+                switch (readIntBigEndian(Stream.Position))
                 {
                     // at3 (wav)
                     case 0x61743300:
@@ -68,7 +69,7 @@ namespace FBRepacker.extractPAC
                         break;
                 }
 
-                PAC.Seek(nextOffsetPosition, SeekOrigin.Begin);
+                Stream.Seek(nextOffsetPosition, SeekOrigin.Begin);
 
                 audioFileNumber++;
             }
@@ -76,51 +77,51 @@ namespace FBRepacker.extractPAC
 
         private void parseAT3(int audioNumber)
         {
-            PAC.Seek(0x10, SeekOrigin.Current);
+            Stream.Seek(0x10, SeekOrigin.Current);
 
-            int AT3DataSize = readIntBigEndian(PAC.Position);
-            int relativeAT3DataOffset = readIntBigEndian(PAC.Position);
+            int AT3DataSize = readIntBigEndian(Stream.Position);
+            int relativeAT3DataOffset = readIntBigEndian(Stream.Position);
 
             // Write audio Info
             appendPACInfo("#AT3: " + audioNumber);
             appendPACInfo("AT3 Data Size: " + AT3DataSize.ToString());
             appendPACInfo("relative AT3 Data Offset: " + relativeAT3DataOffset.ToString());
 
-            PAC.Seek(STREAMPosition + STREAMHeaderChunkSize + relativeAT3DataOffset, SeekOrigin.Begin);
+            Stream.Seek(STREAMPosition + STREAMHeaderChunkSize + relativeAT3DataOffset, SeekOrigin.Begin);
 
             extractAT3(AT3DataSize);
         }
 
         private void extractAT3(int AT3DataSize)
         {
-            byte[] AT3Chunk = extractChunk(PAC.Position, AT3DataSize);
+            byte[] AT3Chunk = extractChunk(Stream.Position, AT3DataSize);
             extractAudio(AT3Chunk, "at3");
         }
 
         private void parseis14(int audioNumber)
         {
-            PAC.Seek(0x10, SeekOrigin.Current);
+            Stream.Seek(0x10, SeekOrigin.Current);
 
-            int BNSFDataSize = readIntBigEndian(PAC.Position);
-            int relativeBNSFDataOffset = readIntBigEndian(PAC.Position);
+            int BNSFDataSize = readIntBigEndian(Stream.Position);
+            int relativeBNSFDataOffset = readIntBigEndian(Stream.Position);
 
             // Extracting the BNSF / is14 Header chunk for the extracted file. The size 0x30 might be a problem. 
-            PAC.Seek(0xA0, SeekOrigin.Current);
-            byte[] BNSFis14HeaderChunk = extractChunk(PAC.Position, 0x30);
+            Stream.Seek(0xA0, SeekOrigin.Current);
+            byte[] BNSFis14HeaderChunk = extractChunk(Stream.Position, 0x30);
 
-            PAC.Seek(-0x2C, SeekOrigin.Current);
-            audioTotalFileSize = readIntBigEndian(PAC.Position);
-            PAC.Seek(0x10, SeekOrigin.Current);
-            sampleRate = readIntBigEndian(PAC.Position);
-            PAC.Seek(0x0C, SeekOrigin.Current);
-            audioDataSize = readIntBigEndian(PAC.Position);
+            Stream.Seek(-0x2C, SeekOrigin.Current);
+            audioTotalFileSize = readIntBigEndian(Stream.Position);
+            Stream.Seek(0x10, SeekOrigin.Current);
+            sampleRate = readIntBigEndian(Stream.Position);
+            Stream.Seek(0x0C, SeekOrigin.Current);
+            audioDataSize = readIntBigEndian(Stream.Position);
 
             // Write audio Info
             appendPACInfo("#BNSF/is14: " + audioNumber);
             appendPACInfo("BNSF Data Size: " + BNSFDataSize.ToString());
             appendPACInfo("relative BNSF Data Offset: " + relativeBNSFDataOffset.ToString());
 
-            PAC.Seek(STREAMPosition + STREAMHeaderChunkSize + relativeBNSFDataOffset, SeekOrigin.Begin);
+            Stream.Seek(STREAMPosition + STREAMHeaderChunkSize + relativeBNSFDataOffset, SeekOrigin.Begin);
 
             extractBNSF(BNSFis14HeaderChunk, BNSFDataSize);
         }
@@ -128,7 +129,7 @@ namespace FBRepacker.extractPAC
         private void extractBNSF(byte[] BNSFis14HeaderChunk, int BNSFDataSize)
         {
             List<byte[]> BNSFBuffer = new List<byte[]>();
-            byte[] BNSFData = extractChunk(PAC.Position, BNSFDataSize);
+            byte[] BNSFData = extractChunk(Stream.Position, BNSFDataSize);
             BNSFBuffer.Add(BNSFis14HeaderChunk);
             BNSFBuffer.Add(BNSFData);
 
@@ -138,17 +139,17 @@ namespace FBRepacker.extractPAC
 
         private void extractSTREAM()
         {
-            long returnPosition = PAC.Position;
-            PAC.Seek(STREAMPosition, SeekOrigin.Begin);
-            byte[] STREAMHeaderChunk = extractChunk(PAC.Position, STREAMHeaderChunkSize);
+            long returnPosition = Stream.Position;
+            Stream.Seek(STREAMPosition, SeekOrigin.Begin);
+            byte[] STREAMHeaderChunk = extractChunk(Stream.Position, STREAMHeaderChunkSize);
             createFile("STREAM", STREAMHeaderChunk, createExtractFilePath(fileNumber));
-            PAC.Seek(returnPosition, SeekOrigin.Begin);
+            Stream.Seek(returnPosition, SeekOrigin.Begin);
         }
 
         private void extractAudio(byte[] audioBuffer, string fileExt)
         {
-            string filePath = createExtractFilePath(fileNumber);
-            string filePathwithExt = createExtractFilePath(fileNumber) + "." + fileExt;
+            string filePath = createExtractFilePath(fileNumber) + "-" + audioFileNumber.ToString("000");
+            string filePathwithExt = filePath + "." + fileExt;
             createFile(fileExt, audioBuffer, filePath);
 
             if (Properties.Settings.Default.outputWAV)
@@ -174,7 +175,7 @@ namespace FBRepacker.extractPAC
                     // Replace the original file with the new buffer.
                     createFile(fileExt, WAVBuffer, filePath);
                 }
-                renameFile(filePath + "." + fileExt, fileNumber.ToString("000") + "-" + audioFileNumber.ToString("000") + ".WAV");
+                renameFile(filePathwithExt, Path.GetFileNameWithoutExtension(filePath) + ".wav");
             }
         }
     }

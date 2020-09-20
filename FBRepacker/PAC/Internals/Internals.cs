@@ -5,34 +5,40 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using System.Runtime.Remoting.Metadata.W3cXsd2001;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Automation.Peers;
 using System.Windows.Documents;
 using System.Windows.Media.Converters;
 
-namespace FBRepacker
+namespace FBRepacker.PAC
 {
     class Internals
     {
-        protected static StreamWriter infoStream;
+        protected static StreamWriter infoStreamWrite;
+        protected static StreamReader infoStreamRead;
         protected static List<long> fileEndOffset = new List<long>();
         protected static List<int> NTP3LinkedOffset = new List<int>();
+        protected static string[] infoFileString = new string[0];
 
         protected static int fileNumber = 1;
         protected static string currDirectory = string.Empty, rootDirectory = string.Empty;
-        protected FileStream PAC;
+        protected FileStream Stream;
 
         protected static List<string> fileHeadersList = new List<string>
         {
             "FHM ", "OMO\0", "NTP3", "LMB\0", "NDP3", "VBN ", "\0\u0002\u0001\0", "EIDX"
         };
 
-        
-
-        protected Internals(FileStream PAC)
+        protected Internals()
         {
-            this.PAC = PAC;
+
+        }
+
+        protected void changeStreamFile(FileStream stream)
+        {
+            Stream = stream;
         }
 
         protected void resetVariables()
@@ -40,12 +46,15 @@ namespace FBRepacker
             fileNumber = 1;
             fileEndOffset = new List<long>();
             NTP3LinkedOffset = new List<int>();
+            currDirectory = string.Empty;
+            rootDirectory = string.Empty;
+            infoFileString = new string[0];
         }
 
         protected void initializePACInfoFileExtract()
         {
             string path = rootDirectory + @"\PAC.info";
-            infoStream = new StreamWriter(path, false, Encoding.Default);
+            infoStreamWrite = new StreamWriter(path, false, Encoding.Default);
         }
 
         protected void initializePACInfoFileRepack()
@@ -53,11 +62,12 @@ namespace FBRepacker
             string path = rootDirectory + @"\PAC.info";
             if (File.Exists(path))
             {
-                infoStream = new StreamWriter(path, true, Encoding.Default);
+                infoStreamRead = new StreamReader(path);
+                infoFileString = File.ReadAllLines(path);
             }
             else
             {
-                throw new Exception("FHM.info file not found! Make sure that the file is present in the root folder of your repack/extract folder.");
+                throw new Exception("PAC.info file not found! Make sure that the file is present in the root folder of your repack folder.");
             }
         }
 
@@ -65,13 +75,13 @@ namespace FBRepacker
         {
             if (!FHM)
             {
-                infoStream.WriteLine("");
-                infoStream.WriteLine("//");
-                infoStream.WriteLine("--" + fileNumber.ToString() + "--");
+                infoStreamWrite.WriteLine("");
+                infoStreamWrite.WriteLine("//");
+                infoStreamWrite.WriteLine("--" + fileNumber.ToString() + "--");
             }
             else
             {
-                infoStream.WriteLine("--FHM--");
+                infoStreamWrite.WriteLine("--FHM--");
             }
         }
 
@@ -79,49 +89,182 @@ namespace FBRepacker
         {
             if (!STREAM)
             {
-                infoStream.WriteLine("");
-                infoStream.WriteLine("//");
-                infoStream.WriteLine("--" + fileNumber.ToString() + "--");
+                infoStreamWrite.WriteLine("");
+                infoStreamWrite.WriteLine("//");
+                infoStreamWrite.WriteLine("--" + fileNumber.ToString() + "--");
             }
             else
             {
-                infoStream.WriteLine("--STREAM--");
+                infoStreamWrite.WriteLine("--STREAM--");
             }
         }
 
         protected void appendPACInfo(string append)
         {
-            infoStream.WriteLine(append);
+            infoStreamWrite.WriteLine(append);
+        }
+
+        protected string[] getFileInfoProperties(string tag)
+        {
+            // Read the info file, seek to the file tag, take all the lines between tags.
+            var FHMTag = infoFileString.SkipWhile(line => !line.Contains(tag)).TakeWhile(line => !line.Contains("//")).ToArray();
+            return FHMTag;
+        }
+
+        protected string[] getSpecificFileInfoPropertiesRegion(string[] allProperties, string from, string end)
+        {
+            return allProperties.SkipWhile(line => !line.Contains(from)).TakeWhile(line => !line.Contains(end)).ToArray();
+        }
+
+        protected string getSpecificFileInfoProperties(string propertiesTag, string[] allProperties)
+        {
+            if (allProperties.Any(s => s.Contains(propertiesTag)))
+            {
+                string properties = allProperties.FirstOrDefault(line => line.Contains(propertiesTag));
+
+                if (properties == null)
+                {
+                    throw new Exception("No properties found with tag: " + propertiesTag);
+                }
+                else
+                {
+                    return properties.Split(new string[] { ": " }, StringSplitOptions.None)[1];
+                }
+            }
+            else
+            {
+                throw new Exception("No properties found with tag: " + propertiesTag);
+            }
+        }
+
+        protected int convertStringtoInt(string str)
+        {
+            bool conversionSuccessful = int.TryParse(str, out int result);
+            if (conversionSuccessful)
+            {
+                return result;
+            }
+            else
+            {
+                throw new Exception("string to int conversion failed with str: " + str);
+            }
+        }
+        protected byte[] convertHexStringtoByteArray(string input, bool reverseArray)
+        {
+            byte[] ByteArray = SoapHexBinary.Parse(input).Value;
+
+            if (reverseArray)
+                Array.Reverse(ByteArray);
+
+            return ByteArray;
+        }
+
+        protected byte[] convertStringtoByteArray(string input, bool reverseArray)
+        {
+            // Encode the string input. e.g. /0/0/0/0/0/0 -> 000000
+            byte[] ByteArray = Encoding.Default.GetBytes(input);
+
+            if (reverseArray)
+                Array.Reverse(ByteArray);
+
+            return ByteArray;
+        }
+
+        protected string convertByteArraytoString(byte[] ByteArray, bool reverseArray)
+        {
+            if (reverseArray)
+                Array.Reverse(ByteArray);
+
+            // SoapHexBinary automatically converts ByteArray into String.
+            // https://docs.microsoft.com/en-us/dotnet/api/system.runtime.remoting.metadata.w3cxsd2001.soaphexbinary?view=netframework-4.8
+            SoapHexBinary HexString = new SoapHexBinary(ByteArray);
+            return HexString.ToString();
+        }
+
+        protected int convertByteArraytoInt32(byte[] ByteArray, bool reverseArray)
+        {
+            if (reverseArray)
+                Array.Reverse(ByteArray);
+
+            return BitConverter.ToInt32(ByteArray, 0);
+        }
+
+        protected byte[] convertInt32toByteArray(int value, bool reverseArray)
+        {
+            byte[] ByteArray = BitConverter.GetBytes(value);
+
+            if (reverseArray)
+                Array.Reverse(ByteArray);
+
+            return ByteArray;
+        }
+
+        //protected string getfileinfoproperties(string tag, string properties)
+        //{
+        //    // read the info file, seek to the file tag, take all the lines between tags.
+        //    var fhmtag = infofilestring.skipwhile(line => !line.contains(tag)).takewhile(line => !line.contains("//"));
+        //    return fhmtag.firstordefault(prop => prop.contains(properties)); // in the extracted file tag, search for which line has the correct properties, and get the value after :
+        //}
+
+        protected byte[] addPadding(byte[] buffer)
+        {
+            int moduloResult = (buffer.Length % 0x10);
+            int paddingRequired = 0;
+            if (moduloResult != 0)
+                paddingRequired = 0x10 - moduloResult;
+            byte[] zeroBuffer = new byte[paddingRequired];
+            byte[] newBuffer = new byte[buffer.Length + paddingRequired];
+
+            Buffer.BlockCopy(buffer, 0, newBuffer, 0, buffer.Length);
+            Buffer.BlockCopy(zeroBuffer, 0, newBuffer, buffer.Length, paddingRequired);
+
+            return newBuffer;
+        }
+
+        protected int addPaddingSizeCalculation(int size)
+        {
+            // size % 0x10 = Modulus of size and 0x10, the remainder will be the number that is extra. 
+            // 0x10 - extra = Number of bytes needed to be padded to the file.
+            int paddingRequired = 0x10 - (size % 0x10);
+            return paddingRequired + size;
         }
 
         protected byte[] extractChunk(long startpos, long size)
         {
             byte[] buffer = new byte[size];
-            PAC.Seek(startpos, SeekOrigin.Begin);
-            PAC.Read(buffer, 0, (int)size);
+            Stream.Seek(startpos, SeekOrigin.Begin);
+            Stream.Read(buffer, 0, (int)size);
             return buffer;
         }
 
         protected int readIntBigEndian(long offset)
         {
-            PAC.Seek(offset, 0);
+            Stream.Seek(offset, 0);
             byte[] buffer = new byte[4];
-            PAC.Read(buffer, 0x00, 0x04);
+            Stream.Read(buffer, 0x00, 0x04);
             return BinaryPrimitives.ReadInt32BigEndian(buffer);
+        }
+
+        protected int readIntSmallEndian(long offset)
+        {
+            Stream.Seek(offset, 0);
+            byte[] buffer = new byte[4];
+            Stream.Read(buffer, 0x00, 0x04);
+            return BinaryPrimitives.ReadInt32LittleEndian(buffer);
         }
 
         // readShort(long offset, bool bigEndian);
         // if bigEndian = true, return big endian short. 
         protected short readShort(long offset, bool bigEndian)
         {
-            PAC.Seek(offset, 0);
+            Stream.Seek(offset, 0);
             byte[] buffer = new byte[2];
-            PAC.Read(buffer, 0x00, 0x02);
+            Stream.Read(buffer, 0x00, 0x02);
             short result = bigEndian ? BinaryPrimitives.ReadInt16BigEndian(buffer) : BinaryPrimitives.ReadInt16LittleEndian(buffer);
             return result;
         }
         
-        public static byte[] reverseEndianess(byte[] buffer, int reverseThreshold)
+        protected static byte[] reverseEndianess(byte[] buffer, int reverseThreshold)
         {
             // I don't know why using toArray() in a loop causes significant slowdown.
             List<byte[]> tempBuffer = new List<byte[]>();
@@ -141,6 +284,7 @@ namespace FBRepacker
             return filePath;
         }
 
+        // TODO: use Stream instead of byte[] buffer
         protected byte[] appendIntByteStream(byte[] buffer, uint intval, bool bigEndian)
         {
             List<byte[]> tempBuffer = new List<byte[]>(); // Initialize temprary buffer for writing. Needs to be in List to append
@@ -148,6 +292,17 @@ namespace FBRepacker
                 intval = BinaryPrimitives.ReverseEndianness(intval); // Convert value to big endian.
             tempBuffer.Add(buffer);
             tempBuffer.Add(BitConverter.GetBytes(intval)); // Convert int into byte[], then addedinto temporary buffer
+            buffer = tempBuffer.SelectMany(i => i).ToArray(); // Convert List back into byte[]. More work compared to old "unclean" way?
+            return buffer;
+        }
+
+        protected byte[] appendShortByteStream(byte[] buffer, ushort shortval, bool bigEndian)
+        {
+            List<byte[]> tempBuffer = new List<byte[]>(); // Initialize temprary buffer for writing. Needs to be in List to append
+            if (bigEndian)
+                shortval = BinaryPrimitives.ReverseEndianness(shortval); // Convert value to big endian.
+            tempBuffer.Add(buffer);
+            tempBuffer.Add(BitConverter.GetBytes(shortval)); // Convert int into byte[], then addedinto temporary buffer
             buffer = tempBuffer.SelectMany(i => i).ToArray(); // Convert List back into byte[]. More work compared to old "unclean" way?
             return buffer;
         }
@@ -166,11 +321,8 @@ namespace FBRepacker
         protected void createFile(string fileExt, byte[] buffer, string filePath)
         {
             filePath += "." + fileExt;
-
             FileStream newFile = File.Create(filePath);
-
             newFile.Write(buffer, 0x00, buffer.Length);
-
             newFile.Close();
         }
 
@@ -193,6 +345,7 @@ namespace FBRepacker
 
         protected void writeFileinbyteStream(string filePath, byte[] buffer)
         {
+            // Reason why repack don't use this: opening and closing Stream is expensive.
             FileStream fs = File.Create(filePath);
             fs.Write(buffer, 0, buffer.Count());
             fs.Close();

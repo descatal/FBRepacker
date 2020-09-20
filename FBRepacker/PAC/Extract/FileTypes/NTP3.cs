@@ -5,12 +5,12 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace FBRepacker.extractPAC
+namespace FBRepacker.PAC.Extract
 {
     class NTP3 : Internals
     {
         short numberofDDS = 0, widthResolution = 0, heightResolution = 0;
-        int ddsDataChunkSize = 0, NTP3HeaderChunkSize = 0, FHMOffset = 0, DDSFileNumber = 1;
+        int ddsDataChunkSize = 0, NTP3HeaderChunkSize = 0, FHMOffset = 0, DDSFileNumber = 1, beforeCompressionShort = 0;
         string compressionType = string.Empty, DDSFileName = string.Empty;
         bool isCompressed = false, byteReversed = false;
         byte[] remainderNTP3Chunk = new byte[0]; // 0 for initialization purpose only.
@@ -26,15 +26,25 @@ namespace FBRepacker.extractPAC
                 { 0x0007, "No Compression"}
             };
 
-        public NTP3(FileStream PAC, int FHMOffset) : base(PAC)
+        public NTP3(FileStream PAC, int FHMOffset) : base()
         {
+            changeStreamFile(PAC);
             this.FHMOffset = FHMOffset;
         }
 
         public void extract()
         {
-            if(checkLinked())
+            if (checkLinked())
+            {
                 parseNTP3();
+            }
+            else
+            {
+                // see comments in checkLinked for explaination
+                // create a new empty duplicate file for repacking indexing purpose
+                createFile("NTP3", new byte[0] { }, createExtractFilePath(fileNumber) + "-L");
+            }
+                
         }
 
         private bool checkLinked()
@@ -44,6 +54,7 @@ namespace FBRepacker.extractPAC
              * The duplicate offset is actually pointing to a group of NTP3, but it is impossible to tell.
              * Hence, what we do in this class is to check if the NTP3 is 'multiple' type, and extract them all at once. 
              * Hence, if the next file is pointing to the same NTP3, we will extract the same dds images again, and this is wrong. 
+             * TLDR - to let the system skip the NTP3 extraction since it is already extracted under duplicate.
              */
             if (NTP3LinkedOffset.Contains(FHMOffset))
             {
@@ -82,37 +93,46 @@ namespace FBRepacker.extractPAC
 
         private void readNumberofFiles()
         {
-            PAC.Seek(0x02, SeekOrigin.Current);
-            numberofDDS = readShort(PAC.Position, true);
+            Stream.Seek(0x02, SeekOrigin.Current);
+            numberofDDS = readShort(Stream.Position, true);
             appendPACInfo("Number of Files: " + numberofDDS.ToString());
         }
 
         private void readMetadata()
         {
             int seekRange = DDSFileNumber > 1 ? 0x08 : 0x10; // Multiple NTP3 file has none of the 0x10 NTP3 header chunk, so we only have to skip half of it (0x08).
-            PAC.Seek(seekRange, SeekOrigin.Current);
-            ddsDataChunkSize = readIntBigEndian(PAC.Position);
-            NTP3HeaderChunkSize = readShort(PAC.Position, true);
-            PAC.Seek(0x04, SeekOrigin.Current);
-            compressionType = identifyCompressionType(readShort(PAC.Position, true));
+            Stream.Seek(seekRange, SeekOrigin.Current);
+            ddsDataChunkSize = readIntBigEndian(Stream.Position);
+            NTP3HeaderChunkSize = readShort(Stream.Position, true);
+            Stream.Seek(0x02, SeekOrigin.Current);
+            beforeCompressionShort = readShort(Stream.Position, true);
+            compressionType = identifyCompressionType(readShort(Stream.Position, true));
             byteReversed = compressionType.Contains("byteReversed") ? true : false;
 
             if (!compressionType.Contains("No Compression"))
                 isCompressed = true;
 
-            widthResolution = readShort(PAC.Position, true);
-            heightResolution = readShort(PAC.Position, true);
+            widthResolution = readShort(Stream.Position, true);
+            heightResolution = readShort(Stream.Position, true);
         }
 
         private void parseRemainderNTP3Chunks()
         {
-            long NTP3RemainderSize = NTP3HeaderChunkSize - 0x28; // NTP3 header chunk (useful) metadata is always 0x28 in size, and subtracting the metadata size with whole NTP3 header chunk size will get the remainder size. 
-            remainderNTP3Chunk = extractChunk(PAC.Position, NTP3RemainderSize); // Extracting the remainder NTP3 Chunks to be used for repacking. The chunk meaning is not known yet, so copy & paste is the only option.
-            GIDXChunk = extractChunk(PAC.Position, 0x10); // GIDX Chunk have fixed 0x10 size, and is technically outside NTP3 header Chunk. (This is technically counted as DDS file data).
-            DDSFileName = readIntBigEndian(PAC.Position - 0x08).ToString("X4"); // Read the DDS File Name in the GIDX Chunk.
-            PAC.Seek(0x04, SeekOrigin.Current);
+            // NTP3 header chunk (useful) metadata is always 0x28 in size, and subtracting the metadata size with whole NTP3 header chunk size will get the remainder size. 
+            // Also since NTP3HeaderChunkSize is read from NTP3 metadata, -0x28 is correct since it dosen't care if multiple NTP3 header dosen't have the 0x10 header chunk.
+            long NTP3RemainderSize = NTP3HeaderChunkSize - 0x28; 
+            remainderNTP3Chunk = extractChunk(Stream.Position, NTP3RemainderSize); // Extracting the remainder NTP3 Chunks to be used for repacking. The chunk meaning is not known yet, so copy & paste is the only option.
+            GIDXChunk = extractChunk(Stream.Position, 0x10); // GIDX Chunk have fixed 0x10 size, and is technically outside NTP3 header Chunk. (This is technically counted as DDS file data).
+            DDSFileName = readIntBigEndian(Stream.Position - 0x08).ToString("X4"); // Read the DDS File Name in the GIDX Chunk.
+            Stream.Seek(0x04, SeekOrigin.Current);
             appendPACInfo("#DDS: " + DDSFileNumber);
             appendPACInfo("Name: " + DDSFileName);
+            appendPACInfo("DDS Data Chunk Size: " + ddsDataChunkSize);
+            appendPACInfo("NTP3 Header Chunk Size: " + NTP3HeaderChunkSize);
+            appendPACInfo("beforeCompressionShort: " + beforeCompressionShort);
+            appendPACInfo("Width Resolution: " + widthResolution.ToString());
+            appendPACInfo("Height Resolution: " + heightResolution.ToString());
+            appendPACInfo("Compression Type: " + compressionType);
             appendPACInfo("remainderNTP3Chunk: " + Encoding.Default.GetString(remainderNTP3Chunk));
             appendPACInfo("GIDXChunk: " + Encoding.Default.GetString(GIDXChunk));
         }
@@ -206,7 +226,7 @@ namespace FBRepacker.extractPAC
 
         private void parseDDSDataChunk()
         {
-            DDSDataChunk = extractChunk(PAC.Position, ddsDataChunkSize);
+            DDSDataChunk = extractChunk(Stream.Position, ddsDataChunkSize);
             if(byteReversed)
                 DDSDataChunk = reverseEndianess(DDSDataChunk, 4);
         }

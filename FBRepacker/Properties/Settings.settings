@@ -2,7 +2,7 @@
 <SettingsFile xmlns="http://schemas.microsoft.com/VisualStudio/2004/01/settings" CurrentProfile="(Default)" GeneratedClassNamespace="FBRepacker.Properties" GeneratedClassName="Settings">
   <Profiles />
   <Settings>
-    <Setting Name="Path" Type="System.String" Scope="User">
+    <Setting Name="OpenExtractPath" Type="System.String" Scope="User">
       <Value Profile="(Default)" />
     </Setting>
     <Setting Name="ExtractPath" Type="System.String" Scope="User">
@@ -13,6 +13,9 @@
     </Setting>
     <Setting Name="outputWAV" Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">False</Value>
+    </Setting>
+    <Setting Name="OpenRepackPath" Type="System.String" Scope="User">
+      <Value Profile="(Default)" />
     </Setting>
   </Settings>
 </SettingsFile>

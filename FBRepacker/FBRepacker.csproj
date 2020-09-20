@@ -77,11 +77,18 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="PAC\Repack\customFileInfo\DDSFileInfo.cs" />
+    <Compile Include="PAC\Repack\customFileInfo\FHMFileInfo.cs" />
+    <Compile Include="PAC\Repack\customFileInfo\GeneralFileInfo.cs" />
+    <Compile Include="PAC\Repack\customFileInfo\NTP3FileInfo.cs" />
+    <Compile Include="PAC\Repack\FileTypes\NTP3.cs" />
+    <Compile Include="PAC\Repack\FileTypes\STREAM.cs" />
+    <Compile Include="PAC\Repack\RepackPAC.cs" />
     <Compile Include="RepackPsarc.cs" />
     <Compile Include="SettingsWindow.xaml.cs">
       <DependentUpon>SettingsWindow.xaml</DependentUpon>
     </Compile>
-    <Compile Include="STREAM.cs" />
+    <Compile Include="PAC\Extract\FileTypes\STREAM.cs" />
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -90,9 +97,9 @@
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="NTP3.cs" />
-    <Compile Include="ExtractPAC.cs" />
-    <Compile Include="Internals.cs" />
+    <Compile Include="PAC\Extract\FileTypes\NTP3.cs" />
+    <Compile Include="PAC\Extract\ExtractPAC.cs" />
+    <Compile Include="PAC\Internals\Internals.cs" />
     <Compile Include="MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
@@ -129,8 +136,6 @@
   <ItemGroup>
     <None Include="App.config" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="ExtractPAC\" />
-  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
