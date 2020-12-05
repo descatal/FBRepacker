@@ -1,5 +1,7 @@
 ﻿using FBRepacker.PAC.Repack.customFileInfo;
+using OpenTK.Graphics.OpenGL;
 using System;
+using System.Buffers.Binary;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -16,23 +18,40 @@ namespace FBRepacker.PAC.Repack.FileTypes
 
         public static Dictionary<int, string> StringCompareDDSCompressionType = new Dictionary<int, string>
             {
+                { 0x44585433, "DXT3"},
                 { 0x44585435, "DXT5" },
                 { 0x44585431, "DXT1"},
                 { 0x00000000, "No Compression"}
             };
 
-        public static Dictionary<string, short> NTP3DDSCompressionType = new Dictionary<string, short>
+        public static Dictionary<string, ushort> NTP3CompressedTypes = new Dictionary<string, ushort>
             {
+                { "DXT3", 0x0001 },
                 { "DXT5", 0x0002 },
                 { "DXT1", 0x0000 },
-                { "No Compression byteReversed", 0x000E },
-                { "No Compression", 0x0007 }
             };
 
         public NTP3() : base()
         {
-
+            
         }
+
+        /* Pre Base64 conversion code: TODO remove
+        public StreamReader getNTP3InfoStreamReader(string[] NTP3Info)
+        {
+            string PACPath = rootDirectory + @"\PAC.info";
+            StreamReader allStream = new StreamReader(PACPath);
+            string from = NTP3Info.First();
+            string end = NTP3Info.LastOrDefault(line => line != "");
+            byte[] NTP3InfoBuffer = readByteArrayinPACInfoBetweenString(allStream, from, end, false);
+
+            MemoryStream NTP3InfoMemoryStream = new MemoryStream();
+            NTP3InfoMemoryStream.Write(NTP3InfoBuffer, 0, NTP3InfoBuffer.Length);
+
+            StreamReader NTP3InfoStream = new StreamReader(NTP3InfoMemoryStream);
+            return NTP3InfoStream;
+        }
+        */
 
         public void parseNTP3Info(string[] NTP3Info, int fileNumber)
         {
@@ -43,20 +62,48 @@ namespace FBRepacker.PAC.Repack.FileTypes
                 string from = "#DDS: " + fileNo.ToString();
                 string end = "#DDS: " + (fileNo + 1).ToString();
                 string[] DDSInfo = getSpecificFileInfoPropertiesRegion(NTP3Info, from, end);
-                //var werdf = convertByteArraytoString(convertStringtoByteArray("GIDX\0\0\0\u0010\u001cD�D\0\0\0\0", false), false);
-                //var weqr = convertByteArraytoInt32(convertHexStringtoByteArray("1C44CC44", true), false);
+
+                /* Pre Base64 conversion code: TODO remove
+                string end = fileNo != numberofFiles ? "#DDS: " + (fileNo + 1).ToString() : NTP3Info.LastOrDefault(line => line != "");
+                byte[] DDSInfoStreamInBytes = readByteArrayinPACInfoBetweenString(NTP3InfoStream, from, end, false);
+
+                MemoryStream DDSStreamMem = new MemoryStream();
+                DDSStreamMem.Write(DDSInfoStreamInBytes, 0, DDSInfoStreamInBytes.Length);
+                StreamReader DDSInfoStream = new StreamReader(DDSStreamMem);
+                */
+
+                if(fileNo == numberofFiles)
+                {
+
+                }
+
                 NTP3FileInfo newFileInfo = new NTP3FileInfo();
 
                 newFileInfo.fileNo = fileNo;
                 newFileInfo.widthReso = convertStringtoInt(getSpecificFileInfoProperties("Width Resolution: ", DDSInfo));
                 newFileInfo.heightReso = convertStringtoInt(getSpecificFileInfoProperties("Height Resolution: ", DDSInfo));
                 newFileInfo.hexName = convertHexStringtoByteArray(getSpecificFileInfoProperties("Name: ", DDSInfo), true);
-                newFileInfo.remainderNTP3Chunk = convertStringtoByteArray(getSpecificFileInfoProperties("remainderNTP3Chunk: ", DDSInfo), false);
-                newFileInfo.GIDXChunk = convertStringtoByteArray(getSpecificFileInfoProperties("GIDXChunk: ", DDSInfo), false);
+
+                byte[] eXtChunk = Convert.FromBase64String(getSpecificFileInfoProperties("eXtChunk: ", DDSInfo));
+                newFileInfo.eXtChunk = eXtChunk; 
+
+                byte[] GIDXChunk = Convert.FromBase64String(getSpecificFileInfoProperties("GIDXChunk: ", DDSInfo));
+                newFileInfo.GIDXChunk = GIDXChunk;
+
                 newFileInfo.CompressionType = getSpecificFileInfoProperties("Compression Type: ", DDSInfo);
                 newFileInfo.DDSDataChunkSize = convertStringtoInt(getSpecificFileInfoProperties("DDS Data Chunk Size: ", DDSInfo));
                 newFileInfo.NTP3HeaderChunkSize = convertStringtoInt(getSpecificFileInfoProperties("NTP3 Header Chunk Size: ", DDSInfo));
-                newFileInfo.beforeCompressionShort = convertStringtoInt(getSpecificFileInfoProperties("beforeCompressionShort: ", DDSInfo));
+                int numberofMipmaps = convertStringtoInt(getSpecificFileInfoProperties("numberofMipmaps: ", DDSInfo));
+
+                if (newFileInfo.CompressionType == "No Compression")
+                    newFileInfo.pixelFormat = getSpecificFileInfoProperties("pixelFormat: ", DDSInfo);
+
+                newFileInfo.numberofMipmaps = numberofMipmaps;
+
+                for(int i = 0; i < numberofMipmaps; i++)
+                {
+                    //newFileInfo.mipmapsSizeList.Add(convertStringtoInt(getSpecificFileInfoProperties("mipmapSize" + i.ToString() + ": ", DDSInfo)));
+                }
 
                 NTP3FileInfoList.Add(newFileInfo);
             }
@@ -78,7 +125,8 @@ namespace FBRepacker.PAC.Repack.FileTypes
             for (int i = 0; i < numberofFilesinNTP3; i++)
             {
                 string hexName = convertByteArraytoString(NTP3FileInfoList[i].hexName, true);
-                string DDSFilePath = originalFilePath + @"\" + fileNumber.ToString("000") + "-" + (i + 1).ToString("000") + " (" + hexName + ").dds";
+                string baseFileName = originalFilePath + @"\" + fileNumber.ToString("000");
+                string DDSFilePath = hexName == "0000"? baseFileName + ".dds" : baseFileName + "-" + (i + 1).ToString("000") + " (" + hexName + ").dds";
 
                 if (File.Exists(DDSFilePath))
                 {
@@ -87,7 +135,7 @@ namespace FBRepacker.PAC.Repack.FileTypes
                 }
                 else
                 {
-                    throw new Exception("Cannot found DDS file with name: " + DDSFilePath);
+                    throw new Exception("Cannot find DDS file with name: " + DDSFilePath);
                 }
             }
 
@@ -95,7 +143,7 @@ namespace FBRepacker.PAC.Repack.FileTypes
 
             repackNTP3(NTP3FileInfoList, DDSFileList, NTP3Stream);
 
-            byte[] NTP3Buffer = NTP3Stream.GetBuffer();
+            byte[] NTP3Buffer = NTP3Stream.ToArray();
 
             FileStream fileStream = File.Create(Directory.GetCurrentDirectory() + (@"\temp\NTP3" + fileNumber.ToString()));
             fileStream.Write(NTP3Buffer, 0, NTP3Buffer.Length);
@@ -113,44 +161,110 @@ namespace FBRepacker.PAC.Repack.FileTypes
 
             for(int fileNo = 0; fileNo < numberofDDS; fileNo++)
             {
+                // https://docs.microsoft.com/en-us/windows/win32/direct3ddds/dds-header
                 FileStream DDSStream = File.OpenRead(allDDSFiles[fileNo].FullName);
                 NTP3FileInfo NTP3FileInfo = NTP3FileInfoList[fileNo];
                 changeStreamFile(DDSStream);
-                DDSStream.Seek(0x0C, SeekOrigin.Begin);
 
+                if (readIntBigEndian(DDSStream.Position) != 0x44445320)
+                    throw new Exception("DDS header not found!");
+
+                // 7C byte
+                DDSStream.Seek(0x04, SeekOrigin.Current);
+
+                // DDSFlags
+                dwDDSFlags ddsFlags = (dwDDSFlags)readIntSmallEndian(DDSStream.Position);
+                dwDDSFlags requiredDDSFlags = dwDDSFlags.DDSD_CAPS | dwDDSFlags.DDSD_HEIGHT | dwDDSFlags.DDSD_WIDTH | dwDDSFlags.DDSD_PIXELFORMAT;
+
+                if (!ddsFlags.HasFlag(requiredDDSFlags))
+                    throw new Exception("DDS Flags error!");
+                
+                // Resolutions
                 int heightReso = readIntSmallEndian(DDSStream.Position);
                 int widthReso = readIntSmallEndian(DDSStream.Position);
 
                 if(widthReso != NTP3FileInfo.widthReso || heightReso != NTP3FileInfo.heightReso)
                     throw new Exception("Image resolution mismatch between DDS file and NTP3FileInfo!" + Environment.NewLine + "DDS File: " + allDDSFiles[fileNo].FullName);
 
-                DDSStream.Seek(0x40, SeekOrigin.Current);
-                string CompressionType = identifyCompressionType(readIntBigEndian(DDSStream.Position));
+                // pitchorLinearSize
+                int pitchorLinearSize = readIntSmallEndian(DDSStream.Position); // Not used as per Microsoft's Guideline.
 
-                if (CompressionType == "No Compression")
-                {
-                    DDSStream.Seek(-0x08, SeekOrigin.Current);
-                    CompressionType = readIntBigEndian(DDSStream.Position) == 0x40000000 ? "No Compression byteReversed" : "No Compression";
-                    DDSStream.Seek(0x04, SeekOrigin.Current);
-                }
+                // depth, skipped.
+                DDSStream.Seek(0x04, SeekOrigin.Current);
 
-                if (CompressionType != NTP3FileInfo.CompressionType)
-                    throw new Exception("Compression Type mismatch between DDS file and NTP3FileInfo!" + Environment.NewLine + "DDS File: " + allDDSFiles[fileNo].FullName);
+                // Mipmaps
+                int numberofMipmaps = readIntSmallEndian(DDSStream.Position);
 
-                int DDSFileChunkSize = (int)DDSStream.Length - 0x80;
-                DDSStream.Seek(0x80, SeekOrigin.Begin);
-                // TODO: make a log that DDS file size is different (new file)
+                // Reserved 11*4 byte + 4 byte dwSizeforPixelFormat.
+                DDSStream.Seek(0x30, SeekOrigin.Current);
+
+                // Pixel Formats.
+                dwPixelFormatFlags pixelFlags = (dwPixelFormatFlags) readIntSmallEndian(DDSStream.Position);
+                string compressionType = null;
+                uint dwRGBBitCount = 0, dwRBitMask = 0, dwGBitMask = 0, dwBBitMask = 0, dwABitMask = 0, dwCaps = 0, dwCaps2 = 0, dwCaps3 = 0, dwCaps4 = 0;
 
                 DDSFileInfo newFileInfo = new DDSFileInfo();
+                int DDSFileChunkSize = addPaddingSizeCalculation((int)DDSStream.Length) - 0x80;
 
+                if (pixelFlags.HasFlag(dwPixelFormatFlags.DDPF_FOURCC))
+                {
+                    // Compressed.
+                    compressionType = identifyCompressionType(readIntBigEndian(DDSStream.Position));
+                    DDSStream.Seek(0x80, SeekOrigin.Begin);
+                    DDSStream.CopyTo(newFileInfo.DDSByteStream); // If not compressed, directly copy the RGBA values. 
+                }
+                else
+                {
+                    DDSStream.Seek(0x04, SeekOrigin.Current);
+                    compressionType = "No Compression";
+
+                    dwRGBBitCount = readUIntSmallEndian(DDSStream.Position);
+                    dwRBitMask = readUIntSmallEndian(DDSStream.Position);
+                    dwGBitMask = readUIntSmallEndian(DDSStream.Position);
+                    dwBBitMask = readUIntSmallEndian(DDSStream.Position);
+                    dwABitMask = readUIntSmallEndian(DDSStream.Position);
+                    dwCaps = readUIntSmallEndian(DDSStream.Position); // Caps are not used to determine stuff although we set them.
+                    dwCaps2 = readUIntSmallEndian(DDSStream.Position); // TODO: caps 2 stores cubemap infos.
+                    dwCaps3 = readUIntSmallEndian(DDSStream.Position);
+                    dwCaps4 = readUIntSmallEndian(DDSStream.Position);
+
+                    DDSStream.Seek(0x04, SeekOrigin.Current); // Reserved 1*4 bytes.
+
+                    bool isAlpha = pixelFlags.HasFlag(dwPixelFormatFlags.DDPF_ALPHAPIXELS);
+
+                    if (dwRGBBitCount % 8 != 0)
+                        throw new Exception("dwRGBitCount not a multiple of 4!");
+
+                    int RGBAByteCount = (int)(dwRGBBitCount / 8);
+                    byte[] RGBAChunk = extractChunk(0x80, DDSFileChunkSize);
+                    List<byte[]> RGBA = parseMaskedRGBA(isAlpha, RGBAChunk, RGBAByteCount, dwRBitMask, dwGBitMask, dwBBitMask, dwABitMask);
+
+                    newFileInfo.pixelFormatRGBAByteSize = RGBAByteCount;
+
+                    // We try to convert based on the pixelFormat in info file, else we use the default of Abgr.
+                    byte[] maskedRGBA;
+                    if(Enum.TryParse(NTP3FileInfo.pixelFormat, out PixelFormat pixelFormat))
+                    {
+                        maskedRGBA = writeMaskedRGBA(pixelFormat, RGBA);
+                    }
+                    else
+                    {
+                        maskedRGBA = writeMaskedRGBA(PixelFormat.AbgrExt, RGBA);
+                    }
+
+                    newFileInfo.DDSByteStream.Write(maskedRGBA, 0, maskedRGBA.Length);
+                }
+
+                if (compressionType != NTP3FileInfo.CompressionType)
+                    throw new Exception("Compression Type mismatch between DDS file and NTP3FileInfo!" + Environment.NewLine + "DDS File: " + allDDSFiles[fileNo].FullName);
+                
                 newFileInfo.fileNo = fileNo + 1;
                 newFileInfo.DDSFileChunkSize = DDSFileChunkSize;
                 newFileInfo.widthReso = widthReso;
                 newFileInfo.heightReso = heightReso;
-                newFileInfo.CompressionType = CompressionType;
+                newFileInfo.CompressionType = compressionType;
                 newFileInfo.hexName = convertInt32toByteArray(getDDSFileName(DDSStream.Name), true);
-                newFileInfo.beforeCompressionShort = NTP3FileInfo.beforeCompressionShort;
-                DDSStream.CopyTo(newFileInfo.DDSByteStream);
+                newFileInfo.numberofMipmaps = numberofMipmaps;
 
                 realNTP3FileList.Add(newFileInfo);
                 DDSStream.Close();
@@ -166,13 +280,15 @@ namespace FBRepacker.PAC.Repack.FileTypes
                 NTP3FileInfo NTP3Info = NTP3FileInfoList[fileNo];
                 DDSFileInfo DDSFile = DDSFileList[fileNo];
 
+                // We try to follow the compressionType
+
                 bool writeWithNTP3Header = fileNo == 0 ? true : false;
                 writeNTP3Header(writeWithNTP3Header, NTP3Info, DDSFileList, fileNo, NTP3Stream);
 
-                byte[] DDSDataChunkBuffer = DDSFile.DDSByteStream.GetBuffer();
+                // byteReverse?
+                byte[] DDSDataChunkBuffer = addPaddingArrayBuffer(DDSFile.DDSByteStream.ToArray());
                 NTP3Stream.Write(DDSDataChunkBuffer, 0, DDSDataChunkBuffer.Length);
 
-                byte[] temp = NTP3Stream.GetBuffer();
                 FileStream fileStream = File.Create(Directory.GetCurrentDirectory() + (@"\temp\NTP3-" + fileNumber.ToString()));
                 fileStream.Write(DDSDataChunkBuffer, 0, DDSDataChunkBuffer.Length);
 
@@ -180,39 +296,77 @@ namespace FBRepacker.PAC.Repack.FileTypes
             }
         }
 
-        private void writeNTP3Header(bool withHeader, NTP3FileInfo NTP3FileInfo, List<DDSFileInfo> DDSFileList, int fileNo, Stream NTP3Stream)
+        private void writeNTP3Header(bool withHeader, NTP3FileInfo NTP3FileInfo, List<DDSFileInfo> DDSFileList, int fileNo, MemoryStream NTP3Stream)
         {
-            int NTP3HeaderChunkSize = NTP3FileInfo.NTP3HeaderChunkSize;
-            int DDSDataChunkSize = NTP3FileInfo.DDSDataChunkSize;
-            int combinedSize = NTP3HeaderChunkSize + DDSDataChunkSize;
             DDSFileInfo DDSFile = DDSFileList[fileNo];
 
-            byte[] NTP3HeaderMetadata = new byte[0];
+            int DDSDataChunkSize = DDSFile.DDSFileChunkSize;
+
+            byte[] NTP3Header = new byte[0];
+            byte[] NTP3Metadata = new byte[0];
             if (withHeader)
             {
-                NTP3HeaderMetadata = appendIntByteStream(NTP3HeaderMetadata, 0x4E545033, true);
-                NTP3HeaderMetadata = appendShortByteStream(NTP3HeaderMetadata, 0x0001, false);
-                NTP3HeaderMetadata = appendShortByteStream(NTP3HeaderMetadata, (ushort)DDSFileList.Count, true);
-                NTP3HeaderMetadata = appendZeroByteStream(NTP3HeaderMetadata, 0x08);
+                NTP3Header = appendUIntArrayBuffer(NTP3Header, 0x4E545033, true);
+                NTP3Header = appendShortArrayBuffer(NTP3Header, 0x0001, false); // Version 1
+                NTP3Header = appendShortArrayBuffer(NTP3Header, (ushort)DDSFileList.Count, true);
+                NTP3Header = appendZeroArrayBuffer(NTP3Header, 0x08);
             }
 
-            NTP3HeaderMetadata = appendIntByteStream(NTP3HeaderMetadata, (uint)combinedSize, true);
-            NTP3HeaderMetadata = appendZeroByteStream(NTP3HeaderMetadata, 0x04);
-            NTP3HeaderMetadata = appendIntByteStream(NTP3HeaderMetadata, (uint)DDSDataChunkSize, true);
-            NTP3HeaderMetadata = appendShortByteStream(NTP3HeaderMetadata, (ushort)NTP3HeaderChunkSize, true);
-            NTP3HeaderMetadata = appendZeroByteStream(NTP3HeaderMetadata, 0x02);
+            int combinedSizeOffset = NTP3Metadata.Length;
+            NTP3Metadata = appendUIntArrayBuffer(NTP3Metadata, 0, true); // Placeholder, will be written once the header part is all done.
+            NTP3Metadata = appendZeroArrayBuffer(NTP3Metadata, 0x04);
+            NTP3Metadata = appendUIntArrayBuffer(NTP3Metadata, (uint)DDSDataChunkSize, true);
+            int NTP3HeaderChunkSizeOffset = NTP3Metadata.Length;
+            NTP3Metadata = appendShortArrayBuffer(NTP3Metadata, 0, true); // Placeholder, will be written once the header part is all done.
+            NTP3Metadata = appendZeroArrayBuffer(NTP3Metadata, 0x02);
 
-            if(!NTP3DDSCompressionType.ContainsKey(DDSFile.CompressionType))
-                throw new Exception("Cannot find Compression Type: " + DDSFile.CompressionType + " in NTP3DDSCompressionType dic");
+            NTP3Metadata = appendShortArrayBuffer(NTP3Metadata, (ushort)DDSFile.numberofMipmaps, true);
 
-            NTP3HeaderMetadata = appendShortByteStream(NTP3HeaderMetadata, (ushort)DDSFile.beforeCompressionShort, true);
-            NTP3HeaderMetadata = appendShortByteStream(NTP3HeaderMetadata, (ushort)NTP3DDSCompressionType[DDSFileList[fileNo].CompressionType], true);
-            NTP3HeaderMetadata = appendShortByteStream(NTP3HeaderMetadata, (ushort)DDSFile.widthReso, true);
-            NTP3HeaderMetadata = appendShortByteStream(NTP3HeaderMetadata, (ushort)DDSFile.heightReso, true);
+            ushort NTP3compresionType = getNTP3CompressionType(DDSFile, NTP3FileInfo);
+            
+            NTP3Metadata = appendShortArrayBuffer(NTP3Metadata, NTP3compresionType, true);
+            NTP3Metadata = appendShortArrayBuffer(NTP3Metadata, (ushort)DDSFile.widthReso, true);
+            NTP3Metadata = appendShortArrayBuffer(NTP3Metadata, (ushort)DDSFile.heightReso, true);
 
-            byte[] remainderNTP3ChunkBuffer = NTP3FileInfo.remainderNTP3Chunk;
-            byte[] GIDXChunkBuffer = NTP3FileInfo.GIDXChunk;
-            byte[] NTP3HeaderBuffer = NTP3HeaderMetadata.Concat(remainderNTP3ChunkBuffer).Concat(GIDXChunkBuffer).ToArray();
+            // TODO: cube maps
+            NTP3Metadata = appendZeroArrayBuffer(NTP3Metadata, 0x18);
+
+            // Manually calculate mipmapsSize, not trusting Info file's.
+            List<uint> mipmapsSizeList = calculateMipmapsSize(DDSFile);
+            if(mipmapsSizeList.Count > 1)
+            {
+                // Only write the offsets if there are more than 1 mipmaps. (1 is the original)
+                for (int i = 0; i < mipmapsSizeList.Count; i++)
+                {
+                    NTP3Metadata = appendUIntArrayBuffer(NTP3Metadata, mipmapsSizeList[i], true);
+                }
+            }
+
+
+            NTP3Metadata = addPaddingArrayBuffer(NTP3Metadata);
+
+            byte[] eXtChunkBuffer = NTP3FileInfo.eXtChunk;
+            byte[] GIDXChunkBuffer = NTP3FileInfo.GIDXChunk; // TODO: write hash seperately.
+            byte[] NTP3MetadataBuffer = NTP3Metadata.Concat(eXtChunkBuffer).Concat(GIDXChunkBuffer).ToArray();
+
+            // I don't like this implementation, for changing size when everything is written.
+            ushort NTP3HeaderChunkSize = (ushort)NTP3MetadataBuffer.Length;
+            uint combinedSize = (uint)(NTP3HeaderChunkSize + DDSDataChunkSize);
+
+            byte[] NTP3HeaderChunkSizeBuffer = BitConverter.GetBytes(BinaryPrimitives.ReverseEndianness(NTP3HeaderChunkSize));
+            byte[] combinedSizeBuffer = BitConverter.GetBytes(BinaryPrimitives.ReverseEndianness(combinedSize));
+
+            for (int i = 0; i < NTP3HeaderChunkSizeBuffer.Length; i++)
+            {
+                NTP3MetadataBuffer[NTP3HeaderChunkSizeOffset + i] = NTP3HeaderChunkSizeBuffer[i];
+            }
+
+            for (int i = 0; i < combinedSizeBuffer.Length; i++)
+            {
+                NTP3MetadataBuffer[combinedSizeOffset + i] = combinedSizeBuffer[i];
+            }
+
+            byte[] NTP3HeaderBuffer = NTP3Header.Concat(NTP3MetadataBuffer).ToArray();
 
             NTP3Stream.Write(NTP3HeaderBuffer, 0, NTP3HeaderBuffer.Length);
         }
@@ -232,16 +386,17 @@ namespace FBRepacker.PAC.Repack.FileTypes
 
         private int getDDSFileName(string fileName)
         {
-            string newFileName = fileName;
-            if (fileName.Contains('('))
+            string newFileName = Path.GetFileNameWithoutExtension(fileName);
+            if (newFileName.Contains('('))
             {
-                int pFrom = fileName.IndexOf(" (") + " (".Length;
-                int pTo = fileName.LastIndexOf(")");
-                newFileName = fileName.Substring(pFrom, pTo - pFrom);
+                int pFrom = newFileName.IndexOf(" (") + " (".Length;
+                int pTo = newFileName.LastIndexOf(")");
+                newFileName = newFileName.Substring(pFrom, pTo - pFrom);
             }
             else
             {
-                throw new Exception("DDS fileName format error, '(' not found: " + fileName);
+                //throw new Exception("DDS fileName format error, '(' not found: " + fileName);
+                return 0;
             }
 
             if (int.TryParse(newFileName, System.Globalization.NumberStyles.HexNumber, null, out int fileNumber))
@@ -252,6 +407,94 @@ namespace FBRepacker.PAC.Repack.FileTypes
             {
                 throw new Exception("fileName int to string conversion failed with fileName: " + fileName);
             }
+        }
+
+        private ushort getNTP3CompressionType(DDSFileInfo DDSFileList, NTP3FileInfo NTP3FileInfo)
+        {
+            string compressionType = DDSFileList.CompressionType;
+
+            if(compressionType == "No Compression")
+            {
+                if(Enum.TryParse(NTP3FileInfo.pixelFormat, out PixelFormat pixelFormat))
+                {
+                    switch (pixelFormat)
+                    {
+                        case PixelFormat.AbgrExt:
+                            return 14;
+
+                        case PixelFormat.R5G6B5IccSgix:
+                        default:
+                            return 7;
+                    }
+                }
+                else
+                {
+                    throw new Exception("Cannot parse pixelFormat!");
+                }
+                
+            }
+            else
+            {
+                return NTP3CompressedTypes[compressionType];
+            }
+        }
+
+        private List<uint> calculateMipmapsSize(DDSFileInfo DDSFile)
+        {
+            List<uint> mipmapsSizeList = new List<uint>();
+            int numberofMipmaps = DDSFile.numberofMipmaps;
+            int widthResolution = DDSFile.widthReso;
+            int heightResolution = DDSFile.heightReso;
+
+            for(int i = 0; i  < numberofMipmaps; i++)
+            {
+                uint mipmapSize = 0;
+                if (DDSFile.CompressionType == "No Compression")
+                {
+                    mipmapSize = (uint)(widthResolution * heightResolution * DDSFile.pixelFormatRGBAByteSize);
+                    Math.Max(1, Math.Truncate((decimal)(widthResolution /= 2)));
+                    Math.Max(1, Math.Truncate((decimal)(heightResolution /= 2)));
+                    mipmapsSizeList.Add(mipmapSize);
+                }
+                else
+                {
+                    int blockSize;
+                    switch (DDSFile.CompressionType)
+                    {
+                        case "DXT1":
+                            blockSize = 8;
+                            break;
+
+                        case "DXT2":
+                        case "DXT3":
+                        case "DXT5":
+                            blockSize = 16;
+                            break;
+
+                        default:
+                            throw new Exception("DDS Compression type not supported!");
+                    }
+                    // should I add a check on min size?
+                    mipmapSize = (uint)(Math.Max(1, Math.Truncate((decimal)((widthResolution + 3) / 4))) * Math.Max(1, Math.Truncate((decimal)((heightResolution + 3) / 4))) * blockSize);
+                    Math.Max(1, Math.Truncate((decimal)(widthResolution /= 2)));
+                    Math.Max(1, Math.Truncate((decimal)(heightResolution /= 2)));
+                    mipmapsSizeList.Add(mipmapSize);
+                }
+            }
+            return mipmapsSizeList;
+        }
+
+        private byte[] removePropertiesTagandConvertFromBase64(byte[] input, string start, string end, Encoding stringEncoding)
+        {
+            byte[] startBytes = stringEncoding.GetBytes(start);
+            byte[] endBytes = stringEncoding.GetBytes(end);
+
+            byte[] tempBuff = input.Skip(startBytes.Length).ToArray();
+            byte[] finalBuff = tempBuff.Take(tempBuff.Length - endBytes.Length).ToArray();
+
+            //Convert.FromBase64String()
+
+            return finalBuff;
         }
     }
 }

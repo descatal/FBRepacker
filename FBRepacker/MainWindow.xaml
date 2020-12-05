@@ -12,16 +12,18 @@
             <MenuItem Header="File">
                 <MenuItem Header="Open Extract" Click="OpenExtractFileMenu_Click"></MenuItem>
                 <MenuItem Header="Open Repack" Click="OpenRepackFileMenu_Click"></MenuItem>
+                <MenuItem Header="Open NUD and VBN File" Click="OpenNUDandVBNFile_Click"></MenuItem>
+                <MenuItem Header="Open DAE File" Click="OpenDAEandVBNFile_Click"></MenuItem>
             </MenuItem>
             <MenuItem Header="Settings">
                 <MenuItem Header="Options" Click="OpenSettings_Click"></MenuItem>
             </MenuItem>
         </Menu>
         
-        <Grid Height="396" Width="791">
+        <Grid Width="791">
             <Grid.RowDefinitions>
                 <RowDefinition Height="*"/>
-                <RowDefinition Height="8*"/>
+                <RowDefinition Height="*"/>
             </Grid.RowDefinitions>
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*"></ColumnDefinition>
@@ -29,6 +31,8 @@
 
             <Grid Grid.Row="0" Grid.Column="0" >
                 <Grid.RowDefinitions>
+                    <RowDefinition Height="*"></RowDefinition>
+                    <RowDefinition Height="*"></RowDefinition>
                     <RowDefinition Height="*"></RowDefinition>
                     <RowDefinition Height="*"></RowDefinition>
                 </Grid.RowDefinitions>
@@ -64,12 +68,43 @@
                 </Grid>
 
                 <Button Content="..." Width="35" HorizontalContentAlignment="Center" Margin="10,0,0,0" Click="selectRepackPathButton" Grid.Row="1" Grid.Column="1"/>
+
+                <Grid Grid.Row="2" VerticalAlignment="Center">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="1*"></ColumnDefinition>
+                        <ColumnDefinition Width="4*"></ColumnDefinition>
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="*"></RowDefinition>
+                    </Grid.RowDefinitions>
+                    <TextBlock Text="NUD to DAE Output Path: "  Width="137" TextAlignment="Left" Margin="5,0,0,0" Grid.Column="0"/>
+                    <TextBlock HorizontalAlignment="Center" TextWrapping="Wrap" Name="NUDtoDAEOutputPath" Margin="10,0,0,0" Grid.Column="1"/>
+                </Grid>
+
+                <Button Content="..." Width="35" HorizontalContentAlignment="Center" Margin="10,0,0,0" Click="selectNUDtoDAEOutputPathButton" Grid.Row="2" Grid.Column="1"/>
+
+                <Grid Grid.Row="3" VerticalAlignment="Center">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="1*"></ColumnDefinition>
+                        <ColumnDefinition Width="4*"></ColumnDefinition>
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="*"></RowDefinition>
+                    </Grid.RowDefinitions>
+                    <TextBlock Text="DAE to NUD Output Path: "  Width="137" TextAlignment="Left" Margin="5,0,0,0" Grid.Column="0"/>
+                    <TextBlock HorizontalAlignment="Center" TextWrapping="Wrap" Name="DAEtoNUDOutputPath" Margin="10,0,0,0" Grid.Column="1"/>
+                </Grid>
+
+                <Button Content="..." Width="35" HorizontalContentAlignment="Center" Margin="10,0,0,0" Click="selectDAEtoNUDOutputPathButton" Grid.Row="3" Grid.Column="1"/>
+
             </Grid>
 
             <StackPanel Grid.Row="1">
-                <TextBlock TextWrapping="Wrap" Text="debug" Name="debugmsg" Height="269"/>
-                <Button Content="Extract" Click="extract_Click"></Button>
+                <TextBlock TextWrapping="Wrap" Text="debug" Name="debugmsg" Height="50"/>
+                <Button Content="Extract" Click="extractPAC_Click"></Button>
                 <Button Content="Repack PAC" Click="repackPAC_Click"></Button>
+                <Button Content="Convert NUD to DAE" Click="NUDtoDAE_Click"/>
+                <Button Content="Convert DAE to NUD" Click="DAEtoNUD_Click"></Button>
                 <Button Content="Repack Psarc" Click="repackPsarc_Click"></Button>
             </StackPanel>
         </Grid>

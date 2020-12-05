@@ -11,9 +11,10 @@ namespace FBRepacker.PAC.Repack.customFileInfo
     {
         public int fileNo;
         public int DDSFileChunkSize;
-        public int beforeCompressionShort;
+        public int numberofMipmaps;
         public int widthReso;
         public int heightReso;
+        public int pixelFormatRGBAByteSize;
         public byte[] hexName;
         public string CompressionType;
         public MemoryStream DDSByteStream;

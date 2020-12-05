@@ -12,6 +12,7 @@ namespace FBRepacker.PAC.Extract
     {
         string filePath = string.Empty;
         bool duplicateLinkedFile = false;
+        Dictionary<int, int> globalOffset = new Dictionary<int, int>();
 
         public ExtractPAC(string filePath, FileStream PAC) : base()
         {
@@ -76,7 +77,9 @@ namespace FBRepacker.PAC.Extract
             int FHMFileNumber = fileNumber;
 
             // Get the FHM Chunk Size by getting the first file offset.
-            int FHMChunkSize = readIntBigEndian(Stream.Position);
+            // Will have a fixed FHMChunkSize of 0x14 if there's no file inside the FHM.
+            int FHMChunkSize = numberofFiles != 0? readIntBigEndian(Stream.Position) : 0x14;
+
             Stream.Seek(-0x04, SeekOrigin.Current);
 
             // Create a new directory for each FHM
@@ -102,8 +105,12 @@ namespace FBRepacker.PAC.Extract
                 int fileOffset = readIntBigEndian(Stream.Position); // The current fileOffset
                 int sizeOffsetOffset = numberofFiles * 0x04; // The offset of the size of the nth file
 
-                // Reading FHM Offset, update the list
-                fileOffsets = writeFileOffsetInfo(fileOffsets, fileOffset);
+                int globalOff = (int)FHMStartingPos + fileOffset;
+                globalOffset[fileNumber] = globalOff;
+                //writeInsert(globalOff, fileNumber);
+
+                // Reading FHM Offset, update the list (including link & insert)
+                fileOffsets = writeFileOffsetInfo(fileOffsets, fileOffset, globalOff);
 
                 // Save the next position to return to
                 long nextOffsetPosition = Stream.Position;
@@ -112,7 +119,9 @@ namespace FBRepacker.PAC.Extract
                 int fileSize = readIntBigEndian(Stream.Position + sizeOffsetOffset - 0x04);
                 fileSizes = writeFileSizeInfo(fileSizes, fileSize);
 
-                string header = identifyHeader(readIntBigEndian(FHMStartingPos + fileOffset));
+
+
+                string header = identifyHeader(readIntBigEndian(globalOff));
                 fileHeaders.Add(header);
                 appendPACInfo("Header: " + header.ToString());
 
@@ -136,9 +145,18 @@ namespace FBRepacker.PAC.Extract
             currDirectory = Directory.GetParent(currDirectory).FullName; // Navigate up 1 directory
         }
 
-        private List<int> writeFileOffsetInfo(List<int> fileOffsets, int fileOffset)
+        private List<int> writeFileOffsetInfo(List<int> fileOffsets, int fileOffset, int globalOff)
         {
-            if (fileOffsets.Contains(fileOffset)) // For cases where the FHM uses linked (shared) offsets.
+            bool isInsert = globalOffset.Any(off => off.Value > globalOff);
+            bool isLinked = fileOffsets.Contains(fileOffset);
+
+            if (isInsert && !isLinked)
+            {
+                int insertFileNumber = globalOffset.FirstOrDefault(file => file.Value > globalOff).Key;
+                appendPACInfo("Insert before file no: " + insertFileNumber);
+            }
+
+            if (isLinked) // For cases where the FHM uses linked (shared) offsets.
             {
                 int linkOffset = fileOffsets.FindIndex(off => off == fileOffset) + 1; // Find the Index of the first duplicate in FHM. 
                 appendPACInfo("Link FHMOffset: " + linkOffset.ToString()); // For repacking use. If link is present, use the same file. 
@@ -146,6 +164,7 @@ namespace FBRepacker.PAC.Extract
             }
 
             fileOffsets.Add(fileOffset);
+
             appendPACInfo("FHMOffset: " + fileOffset.ToString());
             return fileOffsets;
         }
@@ -186,6 +205,7 @@ namespace FBRepacker.PAC.Extract
         private void extractEndFile()
         {
             fileNumber++;
+            //var asd = Stream.Position;
             long lastOffset = fileEndOffset.Count > 0 ? fileEndOffset.Max() : 0;
             long EndFileSize = Stream.Length - lastOffset;
             byte[] EndFileChunk = new byte[EndFileSize];
@@ -216,7 +236,6 @@ namespace FBRepacker.PAC.Extract
             {
                 createFile(extension, new byte[0] { }, createExtractFilePath(fileNumber) + "-L");
             }
-            
         }
 
         private string identifyHeader(int header)

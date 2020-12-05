@@ -49,18 +49,11 @@ namespace FBRepacker.PAC.Repack
             DirectoryInfo repackFolder = new DirectoryInfo(rootDirectory);
             repackName = repackFolder.Name;
 
-            try
-            {
-                initializePACInfoFileRepack();
-                parseInfo();
-                repackFiles(rootDirectory);
-                copyTempFiles();
-                cleanTempFiles();
-            }
-            catch (Exception e)
-            {
-                MessageBox.Show("Error: " + e.Message);
-            }
+            initializePACInfoFileRepack();
+            parseInfo();
+            repackFiles(rootDirectory);
+            repackEndFile();
+            cleanTempFiles();
 
             resetVariables();
         }
@@ -78,11 +71,10 @@ namespace FBRepacker.PAC.Repack
                 }
             }
             
-
             switch (fileInfoDic.First().Value.Skip(3).First())
             {
                 case "--FHM--":
-                    parseFHMInfo(1);
+                    parseFHMInfo(fileNumberinInfoFile, true); // always 1
                     break;
                 case "--STREAM--":
 
@@ -92,43 +84,48 @@ namespace FBRepacker.PAC.Repack
             }
         }
 
-        private void parseFHMInfo(int fileNumber)
+        private void parseFHMInfo(int fileNumber, bool isRootFHM)
         {
-            fileNumberinInfoFile++;
+            // For the .fhm File
             int fileNumberinFHM = 1;
             string[] FHMinfos = fileInfoDic[fileNumber];
             FHMFileInfo fhmFileInfo = new FHMFileInfo();
             FHMFileInfoDic[fileNumber] = fhmFileInfo;
 
-            // parse and get infos from PAC.info
+            // parse and get info of FHM from PAC.info
             fhmFileInfo.totalFileSize = convertStringtoInt(getSpecificFileInfoProperties("Total file size: ", FHMinfos));
             fhmFileInfo.numberofFiles = convertStringtoInt(getSpecificFileInfoProperties("Number of files: ", FHMinfos));
             fhmFileInfo.FHMChunkSize = convertStringtoInt(getSpecificFileInfoProperties("FHM chunk size: ", FHMinfos));
 
             for (int i = 1; i <= fhmFileInfo.numberofFiles; i++)
             {
+                // For the rest of the files in the FHM tag in PAC.info
+                fileNumberinInfoFile++;
                 string[] newFileInfos = fileInfoDic[fileNumberinInfoFile];
                 parseGeneralFileInfo(newFileInfos, fileNumberinInfoFile, fileNumberinFHM);
                 fileNumberinFHM++;
+            }
+
+            // For endfile
+            if (isRootFHM)
+            {
                 fileNumberinInfoFile++;
+                string[] endFileInfos = fileInfoDic[fileNumberinInfoFile];
+                parseGeneralFileInfo(endFileInfos, fileNumberinInfoFile, fileNumberinFHM);
             }
         }
 
-        private void parseGeneralFileInfo(string[] newFileInfos, int fileNo, int fileNoinFHM)
+        private void parseGeneralFileInfo(string[] newFileInfos, int fileNumber, int fileNoinFHM)
         {
             GeneralFileInfo generalFileInfo = new GeneralFileInfo();
-            int FHMOffset = 0, fileSize = 0, fileNumber = 0;
-            string header = string.Empty;
+            string header = getSpecificFileInfoProperties("Header: ", newFileInfos);
 
-            header = getSpecificFileInfoProperties("Header: ", newFileInfos);
             if (header != "endfile")
             {
                 // parse and get infos from PAC.info
                 // we should link up duplicate infos, but this will suffice for now
-                FHMOffset = convertStringtoInt(getSpecificFileInfoProperties("FHMOffset: ", newFileInfos));
-                fileSize = convertStringtoInt(getSpecificFileInfoProperties("Size: ", newFileInfos));
-
-                fileNumber = fileNo;
+                int FHMOffset = convertStringtoInt(getSpecificFileInfoProperties("FHMOffset: ", newFileInfos));
+                int fileSize = convertStringtoInt(getSpecificFileInfoProperties("Size: ", newFileInfos));
 
                 // parse and get infos from PAC.info
                 generalFileInfo.FHMOffset = FHMOffset;
@@ -146,19 +143,20 @@ namespace FBRepacker.PAC.Repack
                 switch (generalFileInfo.header)
                 {
                     case "fhm":
-                        parseFHMInfo(fileNo);
-                        fileNumberinInfoFile--;
+                        parseFHMInfo(fileNumber, false);
                         break;
                     case "NTP3":
                         // TODO: should check if the fileNumber has been parsed before instead of checking linked. Hopefully there's no linked non-multi NTP3.
                         if (!generalFileInfo.isLinked)
                         {
+                            // Pre Base64 code, TODO: Remove
+                            // StreamReader NTP3Info = repackNTP3.getNTP3InfoStreamReader(newFileInfos);
                             repackNTP3.parseNTP3Info(newFileInfos, fileNumber);
                         }
-                        GeneralFileInfoDic[fileNo] = generalFileInfo;
+                        GeneralFileInfoDic[fileNumber] = generalFileInfo;
                         break;
                     default:
-                        GeneralFileInfoDic[fileNo] = generalFileInfo;
+                        GeneralFileInfoDic[fileNumber] = generalFileInfo;
                         break;
                 }
             }
@@ -173,9 +171,8 @@ namespace FBRepacker.PAC.Repack
                 generalFileInfo.fileSize = EndFileSize;
                 generalFileInfo.header = header;
                 generalFileInfo.fileNo = fileNumber;
-                generalFileInfo.fileNoinFHM = fileNoinFHM;
 
-                GeneralFileInfoDic[fileNo] = generalFileInfo;
+                GeneralFileInfoDic[fileNumber] = generalFileInfo;
             }
         }
 
@@ -333,7 +330,7 @@ namespace FBRepacker.PAC.Repack
             int fileBufferSizebeforePadding = fileBuffer.Length;
 
             if (!file.Equals(lastFile) && file.Extension != ".fhm")
-                fileBuffer = addPadding(fileBuffer);
+                fileBuffer = addPaddingArrayBuffer(fileBuffer);
 
             GeneralFileInfo realFileInfo = new GeneralFileInfo();
 
@@ -421,6 +418,30 @@ namespace FBRepacker.PAC.Repack
 
             if (!fileExtension.ToLower().Equals(fileExtensionfromInfo.ToLower()))
                 throw new Exception("file Extension for " + file.Name + " is not the same extension in fileInfo's " + fileNumber.ToString() + "th file.");
+        }
+
+        private void repackEndFile()
+        {
+            GeneralFileInfo endFileInfo = GeneralFileInfoDic.Last().Value;
+            int endFileFileNo = endFileInfo.fileNo;
+
+            if (endFileInfo.header != "endfile")
+                throw new Exception("last file in GeneralFileInfoDic is not endfile! Please recheck PAC.info." + Environment.NewLine + "File Header & FileNo: " + endFileInfo.header + " | " + endFileInfo.fileNo);
+
+            string endFilePath = Path.Combine(Properties.Settings.Default.OpenRepackPath, endFileFileNo.ToString("000") + ".endfile");
+
+            if(!File.Exists(endFilePath))
+                throw new Exception("endFilePath not valid: " + endFilePath);
+
+            string tempPACFilePath = tempFileList.Last();
+            FileStream PACStream = new FileStream(tempPACFilePath, FileMode.Append);
+
+            byte[] EndFileBuffer = File.ReadAllBytes(endFilePath);
+            PACStream.Write(EndFileBuffer, 0, EndFileBuffer.Length);
+
+            PACStream.Close();
+
+            copyTempFiles();
         }
 
         private int getFileNumberfromFileName(string fileName)

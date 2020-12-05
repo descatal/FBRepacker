@@ -82,5 +82,89 @@ namespace FBRepacker.Properties {
                 this["OpenRepackPath"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string VBNPathNUDtoDAE {
+            get {
+                return ((string)(this["VBNPathNUDtoDAE"]));
+            }
+            set {
+                this["VBNPathNUDtoDAE"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string NUDPathNUDtoDAE {
+            get {
+                return ((string)(this["NUDPathNUDtoDAE"]));
+            }
+            set {
+                this["NUDPathNUDtoDAE"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string OutputPathNUDtoDAE {
+            get {
+                return ((string)(this["OutputPathNUDtoDAE"]));
+            }
+            set {
+                this["OutputPathNUDtoDAE"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string DAEPathDAEtoNUD {
+            get {
+                return ((string)(this["DAEPathDAEtoNUD"]));
+            }
+            set {
+                this["DAEPathDAEtoNUD"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string OutputPathDAEtoNUD {
+            get {
+                return ((string)(this["OutputPathDAEtoNUD"]));
+            }
+            set {
+                this["OutputPathDAEtoNUD"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string VBNPathDAEtoNUD {
+            get {
+                return ((string)(this["VBNPathDAEtoNUD"]));
+            }
+            set {
+                this["VBNPathDAEtoNUD"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool exportVBN {
+            get {
+                return ((bool)(this["exportVBN"]));
+            }
+            set {
+                this["exportVBN"] = value;
+            }
+        }
     }
 }

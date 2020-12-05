@@ -28,16 +28,31 @@ namespace FBRepacker
         private void init()
         {
             outputWAVCheck.IsChecked = Properties.Settings.Default.outputWAV;
+            exportVBNCheck.IsChecked = Properties.Settings.Default.exportVBN;
         }
 
-        private void CheckBox_Checked(object sender, RoutedEventArgs e)
+        private void exportVBNCheckBox_Checked(object sender, RoutedEventArgs e)
+        {
+            Properties.Settings.Default.exportVBN = true;
+            Properties.Settings.Default.Save();
+        }
+
+        private void exportVBNCheckBox_Unchecked(object sender, RoutedEventArgs e)
+        {
+            Properties.Settings.Default.exportVBN = false;
+            Properties.Settings.Default.Save();
+        }
+
+        private void outputWAVCheckBox_Checked(object sender, RoutedEventArgs e)
         {
             Properties.Settings.Default.outputWAV = true;
+            Properties.Settings.Default.Save();
         }
 
-        private void CheckBox_Unchecked(object sender, RoutedEventArgs e)
+        private void outputWAVCheckBox_Unchecked(object sender, RoutedEventArgs e)
         {
             Properties.Settings.Default.outputWAV = false;
+            Properties.Settings.Default.Save();
         }
     }
 }

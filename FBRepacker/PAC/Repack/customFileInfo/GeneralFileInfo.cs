@@ -15,6 +15,8 @@ namespace FBRepacker.PAC.Repack.customFileInfo
         public int fileNoinFHM;
         public bool isLinked;
         public int linkFileNumber;
+        public bool hasInsert;
+        public int insertFileNumber;
 
         public GeneralFileInfo()
         {

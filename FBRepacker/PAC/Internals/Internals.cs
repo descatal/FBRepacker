@@ -1,4 +1,5 @@
-﻿using System;
+﻿using OpenTK.Graphics.OpenGL;
+using System;
 using System.Buffers.Binary;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -25,6 +26,7 @@ namespace FBRepacker.PAC
         protected static int fileNumber = 1;
         protected static string currDirectory = string.Empty, rootDirectory = string.Empty;
         protected FileStream Stream;
+        protected BinaryReader streamBinaryReader;
 
         protected static List<string> fileHeadersList = new List<string>
         {
@@ -39,6 +41,7 @@ namespace FBRepacker.PAC
         protected void changeStreamFile(FileStream stream)
         {
             Stream = stream;
+            //streamBinaryReader = new BinaryReader(Stream); // For String reading. Can't use other functionalities since it is small endian only || Update: not used.
         }
 
         protected void resetVariables()
@@ -59,16 +62,90 @@ namespace FBRepacker.PAC
 
         protected void initializePACInfoFileRepack()
         {
+            // TODO: make info file read byte easier, instead of using readalllines (since there are binary data inside, encoding / decoding will cause different results)
             string path = rootDirectory + @"\PAC.info";
             if (File.Exists(path))
             {
                 infoStreamRead = new StreamReader(path);
-                infoFileString = File.ReadAllLines(path);
+                infoFileString = File.ReadAllLines(path, Encoding.UTF8);
             }
             else
             {
                 throw new Exception("PAC.info file not found! Make sure that the file is present in the root folder of your repack folder.");
             }
+        }
+
+        protected byte[] readByteArrayinPACInfoBetweenString(StreamReader inputInfoStreamReader, string start, string end, bool onlyContains)
+        {
+            int startPos = 0, endPos = 0;
+            bool hasStarted = false;
+            
+            StreamReader infoStream = new StreamReader(inputInfoStreamReader.BaseStream); // IDK why, but if I don't create an new instance it will cause the original StreamReader to change.
+
+            TrackingTextReader TrackingInfoStream = new TrackingTextReader(infoStream);
+            MemoryStream memStream = new MemoryStream();
+            infoStream.BaseStream.Seek(0, SeekOrigin.Begin);
+            infoStream.BaseStream.CopyTo(memStream);
+            byte[] memBuffer = memStream.ToArray();
+
+            string PACPath = rootDirectory + @"\PAC.info";
+            FileStream fileStream = File.OpenRead(PACPath);
+            File.ReadLines(PACPath);
+
+            infoStream.BaseStream.Seek(0, SeekOrigin.Begin);
+
+            var asd = new List<string>();
+
+            while (!infoStream.EndOfStream)
+            {
+                asd.Add(infoStream.ReadLine());
+            }
+
+            infoStream.BaseStream.Seek(0, SeekOrigin.Begin);
+
+            string line = string.Empty;
+            do
+            {
+                if (infoStream.EndOfStream)
+                    throw new Exception("Can't find string: " + start + " or " + end + " in PAC.info to extract ByteArray");
+
+                int beforeReadPos = TrackingInfoStream.Position;
+
+                line = TrackingInfoStream.ReadLine();
+                //int lineByteLength = (Encoding.Default.GetBytes(line).Length + 2); // +2 for /n
+
+                if (onlyContains)
+                {
+                    if (line.Contains(start))
+                    {
+                        startPos = beforeReadPos;
+                        hasStarted = true;
+                    }
+
+                    if (line.Contains(end) && hasStarted == true)
+                    {
+                        endPos = TrackingInfoStream.Position;
+                        break;
+                    }
+                }
+                else
+                {
+                    if (line == start)
+                    {
+                        startPos = beforeReadPos;
+                        hasStarted = true;
+                    }
+
+                    if (line == end && hasStarted == true)
+                    {
+                        endPos = TrackingInfoStream.Position;
+                        break;
+                    }
+                }
+            } while (line != end);
+
+            byte[] extractedBuffer = memBuffer.Skip(startPos).Take(endPos - startPos).ToArray();
+            return extractedBuffer;
         }
 
         protected void createFHMPACInfoTag(int fileNumber, bool FHM)
@@ -137,6 +214,33 @@ namespace FBRepacker.PAC
             }
         }
 
+        protected void getSpecificFileInfoPropertiesByteStream(string propertiesTag, byte[] allProperties)
+        {
+            MemoryStream allPropertiesStream = new MemoryStream();
+            allPropertiesStream.Write(allProperties, 0, allProperties.Length);
+
+            StreamReader allPropertiesStreamReader = new StreamReader(allPropertiesStream);
+
+            string line = allPropertiesStreamReader.ReadLine();
+            //do
+            //{
+                line = allPropertiesStreamReader.ReadLine();
+
+                if (line.Contains(propertiesTag))
+                {
+                    MemoryStream newStream = new MemoryStream();
+                    allPropertiesStreamReader.BaseStream.CopyTo(newStream);
+
+                    byte[] newByteArr = newStream.ToArray();
+                    //memStream.Write(newByteArr, 0, newByteArr.Length);
+                }
+
+
+            //} //while (line != end);
+
+
+        }
+
         protected int convertStringtoInt(string str)
         {
             bool conversionSuccessful = int.TryParse(str, out int result);
@@ -162,7 +266,7 @@ namespace FBRepacker.PAC
         protected byte[] convertStringtoByteArray(string input, bool reverseArray)
         {
             // Encode the string input. e.g. /0/0/0/0/0/0 -> 000000
-            byte[] ByteArray = Encoding.Default.GetBytes(input);
+            byte[] ByteArray = Encoding.UTF8.GetBytes(input);
 
             if (reverseArray)
                 Array.Reverse(ByteArray);
@@ -206,7 +310,7 @@ namespace FBRepacker.PAC
         //    return fhmtag.firstordefault(prop => prop.contains(properties)); // in the extracted file tag, search for which line has the correct properties, and get the value after :
         //}
 
-        protected byte[] addPadding(byte[] buffer)
+        protected byte[] addPaddingArrayBuffer(byte[] buffer)
         {
             int moduloResult = (buffer.Length % 0x10);
             int paddingRequired = 0;
@@ -215,17 +319,32 @@ namespace FBRepacker.PAC
             byte[] zeroBuffer = new byte[paddingRequired];
             byte[] newBuffer = new byte[buffer.Length + paddingRequired];
 
-            Buffer.BlockCopy(buffer, 0, newBuffer, 0, buffer.Length);
-            Buffer.BlockCopy(zeroBuffer, 0, newBuffer, buffer.Length, paddingRequired);
+            System.Buffer.BlockCopy(buffer, 0, newBuffer, 0, buffer.Length);
+            System.Buffer.BlockCopy(zeroBuffer, 0, newBuffer, buffer.Length, paddingRequired);
 
             return newBuffer;
+        }
+
+        protected Stream addPaddingStream(Stream memStream)
+        {
+            int moduloResult = ((int)memStream.Length % 0x10);
+            int paddingRequired = 0;
+            if (moduloResult != 0)
+                paddingRequired = 0x10 - moduloResult;
+            byte[] zeroBuffer = new byte[paddingRequired];
+            memStream.Write(zeroBuffer, 0, paddingRequired);
+
+            return memStream;
         }
 
         protected int addPaddingSizeCalculation(int size)
         {
             // size % 0x10 = Modulus of size and 0x10, the remainder will be the number that is extra. 
             // 0x10 - extra = Number of bytes needed to be padded to the file.
-            int paddingRequired = 0x10 - (size % 0x10);
+            int moduloResult = (size % 0x10);
+            int paddingRequired = 0;
+            if (moduloResult != 0)
+                paddingRequired = 0x10 - moduloResult;
             return paddingRequired + size;
         }
 
@@ -237,12 +356,37 @@ namespace FBRepacker.PAC
             return buffer;
         }
 
+        protected string readString(long offset, int size)
+        {
+            Stream.Seek(offset, 0);
+            byte[] strBytes = extractChunk(Stream.Position, size);
+            string str = Encoding.Default.GetString(strBytes);
+            str = str.Trim('\0');
+            return str;
+        }
+
         protected int readIntBigEndian(long offset)
         {
             Stream.Seek(offset, 0);
             byte[] buffer = new byte[4];
             Stream.Read(buffer, 0x00, 0x04);
             return BinaryPrimitives.ReadInt32BigEndian(buffer);
+        }
+
+        protected uint readUIntBigEndian(long offset)
+        {
+            Stream.Seek(offset, 0);
+            byte[] buffer = new byte[4];
+            Stream.Read(buffer, 0x00, 0x04);
+            return BinaryPrimitives.ReadUInt32BigEndian(buffer);
+        }
+
+        protected uint readUIntSmallEndian(long offset)
+        {
+            Stream.Seek(offset, 0);
+            byte[] buffer = new byte[4];
+            Stream.Read(buffer, 0x00, 0x04);
+            return BinaryPrimitives.ReadUInt32LittleEndian(buffer);
         }
 
         protected int readIntSmallEndian(long offset)
@@ -263,7 +407,45 @@ namespace FBRepacker.PAC
             short result = bigEndian ? BinaryPrimitives.ReadInt16BigEndian(buffer) : BinaryPrimitives.ReadInt16LittleEndian(buffer);
             return result;
         }
-        
+
+        protected ushort readUShort(long offset, bool bigEndian)
+        {
+            Stream.Seek(offset, 0);
+            byte[] buffer = new byte[2];
+            Stream.Read(buffer, 0x00, 0x02);
+            ushort result = bigEndian ? BinaryPrimitives.ReadUInt16BigEndian(buffer) : BinaryPrimitives.ReadUInt16LittleEndian(buffer);
+            return result;
+        }
+
+        protected float readFloat(long offset, bool bigEndian)
+        {
+            Stream.Seek(offset, 0);
+            byte[] buffer = new byte[4];
+            Stream.Read(buffer, 0x00, 0x04);
+            if (bigEndian)
+                Array.Reverse(buffer);
+            float result = BitConverter.ToSingle(buffer, 0);
+            return result;
+        }
+
+        protected ushort readUShortMemoryStream(MemoryStream stream, long offset, bool bigEndian)
+        {
+            stream.Seek(offset, 0);
+            byte[] buffer = new byte[2];
+            stream.Read(buffer, 0x00, 0x02);
+            ushort result = bigEndian ? BinaryPrimitives.ReadUInt16BigEndian(buffer) : BinaryPrimitives.ReadUInt16LittleEndian(buffer);
+            return result;
+        }
+
+        protected uint readUIntMemoryStream(MemoryStream stream, long offset, bool bigEndian)
+        {
+            stream.Seek(offset, 0);
+            byte[] buffer = new byte[4];
+            stream.Read(buffer, 0x00, 0x04);
+            uint result = bigEndian ? BinaryPrimitives.ReadUInt32BigEndian(buffer) : BinaryPrimitives.ReadUInt32LittleEndian(buffer);
+            return result;
+        }
+
         protected static byte[] reverseEndianess(byte[] buffer, int reverseThreshold)
         {
             // I don't know why using toArray() in a loop causes significant slowdown.
@@ -271,8 +453,9 @@ namespace FBRepacker.PAC
             for (int i = 0; i < (buffer.Length) / reverseThreshold; i++)
             {
                 byte[] revBytes = new byte[reverseThreshold];
-                Buffer.BlockCopy(buffer, i * 4, revBytes, 0, 4); 
-                tempBuffer.Add(BitConverter.GetBytes(BinaryPrimitives.ReverseEndianness(BitConverter.ToInt32(revBytes, 0))));
+                System.Buffer.BlockCopy(buffer, i * reverseThreshold, revBytes, 0, 4);
+                Array.Reverse(revBytes);
+                tempBuffer.Add(revBytes);
             }
 
             return tempBuffer.SelectMany(i => i).ToArray();
@@ -285,7 +468,7 @@ namespace FBRepacker.PAC
         }
 
         // TODO: use Stream instead of byte[] buffer
-        protected byte[] appendIntByteStream(byte[] buffer, uint intval, bool bigEndian)
+        protected byte[] appendUIntArrayBuffer(byte[] buffer, uint intval, bool bigEndian)
         {
             List<byte[]> tempBuffer = new List<byte[]>(); // Initialize temprary buffer for writing. Needs to be in List to append
             if(bigEndian)
@@ -296,7 +479,7 @@ namespace FBRepacker.PAC
             return buffer;
         }
 
-        protected byte[] appendShortByteStream(byte[] buffer, ushort shortval, bool bigEndian)
+        protected byte[] appendShortArrayBuffer(byte[] buffer, ushort shortval, bool bigEndian)
         {
             List<byte[]> tempBuffer = new List<byte[]>(); // Initialize temprary buffer for writing. Needs to be in List to append
             if (bigEndian)
@@ -307,7 +490,7 @@ namespace FBRepacker.PAC
             return buffer;
         }
 
-        protected byte[] appendZeroByteStream(byte[] buffer, int size)
+        protected byte[] appendZeroArrayBuffer(byte[] buffer, int size)
         {
             List<byte[]> tempBuffer = new List<byte[]>(); // Initialize temprary buffer for writing. Needs to be in List to append
             byte[] zeroBuffer = new byte[size];
@@ -316,6 +499,46 @@ namespace FBRepacker.PAC
             tempBuffer.Add(zeroBuffer);
             buffer = tempBuffer.SelectMany(i => i).ToArray(); // Convert List back into byte[]. More work compared to old "unclean" way?
             return buffer;
+        }
+
+        protected void appendIntMemoryStream(MemoryStream memStream, int intval, bool bigEndian)
+        {
+            if (bigEndian)
+                intval = BinaryPrimitives.ReverseEndianness(intval);
+            byte[] tempBuffer = BitConverter.GetBytes(intval);
+            memStream.Write(tempBuffer, 0, tempBuffer.Length);
+        }
+
+        protected void appendUIntMemoryStream(MemoryStream memStream, uint intval, bool bigEndian)
+        {
+            if (bigEndian)
+                intval = BinaryPrimitives.ReverseEndianness(intval);
+            byte[] tempBuffer = BitConverter.GetBytes(intval);
+            memStream.Write(tempBuffer, 0, tempBuffer.Length);
+        }
+
+        protected void appendUShortMemoryStream(MemoryStream memStream, ushort shortval, bool bigEndian)
+        {
+            if (bigEndian)
+                shortval = BinaryPrimitives.ReverseEndianness(shortval);
+            byte[] tempBuffer = BitConverter.GetBytes(shortval);
+            memStream.Write(tempBuffer, 0, tempBuffer.Length);
+
+        }
+
+        protected void appendFloatMemoryStream(MemoryStream memStream, float floatval, bool bigEndian)
+        {
+            byte[] tempBuffer = BitConverter.GetBytes(floatval);
+            if (bigEndian)
+                Array.Reverse(tempBuffer);
+            memStream.Write(tempBuffer, 0, tempBuffer.Length);
+        }
+
+        protected void appendZeroMemoryStream(MemoryStream memStream, int size)
+        {
+            byte[] zeroBuffer = new byte[size];
+            Array.Clear(zeroBuffer, 0, size);
+            memStream.Write(zeroBuffer, 0, zeroBuffer.Length);
         }
 
         protected void createFile(string fileExt, byte[] buffer, string filePath)
@@ -351,6 +574,218 @@ namespace FBRepacker.PAC
             fs.Close();
         }
 
+        // For DDS Images.
+        [Flags]
+        protected enum dwDDSFlags
+        {
+            DDSD_CAPS = 0x1, // Required in every .dds file.
+            DDSD_HEIGHT = 0x2, // Required in every .dds file.
+            DDSD_WIDTH = 0x4, //  Required in every .dds file.
+            DDSD_PITCH = 0x8, // Required when pitch is provided for an uncompressed texture.
+            DDSD_PIXELFORMAT = 0x1000, // Required in every .dds file.
+            DDSD_MIPMAPCOUNT = 0x20000, // Required in a mipmapped texture.	
+            DDSD_LINEARSIZE = 0x80000, // Required when pitch is provided for a compressed texture.
+            DDSD_DEPTH = 0x800000 // Required in a depth texture.
+        }
+
+        // https://docs.microsoft.com/en-us/windows/win32/direct3ddds/dds-pixelformat
+        [Flags]
+        protected enum dwPixelFormatFlags
+        {
+            DDPF_ALPHAPIXELS = 0x1, // Texture contains alpha data; dwRGBAlphaBitMask contains valid data.
+            DDPF_ALPHA = 0x2, // Used in some older DDS files for alpha channel only uncompressed data (dwRGBBitCount contains the alpha channel bitcount; dwABitMask contains valid data)
+            DDPF_FOURCC = 0x4, // Texture contains compressed RGB data; dwFourCC contains valid data.
+            DDPF_RGB = 0x40, // Texture contains uncompressed RGB data; dwRGBBitCount and the RGB masks (dwRBitMask, dwGBitMask, dwBBitMask) contain valid data.
+            DDPF_YUV = 0x200, // Used in some older DDS files for YUV uncompressed data (dwRGBBitCount contains the YUV bit count; dwRBitMask contains the Y mask, dwGBitMask contains the U mask, dwBBitMask contains the V mask)
+            DDPF_LUMINANCE = 0x20000 // Used in some older DDS files for single channel color uncompressed data (dwRGBBitCount contains the luminance channel bit count; dwRBitMask contains the channel mask). Can be combined with DDPF_ALPHAPIXELS for a two channel DDS file.
+        }
+
+        // https://docs.microsoft.com/en-us/windows/win32/direct3ddds/dds-header
+        [Flags]
+        protected enum dwCapsFlag
+        {
+            DDSCAPS_COMPLEX = 0x8, // Optional; must be used on any file that contains more than one surface (a mipmap, a cubic environment map, or mipmapped volume texture).
+            DDSCAPS_MIPMAP = 0x400000, // Optional; should be used for a mipmap.
+            DDSCAPS_TEXTURE = 0x1000 // Required
+        }
+
+        // Masked RGBA Image data parse (for uncompressed)
+        // https://gitlab.gnome.org/GNOME/gimp/-/blob/master/plug-ins/file-dds/ddsread.c
+        public List<byte[]> parseMaskedRGBA(bool isAlpha, byte[] RGBADataChunk, int RGBAByteSize, uint dwRBitMask, uint dwGBitMask, uint dwBBitMask, uint dwABitMask)
+        {
+            List<byte[]> RGBAList = new List<byte[]>();
+            // Here we parse the Image data chunk and makes it fit the mask in dds.
+
+            // Not sure if this is the good idea, make it stream?
+            int dataPos = 0;
+
+            uint[] masks = isAlpha ? new uint[] { dwRBitMask, dwGBitMask, dwBBitMask, dwABitMask } : new uint[] { dwRBitMask, dwGBitMask, dwBBitMask };
+            int[] colorShifts = color_shift(masks);
+            int[] colorBits = color_bits(masks);
+            uint[] colorMasks = color_mask(masks, colorShifts, colorBits);
+
+            MemoryStream RGBAStream = new MemoryStream();
+            RGBAStream.Write(RGBADataChunk, 0, RGBADataChunk.Length);
+            RGBAStream.Seek(0, SeekOrigin.Begin);
+
+            while (dataPos < RGBADataChunk.Length)
+            {
+                //byte[] RGBAChunk = RGBADataChunk.Skip(dataPos).Take(RGBAByteSize).ToArray();
+                uint RGBAInt = 0;
+
+                if (RGBAByteSize == 2)
+                    RGBAInt = readUShortMemoryStream(RGBAStream, RGBAStream.Position, false);
+
+                if (RGBAByteSize == 4)
+                    RGBAInt = readUIntMemoryStream(RGBAStream, RGBAStream.Position, false);
+
+                byte[] RGBA = parseRGBA(RGBAInt, colorMasks, colorShifts, colorBits);
+                RGBAList.Add(RGBA);
+
+                dataPos += RGBAByteSize;
+            }
+
+            return RGBAList;
+        }
+
+        public byte[] writeMaskedRGBA(PixelFormat pixelFormat, List<byte[]> RGBAList)
+        {
+            MemoryStream DDSRGBADataStream = new MemoryStream();
+            foreach (byte[] RGBA in RGBAList)
+            {
+                int red = 0, green = 0, blue = 0, alpha = 0;
+                dynamic pixelRGBA = 0;
+                byte[] pixelRGBABuffer = new byte[] { };
+                switch (pixelFormat)
+                {
+                    case PixelFormat.R5G6B5IccSgix:
+
+                        if (RGBA.Length != 3)
+                            throw new Exception("RGBA count mismatch!");
+
+                        //https://gitlab.gnome.org/GNOME/gimp/-/blob/master/plug-ins/file-dds/color.h
+                        red = mul8bit(RGBA[0], 31);
+                        green = mul8bit(RGBA[1], 63);
+                        blue = mul8bit(RGBA[2], 31);
+                        pixelRGBA = (ushort)((red << 11) | (green << 5) | blue);
+                        break;
+
+                    case PixelFormat.AbgrExt:
+
+                        if (RGBA.Length != 4)
+                            throw new Exception("RGBA count mismatch!");
+
+                        red = RGBA[0];
+                        green = RGBA[1];
+                        blue = RGBA[2];
+                        alpha = RGBA[3];
+                        pixelRGBA = (uint)((red << 8) | (green << 16) | (blue << 24) | (alpha << 0));
+                        break;
+
+                    default:
+                        throw new Exception("Does not support " + pixelFormat + " DDS export yet!");
+                }
+
+                pixelRGBABuffer = BitConverter.GetBytes(pixelRGBA);
+                DDSRGBADataStream.Write(pixelRGBABuffer, 0, pixelRGBABuffer.Length);
+            }
+            DDSRGBADataStream.Close();
+            return DDSRGBADataStream.ToArray();
+        }
+
+        private int[] color_shift(uint[] masks)
+        {
+            List<int> shift = new List<int>();
+
+            foreach (uint mask in masks)
+            {
+                int i = 0;
+
+                if (mask == 0)
+                    i = 0;
+
+                while (((mask >> i) & 1) == 0)
+                    i++;
+
+                shift.Add(i);
+            }
+
+            return shift.ToArray();
+        }
+
+        private int[] color_bits(uint[] masks)
+        {
+            List<int> bits = new List<int>();
+
+            foreach (uint mask_ in masks)
+            {
+                uint mask = mask_;
+                int i = 0;
+
+                while (mask != 0)
+                {
+                    if ((mask & 1) != 0) ++i;
+                    mask >>= 1;
+                }
+
+                bits.Add(i);
+            }
+
+            return bits.ToArray();
+        }
+
+        private uint[] color_mask(uint[] masks, int[] colorShift, int[] colorBits)
+        {
+            List<uint> colorMaskList = new List<uint>();
+            // I have no idea what this is, just following GIMP DDS's implementations.
+            if (masks.Length != colorShift.Length || masks.Length != colorBits.Length)
+                throw new Exception("mask shift and bits RGBA count not same!");
+
+            for (int count = 0; count < masks.Length; count++)
+            {
+                var maskShifted = masks[count] >> colorShift[count];
+                var actualBitNumber = 8 - colorBits[count];
+                uint colorMask = (maskShifted) << (actualBitNumber);
+                colorMaskList.Add(colorMask);
+            }
+
+            return colorMaskList.ToArray();
+        }
+
+        private byte[] parseRGBA(uint RGBAInt, uint[] colorMasks, int[] colorShifts, int[] colorBits)
+        {
+            List<byte> RGBAList = new List<byte>();
+
+            if (colorMasks.Length != colorShifts.Length || colorMasks.Length != colorBits.Length)
+                throw new Exception("mask shift and bits RGBA count not same!");
+
+            for (int count = 0; count < colorMasks.Length; count++)
+            {
+                var shiftBit = colorShifts[count];
+                var shiftedPixel = RGBAInt >> shiftBit;
+                var acutalBit = (8 - colorBits[count]);
+                var ratio = shiftedPixel << acutalBit & colorMasks[count];
+                byte RGBA = (byte) (ratio * 255 / colorMasks[count]);
+                if(RGBA != 0)
+                {
+
+                }
+                RGBAList.Add(RGBA);
+            }
+
+            return RGBAList.ToArray();
+        }
+
+        // https://gitlab.gnome.org/GNOME/gimp/-/blob/master/plug-ins/file-dds/imath.h
+        private int mul8bit(int a, int b)
+        {
+            int t = a * b + 128;
+
+            return (t + (t >> 8)) >> 8;
+        }
+
+
+        // Sound parts.
         /* G722.1 Codec decoder is broken, use VGMSTREAM instead. (test.exe)
         protected byte[] convertBNSFtoPCM(string inputPath, int sampleRate, int bandwidth)
         {
