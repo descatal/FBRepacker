@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace FBRepacker.PAC.Repack.customFileInfo
 {
-    class NTP3FileInfo
+    public class NTP3FileInfo
     {
         public int fileNo;
         public int DDSDataChunkSize;
@@ -21,6 +21,7 @@ namespace FBRepacker.PAC.Repack.customFileInfo
         public byte[] GIDXChunk;
         public string pixelFormat;
         public string CompressionType;
+        public string fileName;
         public List<int> mipmapsSizeList = new List<int>();
     }
 }

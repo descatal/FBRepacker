@@ -1,0 +1,147 @@
+﻿<Window x:Class="FBRepacker.PACInfoUI.PACInfoWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:FBRepacker.PACInfoUI"
+        mc:Ignorable="d"
+        Title="PACInfoUI" Height="760" Width="650">
+
+    <Grid x:Name="Grd">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="1.1*"/>
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*"></RowDefinition>
+        </Grid.RowDefinitions>
+
+        <DockPanel
+            Grid.Row="0"
+            Grid.Column="0">
+
+            <StackPanel DockPanel.Dock="Top" Orientation="Horizontal">
+                <Button Content="Refresh" Margin="5" Click="UpdateButton_Click"/>
+                <Button Content="Add" Margin="5" Click="AddButton_Click"/>
+                <Button Content="Delete" Margin="5" Click="DeleteLast_Click"/>
+                <Button Content="Save Changes" Margin="5" Click="RebuildInfoButton_Click"/>
+                <Button Content="Repack" Margin="5" Click="RepackButton_Click"/>
+            </StackPanel>
+
+            <TreeView Name="TreeView" HorizontalAlignment="Left" VerticalAlignment="Top" DockPanel.Dock="Bottom" SelectedItemChanged="TreeView_SelectedItemChanged"/>
+        </DockPanel>
+
+
+        <Border Grid.Row="0" Grid.Column="1" Visibility="Visible" BorderThickness="2" BorderBrush="AliceBlue"  CornerRadius="8" Margin="10,10,10,10">
+            <StackPanel Margin="3">
+                <Label  Height="25" Content="General File Infos" Background="LightSkyBlue"/>
+                <Separator Height="5"/>
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="*"/>
+                        <RowDefinition Height="*"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
+
+                    <StackPanel Orientation="Vertical">
+                        <StackPanel.Resources>
+                            <Style TargetType="{x:Type StackPanel}">
+                                <Setter Property="Margin" Value="0,0,0,10"/>
+                            </Style>
+                        </StackPanel.Resources>
+
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="File Number: " Width="70" TextAlignment="Right"/>
+                            <TextBox x:Name="fileNumberInput" Width="200" Margin="10,0,0,0"></TextBox>
+                        </StackPanel>
+
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="File Name: " Width="70" TextAlignment="Right"/>
+                            <TextBox x:Name="fileNameInput" Width="200" Margin="10,0,0,0"></TextBox>
+                        </StackPanel>
+
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="Header: " Width="70" TextAlignment="Right"/>
+                            <TextBox x:Name="headerInput" Width="200" Margin="10,0,0,0"></TextBox>
+                        </StackPanel>
+
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="Included under FHM: " Width="70" TextAlignment="Right" TextWrapping="Wrap"/>
+                            <ComboBox Margin="10,0,0,0" x:Name="FHMSelect" Width="200">
+                            </ComboBox>
+                        </StackPanel>
+                        
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="Asset Load Enum: " Width="70" TextAlignment="Right" TextWrapping="Wrap"/>
+                            <ComboBox Margin="10,0,0,0" x:Name="FHMEnumSelect" Width="200">
+                                <ComboBoxItem Content="0 (Default)" Tag="0"/>
+                                <ComboBoxItem Content="1 (Model-nud)" Tag="1"/>
+                                <ComboBoxItem Content="2 (Images-NTP3)" Tag="2"/>
+                                <ComboBoxItem Content="3 (Sound-bnsf)" Tag="3"/>
+                            </ComboBox>
+                        </StackPanel>
+
+                        <StackPanel Orientation="Horizontal">
+                            <WrapPanel Orientation="Horizontal" Width="100" VerticalAlignment="Center">
+                                <TextBlock Text="      " ></TextBlock>
+                                <CheckBox VerticalAlignment="Center" x:Name="isLinkedFile" IsChecked="False" Checked="isLinkedFile_Checked"></CheckBox>
+                                <TextBlock VerticalAlignment="Center" Text="Linked File: " TextAlignment="Right" TextWrapping="Wrap" Padding="1"/>
+                            </WrapPanel>
+
+                            <ComboBox Margin="10,0,0,0" x:Name="linkedtoFile" IsEnabled="False" Width="200"></ComboBox>
+                        </StackPanel>
+                    </StackPanel>
+
+                    <Expander Grid.Row="1">
+                        <Expander.Header>
+                            <Label Height="25" Content="Additional File Infos" Background="LightCoral" />
+                        </Expander.Header>
+                        
+                        <StackPanel Orientation="Vertical">
+                            <StackPanel.Resources>
+                                <Style TargetType="{x:Type StackPanel}">
+                                    <Setter Property="Margin" Value="0,5,0,5"/>
+                                </Style>
+                            </StackPanel.Resources>
+
+                            <StackPanel Orientation="Horizontal" >
+                                <TextBlock Text="EIDX Index: " Width="100" TextAlignment="Right"/>
+                                <TextBox x:Name="EIDXIndexInput" Width="200" Margin="10,0,0,0"></TextBox>
+                            </StackPanel>
+
+                            <StackPanel Orientation="Horizontal">
+                                <TextBlock Text="EIDX Name: " Width="100" TextAlignment="Right"/>
+                                <TextBox x:Name="EIDXNameInput" Width="200" Margin="10,0,0,0"></TextBox>
+                            </StackPanel>
+
+                        </StackPanel>
+                    </Expander>
+
+                    <Expander Grid.Row="2">
+                        <Expander.Header>
+                            <Label Height="25" Content="File Specific Infos" Background="LightGreen" />
+                        </Expander.Header>
+
+                        <StackPanel>
+                            <StackPanel.Resources>
+                                <Style TargetType="{x:Type Button}">
+                                    <Setter Property="Margin" Value="0,5,0,0"/>
+                                </Style>
+                            </StackPanel.Resources>
+                            <Button Content="FHM" x:Name="addFHMButton" Click="addFHMButton_Click" Width="100"></Button>
+                            <Button Content="EIDX" x:Name="addEIDXButton" Click="addEIDXButton_Click" Width="100"></Button>
+                            <Button Content="NTP3 (DDS)" x:Name="addNTP3Button" Click="addNTP3Button_Click" Width="100"></Button>
+                        </StackPanel>
+                    </Expander>
+
+                </Grid>
+            </StackPanel>
+        </Border>
+
+
+    </Grid>
+
+</Window>

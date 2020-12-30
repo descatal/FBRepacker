@@ -1,4 +1,5 @@
-﻿using System;
+﻿using FBRepacker.PAC.Extract.FileTypes;
+using System;
 using System.Buffers.Binary;
 using System.Collections.Generic;
 using System.IO;
@@ -13,6 +14,7 @@ namespace FBRepacker.PAC.Extract
         string filePath = string.Empty;
         bool duplicateLinkedFile = false;
         Dictionary<int, int> globalOffset = new Dictionary<int, int>();
+        Dictionary<int, string> EIDXFileInfo = new Dictionary<int, string>();
 
         public ExtractPAC(string filePath, FileStream PAC) : base()
         {
@@ -43,7 +45,10 @@ namespace FBRepacker.PAC.Extract
                 case 0x46484D20: // FHM Header
                     appendPACInfo("FHMOffset: 0");
                     appendPACInfo("Header: fhm");
-                    parseFHM();
+
+                    parseFHM(out additionalInfo additionalInfoFlagOut);
+                    addFHMAdditioalInfoFlag(1, additionalInfoFlagOut);
+
                     extractEndFile();
                     break;
                 case 0x00020100: // Stream
@@ -56,14 +61,19 @@ namespace FBRepacker.PAC.Extract
                     break;
             }
 
-            infoStreamWrite.Close();
+            writePACInfo();
             Stream.Close();
 
+            // TODO: remove this, clean up those static variables
             resetVariables();
         }
 
-        private void parseFHM()
+        private void parseFHM(out additionalInfo additionalInfoFlag)
         {
+            // TODO: seperate linked FHM additional info with non linked (i.e. if the additional info affects nested FHM)
+            // For now we reset the Info for each FHM recursive as EIDX only deals with 1 EIDX
+            additionalInfoFlag = additionalInfo.NONE;
+
             // Get the FHM starting pos in the file, subtract by 4 for FHM header.
             long FHMStartingPos = Stream.Position - 0x04;
 
@@ -96,53 +106,80 @@ namespace FBRepacker.PAC.Extract
             List<int> fileSizes = new List<int>();
             List<string> fileHeaders = new List<string>();
 
-            for (int i = 0; i < numberofFiles; i++)
+            for (int file_Index = 0; file_Index < numberofFiles; file_Index++)
             {
                 fileNumber++;
                 createFHMPACInfoTag(fileNumber, false);
 
                 duplicateLinkedFile = false;
-                int fileOffset = readIntBigEndian(Stream.Position); // The current fileOffset
-                int sizeOffsetOffset = numberofFiles * 0x04; // The offset of the size of the nth file
+                int filePointerOffset = (int)Stream.Position;
+                int filePointer = readIntBigEndian(Stream.Position); // The current fileOffset
+                int sizeOffset = numberofFiles * 0x04; // The offset of the size of the nth file
+                int assetLoadEnumOffset = (numberofFiles * 2) * 0x04;
+                int unkEnumOffset = (numberofFiles * 3) * 0x04;
 
-                int globalOff = (int)FHMStartingPos + fileOffset;
+                int globalOff = (int)FHMStartingPos + filePointer;
                 globalOffset[fileNumber] = globalOff;
                 //writeInsert(globalOff, fileNumber);
 
                 // Reading FHM Offset, update the list (including link & insert)
-                fileOffsets = writeFileOffsetInfo(fileOffsets, fileOffset, globalOff);
-
+                fileOffsets = writeFileOffsetInfo(fileOffsets, filePointer, globalOff);
                 // Save the next position to return to
                 long nextOffsetPosition = Stream.Position;
 
+                Stream.Seek(filePointerOffset, SeekOrigin.Begin);
                 // Reading Size of the file, update the list
-                int fileSize = readIntBigEndian(Stream.Position + sizeOffsetOffset - 0x04);
+                int fileSize = readIntBigEndian(Stream.Position + sizeOffset);
+                Stream.Seek(filePointerOffset, SeekOrigin.Begin);
                 fileSizes = writeFileSizeInfo(fileSizes, fileSize);
 
+                // Reading Size of the file, update the list
+                int assetLoadEnum = readIntBigEndian(Stream.Position + assetLoadEnumOffset);
+                Stream.Seek(filePointerOffset, SeekOrigin.Begin);
+                int unkEnum = readIntBigEndian(Stream.Position + unkEnumOffset);
+                //Stream.Seek(filePointerOffset, SeekOrigin.Begin);
 
+                if (unkEnum != 0)
+                    throw new Exception("Not an error, just let me know if there's a non 0 unkEnum since I want to find what does it do. Remove this if statement if you want to continue.");
 
                 string header = identifyHeader(readIntBigEndian(globalOff));
                 fileHeaders.Add(header);
+                appendPACInfo("FHMAssetLoadEnum: " + assetLoadEnum);
+                appendPACInfo("FHMunkEnum: " + unkEnum); // should always be 0.
+                appendPACInfo("FHMFileNo: " + FHMFileNumber);
                 appendPACInfo("Header: " + header.ToString());
 
                 if (header == "fhm")
                 {
-                    parseFHM();
+                    int FHMFileNo = fileNumber;
+                    parseFHM(out additionalInfo additionalInfoFlagOut);
+                    addFHMAdditioalInfoFlag(FHMFileNo, additionalInfoFlagOut);
                 }
                 else
                 {
-                    parseFiles(header, fileSize);
+                    parseFiles(header, file_Index, fileSize);
+                    additionalInfoFlag = setAdditionalInfoFlag(header, additionalInfoFlag);
+                    writeExtraFileInfo(file_Index, additionalInfoFlag);
                 }
 
                 Stream.Seek(nextOffsetPosition, SeekOrigin.Begin);
             }
 
-            int FHMEndFileOffset = fileOffsets.Count > 0 ? fileOffsets.Last() + fileSizes.Last() : 0x14;
+            int maxFileOffsetIndex = 0;
+
+            if (fileOffsets.Count != 0)
+                maxFileOffsetIndex = fileOffsets.IndexOf(fileOffsets.Max());
+
+            int FHMEndFileOffset = fileOffsets.Count > 0 ? fileOffsets[maxFileOffsetIndex] + fileSizes[maxFileOffsetIndex] : 0x14;
             fileEndOffset.Add(FHMStartingPos + FHMEndFileOffset);
 
             extractFHMChunk(fileOffsets, FHMFileNumber, FHMStartingPos);
 
             currDirectory = Directory.GetParent(currDirectory).FullName; // Navigate up 1 directory
+
+            // Reset the global EIDXFileInfo in as 1 EIDX only deals with 1 FHM.
+            if (EIDXFileInfo != null)
+                EIDXFileInfo = new Dictionary<int, string>();
         }
 
         private List<int> writeFileOffsetInfo(List<int> fileOffsets, int fileOffset, int globalOff)
@@ -153,13 +190,13 @@ namespace FBRepacker.PAC.Extract
             if (isInsert && !isLinked)
             {
                 int insertFileNumber = globalOffset.FirstOrDefault(file => file.Value > globalOff).Key;
-                appendPACInfo("Insert before file no: " + insertFileNumber);
+                //appendPACInfo("Insert before file no: " + insertFileNumber);
             }
 
             if (isLinked) // For cases where the FHM uses linked (shared) offsets.
             {
                 int linkOffset = fileOffsets.FindIndex(off => off == fileOffset) + 1; // Find the Index of the first duplicate in FHM. 
-                appendPACInfo("Link FHMOffset: " + linkOffset.ToString()); // For repacking use. If link is present, use the same file. 
+                appendPACInfo("LinkedFileNo_in_FHM: " + linkOffset.ToString()); // For repacking use. If link is present, use the same file. 
                 duplicateLinkedFile = true;
             }
 
@@ -176,7 +213,7 @@ namespace FBRepacker.PAC.Extract
             return fileSizes;
         }
 
-        private void parseFiles(string header, int size)
+        private void parseFiles(string header, int file_Index, int size)
         {
             switch (header)
             {
@@ -185,6 +222,9 @@ namespace FBRepacker.PAC.Extract
                     break;
                 case "STREAM": // Extract STREAM (audio)
                     new STREAM(Stream, (int)Stream.Position - 0x04).extract();
+                    break;
+                case "EIDX":
+                    EIDXFileInfo = new EIDX(Stream, (int)Stream.Position - 0x04, size + 0x04).parseEIDX();
                     break;
                 default:
                     extractDefault(header, size);
@@ -199,7 +239,7 @@ namespace FBRepacker.PAC.Extract
             byte[] FHMChunk = new byte[FHMChunkSize];
             Stream.Seek(startingPos, SeekOrigin.Begin); // Seek to the start of the file
             Stream.Read(FHMChunk, 0x00, FHMChunkSize); // Extract the chunk
-            createFile("fhm", FHMChunk, createExtractFilePath(FHMFileNumber));
+            createFile("fhm", FHMChunk, createExtractFilePath(FHMFileNumber), FHMFileNumber);
         }
 
         private void extractEndFile()
@@ -211,12 +251,14 @@ namespace FBRepacker.PAC.Extract
             byte[] EndFileChunk = new byte[EndFileSize];
             Stream.Seek(lastOffset, SeekOrigin.Begin);
             Stream.Read(EndFileChunk, 0x00, (int)EndFileSize); // Extract the chunk
-            createFile("endfile", EndFileChunk, createExtractFilePath(fileNumber));
 
             createFHMPACInfoTag(fileNumber, false);
             appendPACInfo("Header: endfile");
             appendPACInfo("End File Offset: " + lastOffset);
             appendPACInfo("End File Size: " + EndFileSize);
+
+            createFile("endfile", EndFileChunk, createExtractFilePath(fileNumber));
+
             appendPACInfo("");
             appendPACInfo("//");
         }
@@ -224,8 +266,8 @@ namespace FBRepacker.PAC.Extract
         private void extractDefault(string extension, int size)
         {
             byte[] buffer = new byte[size];
-            int seekstart = extension != "ALEO" ? -0x04 : -0x08;
-            Stream.Seek(seekstart, SeekOrigin.Current);
+            //int seekstart = extension != "ALEO" ? -0x04 : -0x04; // already seek -0x04 in identify header, so ALEO is same as -0x04
+            Stream.Seek(-0x04, SeekOrigin.Current);
             Stream.Read(buffer, 0, size);
 
             if (!duplicateLinkedFile)
@@ -281,6 +323,37 @@ namespace FBRepacker.PAC.Extract
                     break;
             }
             return identifiedHeader;
+        }
+
+        private void writeExtraFileInfo(int FHM_file_Index, additionalInfo additionalInfoFlag)
+        {
+            if(additionalInfoFlag.HasFlag(additionalInfo.EIDX) && EIDXFileInfo != null)
+            {
+                if (!EIDXFileInfo.ContainsKey(FHM_file_Index))
+                    throw new Exception(FHM_file_Index + " does not exist in EIDXFileInfo!");
+
+                appendPACInfo("EIDX_Index: " + FHM_file_Index);
+                appendPACInfo("EIDX_Name: " + EIDXFileInfo[FHM_file_Index]);
+            }
+        }
+
+        private additionalInfo setAdditionalInfoFlag(string header, additionalInfo additionalInfoFlag)
+        {
+            switch (header)
+            {
+                case "EIDX":
+                    additionalInfoFlag |= additionalInfo.EIDX;
+                    break;
+                default:
+                    break;
+            }
+
+            return additionalInfoFlag;
+        }
+
+        private void addFHMAdditioalInfoFlag(int FHMFileNo, additionalInfo additionalInfoFlag)
+        {
+            appendPACInfo(FHMFileNo, "Additional info flag: " + (int)additionalInfoFlag);
         }
     }
 }

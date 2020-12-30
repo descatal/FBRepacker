@@ -6,17 +6,25 @@ using System.Threading.Tasks;
 
 namespace FBRepacker.PAC.Repack.customFileInfo
 {
-    class GeneralFileInfo
+    public class GeneralFileInfo : FHMFileInfo
     {
         public int fileSize;
         public int fileNo;
         public string header;
         public int FHMOffset;
+        public int FHMAssetLoadEnum;
+        public int FHMunkEnum;
+        public string fileName;
+
+        public int FHMFileNumber;
+        public string FHMFileName;
+
+        public bool isLinked = false;
+        public int linkedFileNo;
+        public string linkedFileName;
+
+        // not used
         public int fileNoinFHM;
-        public bool isLinked;
-        public int linkFileNumber;
-        public bool hasInsert;
-        public int insertFileNumber;
 
         public GeneralFileInfo()
         {

@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 
 namespace FBRepacker.PAC.Repack.FileTypes
 {
-    class NTP3 : Internals
+    public class NTP3 : Internals
     {
         public Dictionary<int, List<NTP3FileInfo>> NTP3FileInfoDic = new Dictionary<int, List<NTP3FileInfo>>();
         public Dictionary<int, List<NTP3FileInfo>> realNTP3FileDic = new Dictionary<int, List<NTP3FileInfo>>();
@@ -95,6 +95,9 @@ namespace FBRepacker.PAC.Repack.FileTypes
                 newFileInfo.NTP3HeaderChunkSize = convertStringtoInt(getSpecificFileInfoProperties("NTP3 Header Chunk Size: ", DDSInfo));
                 int numberofMipmaps = convertStringtoInt(getSpecificFileInfoProperties("numberofMipmaps: ", DDSInfo));
 
+                string fileName = getSpecificFileInfoProperties("fileName: ", DDSInfo);
+                newFileInfo.fileName = fileName;
+
                 if (newFileInfo.CompressionType == "No Compression")
                     newFileInfo.pixelFormat = getSpecificFileInfoProperties("pixelFormat: ", DDSInfo);
 
@@ -125,8 +128,10 @@ namespace FBRepacker.PAC.Repack.FileTypes
             for (int i = 0; i < numberofFilesinNTP3; i++)
             {
                 string hexName = convertByteArraytoString(NTP3FileInfoList[i].hexName, true);
-                string baseFileName = originalFilePath + @"\" + fileNumber.ToString("000");
-                string DDSFilePath = hexName == "0000"? baseFileName + ".dds" : baseFileName + "-" + (i + 1).ToString("000") + " (" + hexName + ").dds";
+                //string baseFileName = originalFilePath + @"\" + fileNumber.ToString("000");
+                //string DDSFilePath = hexName == "0000"? baseFileName + ".dds" : baseFileName + "-" + (i + 1).ToString("000") + " (" + hexName + ").dds";
+                
+                string DDSFilePath = originalFilePath + @"\" + NTP3FileInfoList[i].fileName;
 
                 if (File.Exists(DDSFilePath))
                 {

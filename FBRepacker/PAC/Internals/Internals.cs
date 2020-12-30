@@ -15,7 +15,7 @@ using System.Windows.Media.Converters;
 
 namespace FBRepacker.PAC
 {
-    class Internals
+    public class Internals
     {
         protected static StreamWriter infoStreamWrite;
         protected static StreamReader infoStreamRead;
@@ -27,6 +27,22 @@ namespace FBRepacker.PAC
         protected static string currDirectory = string.Empty, rootDirectory = string.Empty;
         protected FileStream Stream;
         protected BinaryReader streamBinaryReader;
+
+        [Flags]
+        public enum additionalInfo
+        {
+            // add if you need to read more extra info appended for each file.
+            NONE = 0x0,
+            EIDX = 0x1
+        }
+
+        // The second unknown FHM info, presumably asset loading.
+        public enum FHMAssetLoadEnum
+        {
+            IMAGE = 0x1,
+            MODEL = 0x2,
+            SOUND = 0x3
+        }
 
         protected static List<string> fileHeadersList = new List<string>
         {
@@ -54,27 +70,13 @@ namespace FBRepacker.PAC
             infoFileString = new string[0];
         }
 
-        protected void initializePACInfoFileExtract()
+        public void initializePACInfoFileExtract()
         {
             string path = rootDirectory + @"\PAC.info";
             infoStreamWrite = new StreamWriter(path, false, Encoding.Default);
         }
 
-        protected void initializePACInfoFileRepack()
-        {
-            // TODO: make info file read byte easier, instead of using readalllines (since there are binary data inside, encoding / decoding will cause different results)
-            string path = rootDirectory + @"\PAC.info";
-            if (File.Exists(path))
-            {
-                infoStreamRead = new StreamReader(path);
-                infoFileString = File.ReadAllLines(path, Encoding.UTF8);
-            }
-            else
-            {
-                throw new Exception("PAC.info file not found! Make sure that the file is present in the root folder of your repack folder.");
-            }
-        }
-
+        // TODO: Remove
         protected byte[] readByteArrayinPACInfoBetweenString(StreamReader inputInfoStreamReader, string start, string end, bool onlyContains)
         {
             int startPos = 0, endPos = 0;
@@ -148,37 +150,109 @@ namespace FBRepacker.PAC
             return extractedBuffer;
         }
 
+        public static Dictionary<int, List<string>> PACFileInfo = new Dictionary<int, List<string>> {
+            // Self initialize the 1st file info, which is not called by createFHMPACInfoTag
+            { 1, new List<string>() }
+        };
+
         protected void createFHMPACInfoTag(int fileNumber, bool FHM)
         {
+            List<string> fileInfo = new List<string>();
+
+            if (PACFileInfo.ContainsKey(fileNumber))
+                fileInfo = PACFileInfo[fileNumber];
+
             if (!FHM)
             {
-                infoStreamWrite.WriteLine("");
-                infoStreamWrite.WriteLine("//");
-                infoStreamWrite.WriteLine("--" + fileNumber.ToString() + "--");
+                //infoStreamWrite.WriteLine("");
+                //infoStreamWrite.WriteLine("//");
+                //infoStreamWrite.WriteLine("--" + fileNumber.ToString() + "--");
+
+                fileInfo.Add("\n");
+                fileInfo.Add("//");
+                fileInfo.Add("--" + fileNumber.ToString() + "--");
             }
             else
             {
-                infoStreamWrite.WriteLine("--FHM--");
+                //infoStreamWrite.WriteLine("--FHM--");
+                fileInfo.Add("--FHM--");
             }
+
+            PACFileInfo[fileNumber] = fileInfo;
         }
 
         protected void createSTREAMPACInfoTag(int fileNumber, bool STREAM)
         {
+            List<string> fileInfo = new List<string>();
+
             if (!STREAM)
             {
-                infoStreamWrite.WriteLine("");
-                infoStreamWrite.WriteLine("//");
-                infoStreamWrite.WriteLine("--" + fileNumber.ToString() + "--");
+                //infoStreamWrite.WriteLine("");
+                //infoStreamWrite.WriteLine("//");
+                //infoStreamWrite.WriteLine("--" + fileNumber.ToString() + "--");
+
+                fileInfo.Add("\n");
+                fileInfo.Add("//");
+                fileInfo.Add("--" + fileNumber.ToString() + "--");
             }
             else
             {
-                infoStreamWrite.WriteLine("--STREAM--");
+                //infoStreamWrite.WriteLine("--FHM--");
+                fileInfo.Add("--STREAM--");
             }
+
+            PACFileInfo[fileNumber] = fileInfo;
         }
 
+        /// <summary>
+        /// append PACInfo 
+        /// </summary>
+        /// <param name="append"> the string to be appended </param>
         protected void appendPACInfo(string append)
         {
-            infoStreamWrite.WriteLine(append);
+            //infoStreamWrite.WriteLine(append);
+            if (!PACFileInfo.ContainsKey(fileNumber))
+                throw new Exception("file info tag: " + fileNumber + " has not been created yet!");
+
+            List<string> fileInfo = PACFileInfo[fileNumber];
+            fileInfo.Add(append);
+        }
+
+        /// <summary>
+        /// overload function for original appendPACInfo to write info based on the given fileNumber.
+        /// </summary>
+        /// <param name="fileNumber"> the fileNumber to append </param>
+        /// <param name="append"> the string to be appended </param>
+        protected void appendPACInfo(int fileNumber, string append)
+        {
+            //infoStreamWrite.WriteLine(append);
+            if (!PACFileInfo.ContainsKey(fileNumber))
+                throw new Exception("file info tag: " + fileNumber + " has not been created yet!");
+
+            List<string> fileInfo = PACFileInfo[fileNumber];
+            fileInfo.Add(append);
+        }
+
+        /// <summary>
+        /// Write the PACInfo using infoStreamWrite
+        /// </summary>
+        public void writePACInfo()
+        {
+            List<List<string>> allFileInfo = PACFileInfo.Values.ToList();
+            foreach(List<string> fileInfos in allFileInfo)
+            {
+                foreach(string fileInfo in fileInfos)
+                {
+                    infoStreamWrite.WriteLine(fileInfo);
+                }
+            }
+
+            PACFileInfo = new Dictionary<int, List<string>> {
+                // Reset the PACFileInfo
+                { 1, new List<string>() }
+            };
+
+            infoStreamWrite.Close();
         }
 
         protected string[] getFileInfoProperties(string tag)
@@ -253,6 +327,7 @@ namespace FBRepacker.PAC
                 throw new Exception("string to int conversion failed with str: " + str);
             }
         }
+
         protected byte[] convertHexStringtoByteArray(string input, bool reverseArray)
         {
             byte[] ByteArray = SoapHexBinary.Parse(input).Value;
@@ -261,6 +336,16 @@ namespace FBRepacker.PAC
                 Array.Reverse(ByteArray);
 
             return ByteArray;
+        }
+
+        protected int convertHexStringtoInt(string input, bool reverseArray)
+        {
+            byte[] ByteArray = SoapHexBinary.Parse(input).Value;
+
+            if (reverseArray)
+                Array.Reverse(ByteArray);
+
+            return BitConverter.ToInt32(ByteArray, 0);
         }
 
         protected byte[] convertStringtoByteArray(string input, bool reverseArray)
@@ -325,15 +410,15 @@ namespace FBRepacker.PAC
             return newBuffer;
         }
 
-        protected Stream addPaddingStream(Stream memStream)
+        protected MemoryStream addPaddingStream(MemoryStream memStream)
         {
+            memStream.Seek(0, SeekOrigin.End);
             int moduloResult = ((int)memStream.Length % 0x10);
             int paddingRequired = 0;
             if (moduloResult != 0)
                 paddingRequired = 0x10 - moduloResult;
             byte[] zeroBuffer = new byte[paddingRequired];
             memStream.Write(zeroBuffer, 0, paddingRequired);
-
             return memStream;
         }
 
@@ -541,12 +626,67 @@ namespace FBRepacker.PAC
             memStream.Write(zeroBuffer, 0, zeroBuffer.Length);
         }
 
+        /// <summary>
+        /// appending String to a memory stream
+        /// </summary>
+        /// <param name="memStream">the memory stream to append</param>
+        /// <param name="str">the string to append</param>
+        /// <param name="encoding">specify the encoding used to encode the string (If unsure use Encoding.Default)</param>
+        protected void appendStringMemoryStream(MemoryStream memStream, string str, Encoding encoding)
+        {
+            byte[] tempBuffer = encoding.GetBytes(str);
+            memStream.Write(tempBuffer, 0, tempBuffer.Length);
+        }
+
+        /// <summary>
+        /// appending String to a memory stream
+        /// </summary>
+        /// <param name="memStream">the memory stream to append</param>
+        /// <param name="str">the string to append</param>
+        /// <param name="encoding">specify the encoding used to encode the string (If unsure use Encoding.Default)</param>
+        /// <param name="size">byte array required size, will pad with 0 if short, and trunc if larger</param>
+        protected void appendStringMemoryStream(MemoryStream memStream, string str, Encoding encoding, int size)
+        {
+            byte[] tempBuffer = encoding.GetBytes(str);
+
+            if(tempBuffer.Length >= size)
+            {
+                tempBuffer = tempBuffer.Take(size).ToArray();
+            }
+            else if (tempBuffer.Length < size)
+            {
+                byte[] newBuffer = new byte[size];
+                int padSize = size - tempBuffer.Length;
+                byte[] zeroBuffer = new byte[padSize];
+                Array.Clear(zeroBuffer, 0, padSize);
+                System.Buffer.BlockCopy(tempBuffer, 0, newBuffer, 0, tempBuffer.Length);
+                System.Buffer.BlockCopy(zeroBuffer, 0, newBuffer, tempBuffer.Length, zeroBuffer.Length);
+                tempBuffer = newBuffer;
+            }
+
+            memStream.Write(tempBuffer, 0, tempBuffer.Length);
+        }
+
+        protected void createFile(string fileExt, byte[] buffer, string filePath, int appendPACInfoFileNumber)
+        {
+            filePath += "." + fileExt;
+            FileStream newFile = File.Create(filePath);
+            newFile.Write(buffer, 0x00, buffer.Length);
+            newFile.Close();
+
+            FileInfo temp = new FileInfo(filePath);
+            appendPACInfo(appendPACInfoFileNumber, "fileName: " + temp.Name);
+        }
+
         protected void createFile(string fileExt, byte[] buffer, string filePath)
         {
             filePath += "." + fileExt;
             FileStream newFile = File.Create(filePath);
             newFile.Write(buffer, 0x00, buffer.Length);
             newFile.Close();
+
+            FileInfo temp = new FileInfo(filePath);
+            appendPACInfo("fileName: " + temp.Name);
         }
 
         protected void renameFile(string filePath, string newFileName)

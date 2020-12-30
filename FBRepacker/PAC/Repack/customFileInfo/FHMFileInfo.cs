@@ -6,12 +6,13 @@ using System.Threading.Tasks;
 
 namespace FBRepacker.PAC.Repack.customFileInfo
 {
-    class FHMFileInfo
+    public class FHMFileInfo
     {
         // FHM Metadata
         public int totalFileSize;
         public int numberofFiles;
         public int FHMChunkSize;
+        public Internals.additionalInfo additionalInfoFlag;
 
         /*
         public FHMFileInfo(int totalFileSize, int numberofFiles, int FHMChunkSize)

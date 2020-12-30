@@ -7,7 +7,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Xml;
 
-namespace FBRepacker.PAC.Extract
+namespace FBRepacker.PAC.Extract.FileTypes
 {
     class NTP3 : Internals
     {
@@ -170,7 +170,7 @@ namespace FBRepacker.PAC.Extract
 
             for(int i = 0; i < mipmapsSizeList.Count; i++)
             {
-                appendPACInfo("mipmapSize" + i.ToString() + ": " + mipmapsSizeList[i].ToString());
+                //appendPACInfo("mipmapSize" + i.ToString() + ": " + mipmapsSizeList[i].ToString());
             }
                 
             appendPACInfo("eXtChunk: " + Convert.ToBase64String(eXtChunk));

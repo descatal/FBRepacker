@@ -1,5 +1,6 @@
 ﻿using FBRepacker.PAC.Repack;
 using FBRepacker.NUD;
+using FBRepacker.PACInfoUI;
 using Microsoft.Win32;
 using Microsoft.WindowsAPICodePack.Dialogs;
 using System;
@@ -243,7 +244,9 @@ namespace FBRepacker
 
         private void repackPAC_Click(object sender, RoutedEventArgs e)
         {
-            new RepackPAC(Properties.Settings.Default.RepackPath).repackPAC();
+            RepackPAC repackInstance = new RepackPAC(Properties.Settings.Default.RepackPath);
+            PACInfoWindow pacInfoUI = new PACInfoWindow(repackInstance);
+            pacInfoUI.ShowDialog();
         }
 
         private void repackPsarc_Click(object sender, RoutedEventArgs e)

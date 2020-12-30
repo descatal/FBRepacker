@@ -105,12 +105,24 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="PACInfoUI\FileSpecific\NTP3FileInfoWindow.xaml.cs">
+      <DependentUpon>NTP3FileInfoWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="PACInfoUI\newFileWindow.xaml.cs">
+      <DependentUpon>newFileWindow.xaml</DependentUpon>
+    </Compile>
     <Compile Include="NUD\ModelConverter.cs" />
+    <Compile Include="PACInfoUI\PACInfoUI.xaml.cs">
+      <DependentUpon>PACInfoUI.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="PAC\Extract\FileTypes\EIDX.cs" />
     <Compile Include="PAC\Internals\TrackingTextReader.cs" />
     <Compile Include="PAC\Repack\customFileInfo\DDSFileInfo.cs" />
+    <Compile Include="PAC\Repack\customFileInfo\EIDXFileInfo.cs" />
     <Compile Include="PAC\Repack\customFileInfo\FHMFileInfo.cs" />
     <Compile Include="PAC\Repack\customFileInfo\GeneralFileInfo.cs" />
     <Compile Include="PAC\Repack\customFileInfo\NTP3FileInfo.cs" />
+    <Compile Include="PAC\Repack\FileTypes\EIDX.cs" />
     <Compile Include="PAC\Repack\FileTypes\NTP3.cs" />
     <Compile Include="PAC\Repack\FileTypes\STREAM.cs" />
     <Compile Include="PAC\Repack\RepackPAC.cs" />
@@ -139,6 +151,18 @@
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+    <Page Include="PACInfoUI\FileSpecific\NTP3FileInfoWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="PACInfoUI\newFileWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="PACInfoUI\PACInfoUI.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="SettingsWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>

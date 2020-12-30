@@ -7,7 +7,7 @@ using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace FBRepacker.PAC.Extract
+namespace FBRepacker.PAC.Extract.FileTypes
 {
     class STREAM : Internals
     {
