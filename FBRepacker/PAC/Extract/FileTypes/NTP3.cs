@@ -371,6 +371,7 @@ namespace FBRepacker.PAC.Extract.FileTypes
                     break;
 
                 case 14:
+                case 17:
                     pixelInternalFormat = PixelInternalFormat.Rgba;
                     pixelFormat = PixelFormat.AbgrExt;
                     RGBAByteSize = 4; // RGBA / AGBR = 8 bit per color, 8*4 = 32bit = 4 byte.

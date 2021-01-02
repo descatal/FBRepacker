@@ -322,6 +322,9 @@ namespace FBRepacker.PAC.Extract
                 case 7:
                     identifiedHeader = "EIDX";
                     break;
+                case 8:
+                    identifiedHeader = "PNG";
+                    break;
                 default:
                     // Since ALEO file has header at the 0x4 offset, we need to check this way.
                     int ALEOHeader = readIntBigEndian(Stream.Position);

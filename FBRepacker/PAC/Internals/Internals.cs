@@ -46,7 +46,7 @@ namespace FBRepacker.PAC
 
         protected static List<string> fileHeadersList = new List<string>
         {
-            "FHM ", "OMO\0", "NTP3", "LMB\0", "NDP3", "VBN ", "\0\u0002\u0001\0", "EIDX"
+            "FHM ", "OMO\0", "NTP3", "LMB\0", "NDP3", "VBN ", "\0\u0002\u0001\0", "EIDX", "‰PNG"
         };
 
         protected Internals()
@@ -1099,6 +1099,10 @@ namespace FBRepacker.PAC
                             stream.Seek(initPos, SeekOrigin.Begin);
                             return filePosition + 1 - pattern.Length;
                         }
+                    }
+                    else
+                    {
+                        patternPosition = 0;
                     }
                     filePosition++;
                 }
