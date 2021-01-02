@@ -1,7 +1,6 @@
 ﻿using FBRepacker.PAC.Repack;
 using FBRepacker.NUD;
 using FBRepacker.PACInfoUI;
-using Microsoft.Win32;
 using Microsoft.WindowsAPICodePack.Dialogs;
 using System;
 using System.Buffers.Binary;
@@ -19,7 +18,7 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
-using System.Windows.Shapes;
+using System.Windows.Forms;
 
 namespace FBRepacker
 {
@@ -236,9 +235,32 @@ namespace FBRepacker
 
         private void extractPAC_Click(object sender, RoutedEventArgs e)
         {
+
             if (filePath != string.Empty && filePath != null)
             {
-                new PAC.Extract.ExtractPAC(filePath, PAC).extractPAC();
+                DialogResult askMultiplePAC = System.Windows.Forms.MessageBox.Show("Extract Multiple FHM?", "Extract Multiple FHM?", MessageBoxButtons.YesNo);
+
+                Stream stream = File.Open(filePath, FileMode.Open);
+                long streamSize = stream.Length;
+                stream.Close();
+
+                string baseExtractPath = Properties.Settings.Default.ExtractPath + @"\" + Path.GetFileNameWithoutExtension(filePath);
+
+                if (askMultiplePAC == System.Windows.Forms.DialogResult.Yes)
+                {
+                    long PACEndPosition = 0;
+                    int i = 0;
+                    do
+                    {
+                        string extractPath = baseExtractPath + @"\" + i.ToString();
+                        new PAC.Extract.ExtractPAC(filePath, PAC).extractPAC(PACEndPosition, out PACEndPosition, extractPath);
+                        i++;
+                    } while (PACEndPosition < streamSize);
+                }
+                else
+                {
+                    new PAC.Extract.ExtractPAC(filePath, PAC).extractPAC(0, out long unused, baseExtractPath);
+                }
             }
         }
 

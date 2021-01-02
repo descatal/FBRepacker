@@ -1071,5 +1071,41 @@ namespace FBRepacker.PAC
             byte[] outputAudioBuffer = readFileinbyteStream(ffmpegPath + "output.pcm");
             return outputAudioBuffer;
         }
+
+        protected long GetPatternPositions(Stream stream, byte[] pattern)
+        {
+            long initPos = stream.Position;
+            int patternPosition = 0; //Track of how much of the array has been matched
+            long filePosition = 0;
+            long bufferSize = Math.Min(stream.Length, 100_000);
+
+            byte[] buffer = new byte[bufferSize];
+            int readCount = 0;
+
+            while ((readCount = stream.Read(buffer, 0, buffer.Length)) > 0)
+            {
+                for (int i = 0; i < readCount; i++)
+                {
+                    byte currentByte = buffer[i];
+
+                    if (currentByte == pattern[0])
+                        patternPosition = 0;
+
+                    if (currentByte == pattern[patternPosition])
+                    {
+                        patternPosition++;
+                        if (patternPosition == pattern.Length)
+                        {
+                            stream.Seek(initPos, SeekOrigin.Begin);
+                            return filePosition + 1 - pattern.Length;
+                        }
+                    }
+                    filePosition++;
+                }
+            }
+
+            stream.Seek(initPos, SeekOrigin.Begin);
+            return -1;
+        }
     }
 }

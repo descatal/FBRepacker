@@ -352,6 +352,15 @@ namespace FBRepacker.PAC.Repack.FileTypes
 
             byte[] eXtChunkBuffer = NTP3FileInfo.eXtChunk;
             byte[] GIDXChunkBuffer = NTP3FileInfo.GIDXChunk; // TODO: write hash seperately.
+
+            byte[] hexName = NTP3FileInfo.hexName;
+            int a = 0x8;
+            foreach(var name in hexName)
+            {
+                GIDXChunkBuffer[a] = name;
+                a++;
+            }
+
             byte[] NTP3MetadataBuffer = NTP3Metadata.Concat(eXtChunkBuffer).Concat(GIDXChunkBuffer).ToArray();
 
             // I don't like this implementation, for changing size when everything is written.

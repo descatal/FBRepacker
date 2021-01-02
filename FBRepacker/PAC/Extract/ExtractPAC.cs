@@ -18,18 +18,18 @@ namespace FBRepacker.PAC.Extract
 
         public ExtractPAC(string filePath, FileStream PAC) : base()
         {
-            changeStreamFile(PAC);
+            changeStreamFile(PAC); // reset Stream File
             this.filePath = filePath;
         }
 
-        public void extractPAC()
+        public void extractPAC(long startOffset, out long endPosition, string extractPath)
         {
             // Load the file into PAC filestream
             if (Stream != null)
                 Stream.Close();
             Stream = File.Open(filePath, FileMode.Open);
 
-            string extractPath = Properties.Settings.Default.ExtractPath + @"\" + Path.GetFileNameWithoutExtension(filePath);
+            Stream.Seek(startOffset, SeekOrigin.Begin);
 
             Directory.CreateDirectory(extractPath);
 
@@ -39,7 +39,7 @@ namespace FBRepacker.PAC.Extract
 
             appendPACInfo("--1--");
             // Read and check Header
-            int Header = readIntBigEndian(0x00);
+            int Header = readIntBigEndian(Stream.Position);
             switch (Header)
             {
                 case 0x46484D20: // FHM Header
@@ -62,6 +62,7 @@ namespace FBRepacker.PAC.Extract
             }
 
             writePACInfo();
+            endPosition = Stream.Position;
             Stream.Close();
 
             // TODO: remove this, clean up those static variables
@@ -247,9 +248,15 @@ namespace FBRepacker.PAC.Extract
             fileNumber++;
             //var asd = Stream.Position;
             long lastOffset = fileEndOffset.Count > 0 ? fileEndOffset.Max() : 0;
-            long EndFileSize = Stream.Length - lastOffset;
-            byte[] EndFileChunk = new byte[EndFileSize];
+
+            byte[] FHMByte = new byte[] { 0x46, 0x48, 0x4D, 0x20 };
+
             Stream.Seek(lastOffset, SeekOrigin.Begin);
+            var offset = GetPatternPositions(Stream, FHMByte);
+
+            long EndFileSize = offset == -1? Stream.Length - lastOffset: offset;
+            byte[] EndFileChunk = new byte[EndFileSize];
+            
             Stream.Read(EndFileChunk, 0x00, (int)EndFileSize); // Extract the chunk
 
             createFHMPACInfoTag(fileNumber, false);

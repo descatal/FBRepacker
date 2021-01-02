@@ -19,6 +19,7 @@ using System.Xml.Schema;
 using SFGraphics.Utils;
 using System.Security.Policy;
 using SharpGLTF.Schema2;
+using System.Windows.Forms;
 
 namespace FBRepacker.NUD
 {
@@ -1154,15 +1155,60 @@ namespace FBRepacker.NUD
                 // Since OMO is tied to VBN, this is assuming we don't change VBN during reimport.
                 FileStream VBN = File.OpenRead(Properties.Settings.Default.VBNPathDAEtoNUD);
                 parseVBN(VBN, out VBNjointHierarchy, out List<Matrix4> boneTransformMatList);
+
+                /*
+                StreamWriter streamWriter = new StreamWriter(File.OpenWrite(@"G:\3D Model Research\Model Research\Snow White\Production\Main Body\BoneOrder.txt"));
+                foreach (var vbn in VBNjointHierarchy)
+                {
+                    streamWriter.WriteLine(vbn.Key);
+                }
+                streamWriter.Close();
+                */
+
                 VBN.Close();
             }
             else
             {
+                DialogResult askVBNOrder = MessageBox.Show("Load VBN order file?", "Load VBN order file?", MessageBoxButtons.YesNo);
+
+                if (askVBNOrder == DialogResult.Yes)
+                {
+                    Dictionary<string, string> newDAEjointHierarchy = new Dictionary<string, string>();
+                    // Change the order of the output VBN, supports adding joints too (need to add it into the txt file too)
+                    // Open file select dialog
+                    OpenFileDialog openFileDialog = new OpenFileDialog();
+                    string filePath = Properties.Settings.Default.OpenExtractPath;
+                    openFileDialog.InitialDirectory = filePath;
+                    openFileDialog.RestoreDirectory = true;
+                    openFileDialog.ShowDialog();
+
+                    string txtFilePath = openFileDialog.FileName;
+                    if (txtFilePath != null)
+                    {
+                        StreamReader streamReader = new StreamReader(File.OpenRead(txtFilePath));
+                        while (!streamReader.EndOfStream)
+                        {
+                            string newBone = streamReader.ReadLine();
+                            if (!DAEjointHierarchy.Keys.Any(s => s.Contains(newBone)))
+                                throw new Exception("Cannot find bone: " + newBone + " in DAE!");
+                            newDAEjointHierarchy[newBone] = DAEjointHierarchy.FirstOrDefault(s => s.Key.Contains(newBone)).Value;
+                        }
+                        DAEjointHierarchy = newDAEjointHierarchy;
+                    }
+                    else
+                    {
+                        throw new Exception("Select a file! Aborting!");
+                    }
+                }
+
                 // We fill VBNjointHierarchy's key with DAE's jointName since the code to write vertexInfo in NUD converts the DAE bone's hierarchy to VBN's hierarchy.
-                foreach(string DAEjoint in DAEjointHierarchy.Keys)
+                // Sine writeNUD needs a VBNjointierarchy passed into them, this is just to make sure that the order of bones are there
+                // The actual parent of the bone is not needed, since we only use the key as order. Hence, -1 on all values.
+                foreach (string DAEjoint in DAEjointHierarchy.Keys)
                 {
                     VBNjointHierarchy[DAEjoint] = -1;
                 }
+
                 writeVBN(DAEjointHierarchy, DAEjointPositionDic, contSourceDatasetList);
             }
 
@@ -1280,6 +1326,9 @@ namespace FBRepacker.NUD
 
             string[] DAEjoints = DAEjointHierarchy.Keys.ToArray();
 
+            // temp
+            //int properBone = 1;
+
             foreach (string DAEjoint in DAEjoints)
             {
                 // Joint Names
@@ -1297,12 +1346,23 @@ namespace FBRepacker.NUD
                 }
 
                 jointNameandPositionStream.Write(encodedStringFixedSize, 0, encodedStringFixedSize.Length);
-                // TODO: research proper bone types. We use 0 for now.
-                appendIntMemoryStream(jointNameandPositionStream, 0x00, true);
+
+                //if(properBone <= 0x18)
+                //{
+                    // TODO: research proper bone types. We use 0 for now.
+                    appendIntMemoryStream(jointNameandPositionStream, 0x00, true);
+                //}
+                //else
+                //{
+                    //appendIntMemoryStream(jointNameandPositionStream, 0x01, true);
+                //}
+
 
                 string parentBoneName = DAEjointHierarchy[DAEjoint];
                 int parentIndex = parentBoneName == "null" ? 0x0FFFFFFF : DAEjointHierarchy.Keys.ToList().IndexOf(parentBoneName);
                 appendIntMemoryStream(jointNameandPositionStream, parentIndex, true);
+
+                //properBone++;
             }
 
             foreach (string DAEjoint in DAEjoints)
