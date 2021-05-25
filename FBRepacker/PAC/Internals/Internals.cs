@@ -33,7 +33,8 @@ namespace FBRepacker.PAC
         {
             // add if you need to read more extra info appended for each file.
             NONE = 0x0,
-            EIDX = 0x1
+            EIDX = 0x1,
+            SOUNDNAME = 0x2
         }
 
         // The second unknown FHM info, presumably asset loading.
@@ -46,7 +47,7 @@ namespace FBRepacker.PAC
 
         protected static List<string> fileHeadersList = new List<string>
         {
-            "FHM ", "OMO\0", "NTP3", "LMB\0", "NDP3", "VBN ", "\0\u0002\u0001\0", "EIDX", "‰PNG"
+            "FHM ", "OMO\0", "NTP3", "LMB\0", "NDP3", "VBN ", "\0\u0002\u0001\0", "EIDX", "‰PNG", "\0\0\0\0", "NUS3"
         };
 
         protected Internals()
@@ -185,6 +186,9 @@ namespace FBRepacker.PAC
         {
             List<string> fileInfo = new List<string>();
 
+            if (PACFileInfo.ContainsKey(fileNumber))
+                fileInfo = PACFileInfo[fileNumber];
+
             if (!STREAM)
             {
                 //infoStreamWrite.WriteLine("");
@@ -262,6 +266,13 @@ namespace FBRepacker.PAC
             return FHMTag;
         }
 
+        protected string[] getFileInfoPropertiess(string tag)
+        {
+            // Read the info file, seek to the file tag, take all the lines between tags.
+            var FHMTag = infoFileString.SkipWhile(line => !line.Contains(tag)).TakeWhile(line => !line.Contains("//")).ToArray();
+            return FHMTag;
+        }
+
         protected string[] getSpecificFileInfoPropertiesRegion(string[] allProperties, string from, string end)
         {
             return allProperties.SkipWhile(line => !line.Contains(from)).TakeWhile(line => !line.Contains(end)).ToArray();
@@ -315,9 +326,35 @@ namespace FBRepacker.PAC
 
         }
 
+        protected float convertStringtoFloat(string str)
+        {
+            bool conversionSuccessful = float.TryParse(str, out float result);
+            if (conversionSuccessful)
+            {
+                return result;
+            }
+            else
+            {
+                throw new Exception("string to float conversion failed with str: " + str);
+            }
+        }
+
         protected int convertStringtoInt(string str)
         {
             bool conversionSuccessful = int.TryParse(str, out int result);
+            if (conversionSuccessful)
+            {
+                return result;
+            }
+            else
+            {
+                throw new Exception("string to int conversion failed with str: " + str);
+            }
+        }
+
+        protected uint convertStringtoUInt(string str)
+        {
+            bool conversionSuccessful = uint.TryParse(str, out uint result);
             if (conversionSuccessful)
             {
                 return result;
@@ -433,6 +470,17 @@ namespace FBRepacker.PAC
             return paddingRequired + size;
         }
 
+        protected uint addPaddingSizeCalculation(uint size)
+        {
+            // size % 0x10 = Modulus of size and 0x10, the remainder will be the number that is extra. 
+            // 0x10 - extra = Number of bytes needed to be padded to the file.
+            uint moduloResult = (size % 0x10);
+            uint paddingRequired = 0;
+            if (moduloResult != 0)
+                paddingRequired = 0x10 - moduloResult;
+            return paddingRequired + size;
+        }
+
         protected byte[] extractChunk(long startpos, long size)
         {
             byte[] buffer = new byte[size];
@@ -441,7 +489,112 @@ namespace FBRepacker.PAC
             return buffer;
         }
 
+        protected byte[] extractChunk(Stream mem, long startpos, long size)
+        {
+            byte[] buffer = new byte[size];
+            mem.Seek(startpos, SeekOrigin.Begin);
+            mem.Read(buffer, 0, (int)size);
+            return buffer;
+        }
+
         protected string readString(long offset, int size)
+        {
+            Stream.Seek(offset, 0);
+            byte[] strBytes = extractChunk(Stream.Position, size);
+            string str = Encoding.Default.GetString(strBytes);
+            str = str.Trim('\0');
+            return str;
+        }
+
+        protected string readString(Stream mem, int size)
+        {
+            byte[] strBytes = extractChunk(mem, mem.Position, size);
+            string str = Encoding.Default.GetString(strBytes);
+            str = str.Trim('\0');
+            return str;
+        }
+
+        protected string readString(Stream mem, char linebreak)
+        {
+            StringBuilder sb = new StringBuilder();
+            using (StreamReader rdr = new StreamReader(mem))
+            {
+                Int32 nc;
+                while (true)
+                {
+                    nc = rdr.Read();
+                    Char c = (Char)nc;
+                    if (c == linebreak)
+                    {
+                        break;
+                    }
+                    else
+                    {
+                        sb.Append(c);
+                    }
+                }
+            }
+            return sb.ToString();
+        }
+
+        protected string readString(Stream mem)
+        {
+            StringBuilder sb = new StringBuilder();
+            StreamReader rdr = new StreamReader(mem);
+            int nc;
+            int count = 0;
+            while (true)
+            {
+                nc = rdr.Read();
+                Char c = (Char)nc;
+                if (c == '\0')
+                {
+                    break;
+                }
+                else
+                {
+                    sb.Append(c);
+                }
+                count++;
+            }
+            mem.Seek(count, SeekOrigin.Current);
+            return sb.ToString();
+        }
+
+        protected string readString(Stream mem, uint offset, bool returnPos)
+        {
+            uint oriPos = (uint)mem.Position;
+            mem.Seek(offset, SeekOrigin.Begin);
+            StringBuilder sb = new StringBuilder();
+            StreamReader rdr = new StreamReader(mem);
+            int nc;
+            uint count = 0;
+            while (true)
+            {
+                nc = rdr.Read();
+                Char c = (Char)nc;
+                if (c == '\0')
+                {
+                    break;
+                }
+                else
+                {
+                    sb.Append(c);
+                }
+                count++;
+            }
+            if (returnPos)
+            {
+                mem.Seek(oriPos, SeekOrigin.Begin);
+            }
+            else
+            {
+                mem.Seek(count, SeekOrigin.Current);
+            }
+            return sb.ToString();
+        }
+
+        protected string readString(long offset, uint size)
         {
             Stream.Seek(offset, 0);
             byte[] strBytes = extractChunk(Stream.Position, size);
@@ -466,9 +619,68 @@ namespace FBRepacker.PAC
             return BinaryPrimitives.ReadUInt32BigEndian(buffer);
         }
 
+        protected uint readUIntBigEndian(Stream mem)
+        {
+            byte[] buffer = new byte[4];
+            mem.Read(buffer, 0x00, 0x04);
+            return BinaryPrimitives.ReadUInt32BigEndian(buffer);
+        }
+
+        protected uint readUIntCD(Stream mem, bool bigendian)
+        {
+            byte[] buffer = new byte[4];
+            mem.Read(buffer, 0x00, 0x04);
+            byte[] checkCD = buffer.Where(s => s.Equals(0xCD)).ToArray();
+
+            if(checkCD.Count() >= 3)
+            {
+                for(int i = 0; i < 4; i++)
+                {
+                    if(buffer[i] == 0xCD)
+                    {
+                        buffer[i] = 0;
+                    }
+                }
+            }
+
+            if(bigendian)
+                return BinaryPrimitives.ReadUInt32BigEndian(buffer);
+
+            return BinaryPrimitives.ReadUInt32LittleEndian(buffer);
+        }
+
+        protected uint readUIntBigEndian()
+        {
+            byte[] buffer = new byte[4];
+            Stream.Read(buffer, 0x00, 0x04);
+            return BinaryPrimitives.ReadUInt32BigEndian(buffer);
+        }
+
         protected uint readUIntSmallEndian(long offset)
         {
             Stream.Seek(offset, 0);
+            byte[] buffer = new byte[4];
+            Stream.Read(buffer, 0x00, 0x04);
+            return BinaryPrimitives.ReadUInt32LittleEndian(buffer);
+        }
+
+        protected uint readUIntSmallEndian(Stream mem, long offset)
+        {
+            mem.Seek(offset, 0);
+            byte[] buffer = new byte[4];
+            mem.Read(buffer, 0x00, 0x04);
+            return BinaryPrimitives.ReadUInt32LittleEndian(buffer);
+        }
+
+        protected uint readUIntSmallEndian(Stream mem)
+        {
+            byte[] buffer = new byte[4];
+            mem.Read(buffer, 0x00, 0x04);
+            return BinaryPrimitives.ReadUInt32LittleEndian(buffer);
+        }
+
+        protected uint readUIntSmallEndian()
+        {
             byte[] buffer = new byte[4];
             Stream.Read(buffer, 0x00, 0x04);
             return BinaryPrimitives.ReadUInt32LittleEndian(buffer);
@@ -482,11 +694,26 @@ namespace FBRepacker.PAC
             return BinaryPrimitives.ReadInt32LittleEndian(buffer);
         }
 
+        protected uint readUIntSmallEndian(MemoryStream mem)
+        {
+            byte[] buffer = new byte[4];
+            mem.Read(buffer, 0x00, 0x04);
+            return BinaryPrimitives.ReadUInt32LittleEndian(buffer);
+        }
+
         // readShort(long offset, bool bigEndian);
         // if bigEndian = true, return big endian short. 
         protected short readShort(long offset, bool bigEndian)
         {
             Stream.Seek(offset, 0);
+            byte[] buffer = new byte[2];
+            Stream.Read(buffer, 0x00, 0x02);
+            short result = bigEndian ? BinaryPrimitives.ReadInt16BigEndian(buffer) : BinaryPrimitives.ReadInt16LittleEndian(buffer);
+            return result;
+        }
+
+        protected short readShort(bool bigEndian)
+        {
             byte[] buffer = new byte[2];
             Stream.Read(buffer, 0x00, 0x02);
             short result = bigEndian ? BinaryPrimitives.ReadInt16BigEndian(buffer) : BinaryPrimitives.ReadInt16LittleEndian(buffer);
@@ -502,11 +729,55 @@ namespace FBRepacker.PAC
             return result;
         }
 
+        protected ushort readUShort(Stream mem, bool bigEndian)
+        {
+            byte[] buffer = new byte[2];
+            mem.Read(buffer, 0x00, 0x02);
+            ushort result = bigEndian ? BinaryPrimitives.ReadUInt16BigEndian(buffer) : BinaryPrimitives.ReadUInt16LittleEndian(buffer);
+            return result;
+        }
+
+        protected ushort readUShort(bool bigEndian)
+        {
+            byte[] buffer = new byte[2];
+            Stream.Read(buffer, 0x00, 0x02);
+            ushort result = bigEndian ? BinaryPrimitives.ReadUInt16BigEndian(buffer) : BinaryPrimitives.ReadUInt16LittleEndian(buffer);
+            return result;
+        }
+
+        protected ushort readUShort(MemoryStream mem, bool bigEndian)
+        {
+            byte[] buffer = new byte[2];
+            mem.Read(buffer, 0x00, 0x02);
+            ushort result = bigEndian ? BinaryPrimitives.ReadUInt16BigEndian(buffer) : BinaryPrimitives.ReadUInt16LittleEndian(buffer);
+            return result;
+        }
+
         protected float readFloat(long offset, bool bigEndian)
         {
             Stream.Seek(offset, 0);
             byte[] buffer = new byte[4];
             Stream.Read(buffer, 0x00, 0x04);
+            if (bigEndian)
+                Array.Reverse(buffer);
+            float result = BitConverter.ToSingle(buffer, 0);
+            return result;
+        }
+
+        protected float readFloat(bool bigEndian)
+        {
+            byte[] buffer = new byte[4];
+            Stream.Read(buffer, 0x00, 0x04);
+            if (bigEndian)
+                Array.Reverse(buffer);
+            float result = BitConverter.ToSingle(buffer, 0);
+            return result;
+        }
+
+        protected float readFloat(Stream mem, bool bigEndian)
+        {
+            byte[] buffer = new byte[4];
+            mem.Read(buffer, 0x00, 0x04);
             if (bigEndian)
                 Array.Reverse(buffer);
             float result = BitConverter.ToSingle(buffer, 0);
@@ -616,6 +887,14 @@ namespace FBRepacker.PAC
             byte[] tempBuffer = BitConverter.GetBytes(floatval);
             if (bigEndian)
                 Array.Reverse(tempBuffer);
+            memStream.Write(tempBuffer, 0, tempBuffer.Length);
+        }
+
+        protected void appendLongMemoryStream(MemoryStream memStream, long intval, bool bigEndian)
+        {
+            if (bigEndian)
+                intval = BinaryPrimitives.ReverseEndianness(intval);
+            byte[] tempBuffer = BitConverter.GetBytes(intval);
             memStream.Write(tempBuffer, 0, tempBuffer.Length);
         }
 
@@ -924,7 +1203,6 @@ namespace FBRepacker.PAC
             return (t + (t >> 8)) >> 8;
         }
 
-
         // Sound parts.
         /* G722.1 Codec decoder is broken, use VGMSTREAM instead. (test.exe)
         protected byte[] convertBNSFtoPCM(string inputPath, int sampleRate, int bandwidth)
@@ -952,7 +1230,7 @@ namespace FBRepacker.PAC
         }
         */
 
-        protected byte[] convertBNSFtoWAV(string inputPath, int sampleRate, int bandwidth)
+        protected byte[] convertBNSFtoPCM(string inputPath, int sampleRate, int bandwidth)
         {
             string VGMSTREAMDecoderPath = Directory.GetCurrentDirectory() + @"\3rd Party\VGMSTREAM\";
             byte[] inputAudioBuffer = readFileinbyteStream(inputPath);
@@ -974,6 +1252,68 @@ namespace FBRepacker.PAC
 
             byte[] outputAudioBuffer = readFileinbyteStream(VGMSTREAMDecoderPath + "output.wav");
             return outputAudioBuffer;
+        }
+
+        protected byte[] convertPCMtoBNSF(string inputPath, uint sampleRate, uint bandwidth, uint sample_size)
+        {
+            string G7221EncoderPath = Directory.GetCurrentDirectory() + @"\3rd Party\G7221\Encoder\";
+            byte[] inputAudioBuffer = readFileinbyteStream(inputPath);
+            byte[] BNSFbitStream = inputAudioBuffer.Skip(0x30).Take(inputAudioBuffer.Length - 0x30).ToArray();
+            writeFileinbyteStream((G7221EncoderPath + "input.wav"), BNSFbitStream);
+
+            // Using G7221 decoder to encode PCM Stream to BNSF.
+            using (Process G7221Encoder = new Process())
+            {
+                G7221Encoder.StartInfo.UseShellExecute = false;
+                G7221Encoder.StartInfo.FileName = G7221EncoderPath + "encode.exe";
+                G7221Encoder.StartInfo.CreateNoWindow = false;
+                G7221Encoder.StartInfo.WorkingDirectory = G7221EncoderPath;
+                G7221Encoder.StartInfo.RedirectStandardOutput = true;
+                G7221Encoder.StartInfo.Arguments = "0 input.wav output.bnsf " + sampleRate.ToString() + " " + bandwidth.ToString();
+                G7221Encoder.Start();
+                G7221Encoder.WaitForExit();
+            }
+
+            byte[] outputAudioBuffer = readFileinbyteStream(G7221EncoderPath + "output.bnsf");
+            MemoryStream outputAudioMS = new MemoryStream(outputAudioBuffer);
+
+            // create BNSF header
+            MemoryStream BNSFHeader = new MemoryStream();
+            //https://github.com/vgmstream/vgmstream/blob/master/src/meta/bnsf.c
+            appendUIntMemoryStream(BNSFHeader, 0x424E5346, true); // BNSF magic
+
+            uint stream_data_Size = (uint)outputAudioBuffer.Length;
+            // the total stream size excluding the magic and the 4 byte to record its size. BNSF header will always have 0x30 in length so 0x30 - 0x8 = 0x28;
+            uint total_file_Size = stream_data_Size + 0x28; 
+            appendUIntMemoryStream(BNSFHeader, total_file_Size, true);
+
+            uint codec = 0x49533134; // IS14
+            appendUIntMemoryStream(BNSFHeader, codec, true);
+
+            // sfmt section
+            appendUIntMemoryStream(BNSFHeader, 0x73666D74, true); // sfmt keyword.
+            appendUIntMemoryStream(BNSFHeader, 0x14, true); // sfmt size, will always be 0x14 in length
+            appendUIntMemoryStream(BNSFHeader, 0x1, true); // number of channel, is 1 for FB.
+            appendUIntMemoryStream(BNSFHeader, sampleRate, true); // sample rate, should be 48000 under most circumstances.
+            appendUIntMemoryStream(BNSFHeader, sample_size, true);
+            appendUIntMemoryStream(BNSFHeader, 0, true); // should be related to loop stuff, but omit for now.
+            appendUShortMemoryStream(BNSFHeader, 0x78, true); // block size, always 0x78
+            appendUShortMemoryStream(BNSFHeader, 0x280, true); // block size, always 0x280
+
+            // sdat section
+            appendUIntMemoryStream(BNSFHeader, 0x73646174, true); // sdat keyword.
+            appendUIntMemoryStream(BNSFHeader, stream_data_Size, true); // the size of the stream data
+
+            // from here onwards are encoded stream data, just append the header to the outputAudioBuffer would do.
+            MemoryStream BNSF = new MemoryStream();
+
+            BNSFHeader.Seek(0, SeekOrigin.Begin);
+            outputAudioMS.Seek(0, SeekOrigin.Begin);
+
+            BNSFHeader.CopyTo(BNSF);
+            outputAudioMS.CopyTo(BNSF);
+
+            return BNSF.ToArray();
         }
 
         /* ATRAC3 Codecs have problem decoding some of the at3 extracted due to not supported birate. Hence, ffmpeg is used instead. Encoding is still useable.
@@ -1007,7 +1347,6 @@ namespace FBRepacker.PAC
             byte[] inputAudioBuffer = readFileinbyteStream(inputPath);
             writeFileinbyteStream((VGMSTREAMDecoderPath + "input.at3"), inputAudioBuffer);
 
-            // Using G7221 decoder to convert BNSF bitStream to PCM.
             using (Process VGSTREAMDecoder = new Process())
             {
                 VGSTREAMDecoder.StartInfo.UseShellExecute = false;
@@ -1023,6 +1362,84 @@ namespace FBRepacker.PAC
             }
 
             byte[] outputAudioBuffer = readFileinbyteStream(VGMSTREAMDecoderPath + "output.wav");
+            return outputAudioBuffer;
+        }
+
+        // Using PS3_at3tool.exe to encode pcm wav to at3
+        protected byte[] convertWAVtoAT3(string inputPath)
+        {
+            string ATRAC3EncoderPath = Directory.GetCurrentDirectory() + @"\3rd Party\ATRAC3 Codec\";
+            byte[] inputAudioBuffer = readFileinbyteStream(inputPath);
+            writeFileinbyteStream((ATRAC3EncoderPath + "input.wav"), inputAudioBuffer);
+
+            using (Process ATRAC3Encoder = new Process())
+            {
+                ATRAC3Encoder.StartInfo.UseShellExecute = false;
+                ATRAC3Encoder.StartInfo.FileName = ATRAC3EncoderPath + "PS3_at3tool.exe";
+                ATRAC3Encoder.StartInfo.WorkingDirectory = ATRAC3EncoderPath;
+                ATRAC3Encoder.StartInfo.CreateNoWindow = true;
+                ATRAC3Encoder.StartInfo.RedirectStandardOutput = true;
+                ATRAC3Encoder.StartInfo.Arguments = "-e input.wav output.at3";
+                ATRAC3Encoder.Start();
+                ATRAC3Encoder.WaitForExit();
+            }
+
+            byte[] outputAudioBuffer = readFileinbyteStream(ATRAC3EncoderPath + "output.at3");
+            return outputAudioBuffer;
+        }
+
+        protected byte[] convertVAGtoWAV(string inputPath)
+        {
+            string VGMSTREAMDecoderPath = Directory.GetCurrentDirectory() + @"\3rd Party\VGMSTREAM\";
+            byte[] inputAudioBuffer = readFileinbyteStream(inputPath);
+            writeFileinbyteStream((VGMSTREAMDecoderPath + "input.vag"), inputAudioBuffer);
+
+            // Using G7221 decoder to convert BNSF bitStream to PCM.
+            using (Process VGSTREAMDecoder = new Process())
+            {
+                VGSTREAMDecoder.StartInfo.UseShellExecute = false;
+                VGSTREAMDecoder.StartInfo.FileName = VGMSTREAMDecoderPath + "test.exe";
+                VGSTREAMDecoder.StartInfo.WorkingDirectory = VGMSTREAMDecoderPath;
+                VGSTREAMDecoder.StartInfo.CreateNoWindow = true;
+                VGSTREAMDecoder.StartInfo.RedirectStandardOutput = true;
+                VGSTREAMDecoder.StartInfo.Arguments = "-o output.wav input.vag";
+                // Alternative arg for ffmpeg decode.
+                // ATRAC3Codec.StartInfo.Arguments = "-i input.at3 -f wav -bitexact -acodec pcm_s16le -y -ar 48000 -ac 1 output.wav";
+                VGSTREAMDecoder.Start();
+                VGSTREAMDecoder.WaitForExit();
+            }
+
+            byte[] outputAudioBuffer = readFileinbyteStream(VGMSTREAMDecoderPath + "output.wav");
+            return outputAudioBuffer;
+        }
+
+        protected byte[] convertPCMtoVAG(string inputPath)
+        {
+            // the wav2vag.exe file is compiled from:
+            // https://github.com/ColdSauce/psxsdk/blob/master/tools/endian.c
+            // https://github.com/ColdSauce/psxsdk/blob/master/tools/wav2vag.c
+            // gcc wav2vag.c
+
+            string wav2vagPath = Directory.GetCurrentDirectory() + @"\3rd Party\wav2vag\";
+            byte[] inputAudioBuffer = readFileinbyteStream(inputPath);
+            writeFileinbyteStream((wav2vagPath + "input.wav"), inputAudioBuffer);
+
+            // Using G7221 decoder to convert BNSF bitStream to PCM.
+            using (Process wav2vagEncoder = new Process())
+            {
+                wav2vagEncoder.StartInfo.UseShellExecute = false;
+                wav2vagEncoder.StartInfo.FileName = wav2vagPath + "wav2vag.exe";
+                wav2vagEncoder.StartInfo.WorkingDirectory = wav2vagPath;
+                wav2vagEncoder.StartInfo.CreateNoWindow = true;
+                wav2vagEncoder.StartInfo.RedirectStandardOutput = true;
+                wav2vagEncoder.StartInfo.Arguments = "input.wav output.vag";
+                // Alternative arg for ffmpeg decode.
+                // ATRAC3Codec.StartInfo.Arguments = "-i input.at3 -f wav -bitexact -acodec pcm_s16le -y -ar 48000 -ac 1 output.wav";
+                wav2vagEncoder.Start();
+                wav2vagEncoder.WaitForExit();
+            }
+
+            byte[] outputAudioBuffer = readFileinbyteStream(wav2vagPath + "output.vag");
             return outputAudioBuffer;
         }
 
@@ -1070,6 +1487,33 @@ namespace FBRepacker.PAC
 
             byte[] outputAudioBuffer = readFileinbyteStream(ffmpegPath + "output.pcm");
             return outputAudioBuffer;
+        }
+
+        public int Search(byte[] src, byte[] pattern)
+        {
+            int c = src.Length - pattern.Length + 1;
+            int j;
+            for (int i = 0; i < c; i++)
+            {
+                if (src[i] != pattern[0]) continue;
+                for (j = pattern.Length - 1; j >= 1 && src[i + j] == pattern[j]; j--) ;
+                if (j == 0) return i;
+            }
+            return -1;
+        }
+
+        public int Search(MemoryStream srcMS, byte[] pattern)
+        {
+            byte[] src = srcMS.ToArray();
+            int c = src.Length - pattern.Length + 1;
+            int j;
+            for (int i = 0; i < c; i++)
+            {
+                if (src[i] != pattern[0]) continue;
+                for (j = pattern.Length - 1; j >= 1 && src[i + j] == pattern[j]; j--) ;
+                if (j == 0) return i;
+            }
+            return -1;
         }
 
         protected long GetPatternPositions(Stream stream, byte[] pattern)

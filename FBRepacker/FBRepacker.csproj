@@ -48,6 +48,9 @@
     <Reference Include="Microsoft.WindowsAPICodePack.ShellExtensions, Version=1.1.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\Microsoft.WindowsAPICodePack-Shell.1.1.0.0\lib\Microsoft.WindowsAPICodePack.ShellExtensions.dll</HintPath>
     </Reference>
+    <Reference Include="Newtonsoft.Json, Version=13.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\packages\Newtonsoft.Json.13.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
+    </Reference>
     <Reference Include="OpenTK, Version=3.2.0.0, Culture=neutral, PublicKeyToken=bad199fe84eb3df4, processorArchitecture=MSIL">
       <HintPath>..\packages\OpenTK.3.2\lib\net20\OpenTK.dll</HintPath>
     </Reference>
@@ -87,6 +90,7 @@
     <Reference Include="System.ValueTuple, Version=4.0.3.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
       <HintPath>..\packages\System.ValueTuple.4.5.0\lib\net47\System.ValueTuple.dll</HintPath>
     </Reference>
+    <Reference Include="System.Web.Extensions" />
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml" />
     <Reference Include="Microsoft.CSharp" />
@@ -97,6 +101,9 @@
     <Reference Include="System.Xaml">
       <RequiredTargetFramework>4.0</RequiredTargetFramework>
     </Reference>
+    <Reference Include="Ude, Version=0.1.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\UDE.CSharp.1.1.0\lib\Ude.dll</HintPath>
+    </Reference>
     <Reference Include="WindowsBase" />
     <Reference Include="PresentationCore" />
     <Reference Include="PresentationFramework" />
@@ -106,6 +113,27 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Data\DataTypes\ALEO.cs" />
+    <Compile Include="Data\DataTypes\CosmeticProperties.cs" />
+    <Compile Include="Data\DataTypes\Projectile_Properties.cs" />
+    <Compile Include="Data\DataTypes\Sound_Hash.cs" />
+    <Compile Include="Data\DataTypes\Unit_ID.cs" />
+    <Compile Include="Data\DataTypes\Unit_Varaibles.cs" />
+    <Compile Include="Data\FB_Parse\DataTypes\Unit_Info_List.cs" />
+    <Compile Include="Data\FB_Parse\Parse_Unit_Info_List.cs" />
+    <Compile Include="Data\Generate_Script_B4AC.cs" />
+    <Compile Include="Data\LinkScriptFunc.cs" />
+    <Compile Include="Data\MBON_Parse\GenerateAudioPACInfo.cs" />
+    <Compile Include="Data\MBON_Parse\MBON_Image_List.cs" />
+    <Compile Include="Data\MBON_Parse\nus3AudioNameHash.cs" />
+    <Compile Include="Data\MBON_Parse\ParseALEO.cs" />
+    <Compile Include="Data\MBON_Parse\ParseCosmeticProperties.cs" />
+    <Compile Include="Data\MBON_Parse\ParseProjectileProperties.cs" />
+    <Compile Include="Data\MBON_Parse\ParseUnitIDGroup.cs" />
+    <Compile Include="Data\MBON_Parse\Parse_Melee_Variables.cs" />
+    <Compile Include="Data\Reverse32ByteEndian.cs" />
+    <Compile Include="Data\Unit Data.cs" />
+    <Compile Include="Data\Voice_Line_Logic.cs" />
     <Compile Include="PACInfoUI\FileSpecific\NTP3FileInfoWindow.xaml.cs">
       <DependentUpon>NTP3FileInfoWindow.xaml</DependentUpon>
     </Compile>
@@ -117,12 +145,15 @@
       <DependentUpon>PACInfoUI.xaml</DependentUpon>
     </Compile>
     <Compile Include="PAC\Extract\FileTypes\EIDX.cs" />
+    <Compile Include="PAC\Internals\AhoCorasick.cs" />
+    <Compile Include="PAC\Internals\Crc32.cs" />
     <Compile Include="PAC\Internals\TrackingTextReader.cs" />
     <Compile Include="PAC\Repack\customFileInfo\DDSFileInfo.cs" />
     <Compile Include="PAC\Repack\customFileInfo\EIDXFileInfo.cs" />
     <Compile Include="PAC\Repack\customFileInfo\FHMFileInfo.cs" />
     <Compile Include="PAC\Repack\customFileInfo\GeneralFileInfo.cs" />
     <Compile Include="PAC\Repack\customFileInfo\NTP3FileInfo.cs" />
+    <Compile Include="PAC\Repack\customFileInfo\STREAMFileInfo.cs" />
     <Compile Include="PAC\Repack\FileTypes\EIDX.cs" />
     <Compile Include="PAC\Repack\FileTypes\NTP3.cs" />
     <Compile Include="PAC\Repack\FileTypes\STREAM.cs" />
@@ -132,11 +163,21 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
-    <Compile Include="RepackPsarc.cs" />
+    <Compile Include="Psarc\CopyPACFiles.cs" />
+    <Compile Include="Psarc\PACFileInfo.cs" />
+    <Compile Include="Psarc\PACFileInfoUI.xaml.cs">
+      <DependentUpon>PACFileInfoUI.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Psarc\PsarcFileInfo.xaml.cs">
+      <DependentUpon>PsarcFileInfo.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Psarc\RepackPsarc.cs" />
+    <Compile Include="Psarc\Toc.cs" />
     <Compile Include="SettingsWindow.xaml.cs">
       <DependentUpon>SettingsWindow.xaml</DependentUpon>
     </Compile>
     <Compile Include="PAC\Extract\FileTypes\STREAM.cs" />
+    <Compile Include="SimpleHelpers\FileEncoding.cs" />
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -164,6 +205,14 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Psarc\PACFileInfoUI.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Psarc\PsarcFileInfo.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="SettingsWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -183,12 +232,39 @@
       <SubType>Designer</SubType>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
+    <Resource Include="Data\JSON\Voice_Unit_ID_Group.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Data\JSON\Unit_IDs.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
     <None Include="OpenTK.dll.config" />
     <None Include="packages.config" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
     </None>
+    <Resource Include="Psarc\01_PATCH.TBL">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Psarc\02_PATCH.TBL">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Psarc\03_PATCH.TBL">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Psarc\04_PATCH.TBL">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Psarc\05_PATCH.TBL">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Psarc\06_PATCH.TBL">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Psarc\DATA.TBL">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />

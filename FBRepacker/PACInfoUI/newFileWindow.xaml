@@ -26,7 +26,6 @@
 
             <Button Content="Open File"></Button>
 
-
             <StackPanel Orientation="Horizontal">
                 <TextBlock Text="Insert after: " Width="100" TextAlignment="Right" TextWrapping="Wrap"/>
                 <ComboBox Margin="10,0,0,0" x:Name="FileNoSelect" Width="200">

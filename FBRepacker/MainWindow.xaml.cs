@@ -1,6 +1,7 @@
 ﻿using FBRepacker.PAC.Repack;
 using FBRepacker.NUD;
 using FBRepacker.PACInfoUI;
+using FBRepacker.Psarc;
 using Microsoft.WindowsAPICodePack.Dialogs;
 using System;
 using System.Buffers.Binary;
@@ -19,6 +20,9 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Forms;
+using FBRepacker.Data;
+using FBRepacker.Data.MBON_Parse;
+using FBRepacker.Data.FB_Parse;
 
 namespace FBRepacker
 {
@@ -27,7 +31,6 @@ namespace FBRepacker
     /// </summary>
     public partial class MainWindow : Window
     {
-        int fileNumber = 1;
         string filePath = string.Empty, currDirectory = string.Empty, rootDirectory = string.Empty;
         FileStream PAC;
 
@@ -35,51 +38,16 @@ namespace FBRepacker
         {
             InitializeComponent();
             init();
+            this.DataContext = this;
             Properties.Settings.Default.Save();
         }
 
         private void init()
         {
-            // Init settings for paths. (TODO cleanup)
-            if(Properties.Settings.Default.OpenExtractPath == string.Empty || Properties.Settings.Default.OpenExtractPath == null)
-                Properties.Settings.Default.OpenExtractPath = Directory.GetCurrentDirectory();
-
-            if (Properties.Settings.Default.OpenRepackPath == string.Empty || Properties.Settings.Default.OpenRepackPath == null)
-                Properties.Settings.Default.OpenRepackPath = Directory.GetCurrentDirectory();
-
-            if (Properties.Settings.Default.ExtractPath == string.Empty || Properties.Settings.Default.ExtractPath == null)
-                Properties.Settings.Default.ExtractPath = Directory.GetCurrentDirectory();
-
-            if (Properties.Settings.Default.RepackPath == string.Empty || Properties.Settings.Default.RepackPath == null)
-                Properties.Settings.Default.RepackPath = Directory.GetCurrentDirectory();
-
-            if (Properties.Settings.Default.NUDPathNUDtoDAE == string.Empty || Properties.Settings.Default.NUDPathNUDtoDAE == null)
-                Properties.Settings.Default.NUDPathNUDtoDAE = Directory.GetCurrentDirectory();
-
-            if (Properties.Settings.Default.VBNPathNUDtoDAE == string.Empty || Properties.Settings.Default.VBNPathNUDtoDAE == null)
-                Properties.Settings.Default.VBNPathNUDtoDAE = Directory.GetCurrentDirectory();
-
-            if (Properties.Settings.Default.DAEPathDAEtoNUD == string.Empty || Properties.Settings.Default.DAEPathDAEtoNUD == null)
-                Properties.Settings.Default.DAEPathDAEtoNUD = Directory.GetCurrentDirectory();
-
-            if (Properties.Settings.Default.VBNPathDAEtoNUD == string.Empty || Properties.Settings.Default.VBNPathDAEtoNUD == null)
-                Properties.Settings.Default.VBNPathDAEtoNUD = Directory.GetCurrentDirectory();
-
-            if (Properties.Settings.Default.OutputPathNUDtoDAE == string.Empty || Properties.Settings.Default.OutputPathNUDtoDAE == null)
-                Properties.Settings.Default.OutputPathNUDtoDAE = Directory.GetCurrentDirectory();
-
-            if (Properties.Settings.Default.OutputPathDAEtoNUD == string.Empty || Properties.Settings.Default.OutputPathDAEtoNUD == null)
-                Properties.Settings.Default.OutputPathDAEtoNUD = Directory.GetCurrentDirectory();
-
-            Properties.Settings.Default.Save();
-
-            ExtractPath.Text = Properties.Settings.Default.ExtractPath;
-            RepackPath.Text = Properties.Settings.Default.RepackPath;
-            NUDtoDAEOutputPath.Text = Properties.Settings.Default.OutputPathNUDtoDAE;
-            DAEtoNUDOutputPath.Text = Properties.Settings.Default.OutputPathDAEtoNUD;
+            tabCont.SelectedIndex = Properties.Settings.Default.SelectedTab;
         }
 
-        private void OpenExtractFileMenu_Click(object sender, RoutedEventArgs e)
+        private void Open_Extract_PAC_File_Click(object sender, RoutedEventArgs e)
         {
             // Close the filestream if another file is opened. This should not be here (TODO)
             if (PAC != null)
@@ -94,9 +62,10 @@ namespace FBRepacker
             
             this.filePath = openFileDialog.FileName;
             Properties.Settings.Default.OpenExtractPath = File.Exists(this.filePath) ? System.IO.Path.GetDirectoryName(this.filePath) : Properties.Settings.Default.OpenExtractPath;
+            Properties.Settings.Default.Save();
         }
 
-        private void OpenRepackFileMenu_Click(object sender, RoutedEventArgs e)
+        private void Open_Repack_PAC_Folder_Click(object sender, RoutedEventArgs e)
         {
             // Close the filestream if another file is opened.
             if (PAC != null)
@@ -112,53 +81,89 @@ namespace FBRepacker
             Properties.Settings.Default.Save();
         }
 
+        private void Open_Psarc_PAC_File_List_Click(object sender, RoutedEventArgs e)
+        {
+            // Open file select dialog
+            OpenFileDialog openFileDialog = new OpenFileDialog();
+            string NUDfileDirectoryPath = System.IO.Path.GetDirectoryName(Properties.Settings.Default.PsarcPACFilePathList);
+            openFileDialog.InitialDirectory = NUDfileDirectoryPath;
+            openFileDialog.RestoreDirectory = true;
+            openFileDialog.ShowDialog();
+
+            NUDfileDirectoryPath = openFileDialog.FileName;
+            Properties.Settings.Default.PsarcPACFilePathList = File.Exists(NUDfileDirectoryPath) ? NUDfileDirectoryPath : Properties.Settings.Default.PsarcPACFilePathList;
+            Properties.Settings.Default.Save();
+        }
+
+        private void Open_Psarc_PAC_Repack_Folder_Click(object sender, RoutedEventArgs e)
+        {
+            // Close the filestream if another file is opened.
+            if (PAC != null)
+                PAC.Close();
+
+            // Open file select dialog
+            string openRepackPath = openFolderDialog(Properties.Settings.Default.PsarcRepackFolder);
+
+            string filePath = openRepackPath;
+            if (Directory.Exists(filePath))
+                Properties.Settings.Default.PsarcRepackFolder = filePath;
+
+            Properties.Settings.Default.Save();
+        }
+
         private void OpenSettings_Click(object sender, RoutedEventArgs e)
         {
             SettingsWindow settingsWindow = new SettingsWindow();
             settingsWindow.ShowDialog();
         }
 
-        private void selectExtractPathButton(object sender, RoutedEventArgs e)
+        private void change_Extract_Output_Folder_Button(object sender, RoutedEventArgs e)
         {
-            string extractPath = openFolderDialog(Properties.Settings.Default.ExtractPath);
+            string extractPath = openFolderDialog(Properties.Settings.Default.OutputExtractPAC);
             if(extractPath != string.Empty)
             {
-                Properties.Settings.Default.ExtractPath = extractPath;
+                Properties.Settings.Default.OutputExtractPAC = extractPath;
                 Properties.Settings.Default.Save();
-                ExtractPath.Text = Properties.Settings.Default.ExtractPath;
             }
         }
 
-        private void selectRepackPathButton(object sender, RoutedEventArgs e)
+        private void change_Repack_Output_Folder_Button(object sender, RoutedEventArgs e)
         {
-            string repackPath = openFolderDialog(Properties.Settings.Default.RepackPath);
+            string repackPath = openFolderDialog(Properties.Settings.Default.OutputRepackPAC);
             if (repackPath != string.Empty)
             {
-                Properties.Settings.Default.RepackPath = repackPath;
+                Properties.Settings.Default.OutputRepackPAC = repackPath;
                 Properties.Settings.Default.Save();
-                RepackPath.Text = Properties.Settings.Default.RepackPath;
             }
         }
 
-        private void selectNUDtoDAEOutputPathButton(object sender, RoutedEventArgs e)
+        private void change_Psarc_Repack_Output_Folder_Button(object sender, RoutedEventArgs e)
+        {
+            string repackPath = openFolderDialog(Properties.Settings.Default.OutputRepackPsarc);
+            if (repackPath != string.Empty)
+            {
+                Properties.Settings.Default.OutputRepackPsarc = repackPath;
+                Properties.Settings.Default.Save();
+            }
+        }
+
+        private void change_NUD_to_DAE_Output_Path_Button(object sender, RoutedEventArgs e)
         {
             string NUDtoDAEPath = openFolderDialog(Properties.Settings.Default.OutputPathNUDtoDAE);
             if (NUDtoDAEPath != string.Empty)
             {
                 Properties.Settings.Default.OutputPathNUDtoDAE = NUDtoDAEPath;
                 Properties.Settings.Default.Save();
-                NUDtoDAEOutputPath.Text = Properties.Settings.Default.OutputPathNUDtoDAE;
             }
         }
 
-        private void selectDAEtoNUDOutputPathButton(object sender, RoutedEventArgs e)
+        private void change_DAE_to_NUD_Output_Path_Button(object sender, RoutedEventArgs e)
         {
             string DAEtoNUDPath = openFolderDialog(Properties.Settings.Default.OutputPathDAEtoNUD);
             if (DAEtoNUDPath != string.Empty)
             {
                 Properties.Settings.Default.OutputPathDAEtoNUD = DAEtoNUDPath;
                 Properties.Settings.Default.Save();
-                DAEtoNUDOutputPath.Text = Properties.Settings.Default.OutputPathDAEtoNUD;
             }
         }
 
@@ -175,7 +180,7 @@ namespace FBRepacker
             return string.Empty;
         }
 
-        private void OpenNUDandVBNFile_Click(object sender, RoutedEventArgs e)
+        private void OpenNUDFile_Click(object sender, RoutedEventArgs e)
         {
             // Open file select dialog
             OpenFileDialog openFileDialog = new OpenFileDialog();
@@ -187,7 +192,11 @@ namespace FBRepacker
             NUDfileDirectoryPath = openFileDialog.FileName;
             Properties.Settings.Default.NUDPathNUDtoDAE = File.Exists(NUDfileDirectoryPath) ? NUDfileDirectoryPath : Properties.Settings.Default.NUDPathNUDtoDAE;
             Properties.Settings.Default.Save();
+        }
 
+        private void OpenVBNFile_Click(object sender, RoutedEventArgs e)
+        {
+            OpenFileDialog openFileDialog = new OpenFileDialog();
             string VBNfileDirectoryPath = Properties.Settings.Default.VBNPathNUDtoDAE;
             openFileDialog.InitialDirectory = System.IO.Path.GetDirectoryName(Properties.Settings.Default.VBNPathNUDtoDAE);
             openFileDialog.RestoreDirectory = true;
@@ -198,7 +207,7 @@ namespace FBRepacker
             Properties.Settings.Default.Save();
         }
 
-        private void OpenDAEandVBNFile_Click(object sender, RoutedEventArgs e)
+        private void OpenDAEFile_Click(object sender, RoutedEventArgs e)
         {
             OpenFileDialog openFileDialog = new OpenFileDialog();
             string DAEfilePath = System.IO.Path.GetDirectoryName(Properties.Settings.Default.DAEPathDAEtoNUD);
@@ -209,7 +218,50 @@ namespace FBRepacker
             DAEfilePath = openFileDialog.FileName;
             Properties.Settings.Default.DAEPathDAEtoNUD = File.Exists(DAEfilePath) ? DAEfilePath : Properties.Settings.Default.DAEPathDAEtoNUD;
             Properties.Settings.Default.Save();
+        }
 
+        private void OpenCScriptFile_Click(object sender, RoutedEventArgs e)
+        {
+            OpenFileDialog openFileDialog = new OpenFileDialog();
+            string ScriptFilePath = System.IO.Path.GetDirectoryName(Properties.Settings.Default.CScriptFilePath);
+            openFileDialog.InitialDirectory = ScriptFilePath;
+            openFileDialog.RestoreDirectory = true;
+            openFileDialog.ShowDialog();
+
+            ScriptFilePath = openFileDialog.FileName;
+            Properties.Settings.Default.CScriptFilePath = File.Exists(ScriptFilePath) ? ScriptFilePath : Properties.Settings.Default.CScriptFilePath;
+            Properties.Settings.Default.Save();
+        }
+
+        private void OpenBABBFile_Click(object sender, RoutedEventArgs e)
+        {
+            OpenFileDialog openFileDialog = new OpenFileDialog();
+            string BABBFilePath = System.IO.Path.GetDirectoryName(Properties.Settings.Default.BABBFilePath);
+            openFileDialog.InitialDirectory = BABBFilePath;
+            openFileDialog.RestoreDirectory = true;
+            openFileDialog.ShowDialog();
+
+            BABBFilePath = openFileDialog.FileName;
+            Properties.Settings.Default.BABBFilePath = File.Exists(BABBFilePath) ? BABBFilePath : Properties.Settings.Default.BABBFilePath;
+            Properties.Settings.Default.Save();
+        }
+
+        private void OpenB4ACFile_Click(object sender, RoutedEventArgs e)
+        {
+            OpenFileDialog openFileDialog = new OpenFileDialog();
+            string B4ACFilePath = System.IO.Path.GetDirectoryName(Properties.Settings.Default.B4ACFilePath);
+            openFileDialog.InitialDirectory = B4ACFilePath;
+            openFileDialog.RestoreDirectory = true;
+            openFileDialog.ShowDialog();
+
+            B4ACFilePath = openFileDialog.FileName;
+            Properties.Settings.Default.B4ACFilePath = File.Exists(B4ACFilePath) ? B4ACFilePath : Properties.Settings.Default.B4ACFilePath;
+            Properties.Settings.Default.Save();
+        }
+        
+        private void OpenDAEVBNFile_Click(object sender, RoutedEventArgs e)
+        {
+            OpenFileDialog openFileDialog = new OpenFileDialog();
             if (!Properties.Settings.Default.exportVBN)
             {
                 string VBNfileDirectoryPath = Properties.Settings.Default.VBNPathDAEtoNUD;
@@ -223,19 +275,100 @@ namespace FBRepacker
             }
         }
 
+        private void OpenMBONDataFile_Click(object sender, RoutedEventArgs e)
+        {
+            string MBONDataFolderPath = openFolderDialog(Properties.Settings.Default.MBONDataFolderPath);
+            if (MBONDataFolderPath != string.Empty)
+            {
+                Properties.Settings.Default.MBONDataFolderPath = MBONDataFolderPath;
+                Properties.Settings.Default.Save();
+            }
+        }
+
+        private void OpenFBDataFile_Click(object sender, RoutedEventArgs e)
+        {
+            string FBDataFolderPath = openFolderDialog(Properties.Settings.Default.FBDataFolderPath);
+            if (FBDataFolderPath != string.Empty)
+            {
+                Properties.Settings.Default.FBDataFolderPath = FBDataFolderPath;
+                Properties.Settings.Default.Save();
+            }
+        }
+
+        private void change_MBON_to_FB_Data_Output_Path_Click(object sender, RoutedEventArgs e)
+        {
+            string outputDataFolderPath = openFolderDialog(Properties.Settings.Default.outputDataFolderPath);
+            if (outputDataFolderPath != string.Empty)
+            {
+                Properties.Settings.Default.outputDataFolderPath = outputDataFolderPath;
+                Properties.Settings.Default.Save();
+            }
+        }
+
+        private void change_Script_Output_Path_Click(object sender, RoutedEventArgs e)
+        {
+            string outputScriptFolderPath = openFolderDialog(Properties.Settings.Default.outputScriptFolderPath);
+            if (outputScriptFolderPath != string.Empty)
+            {
+                Properties.Settings.Default.outputScriptFolderPath = outputScriptFolderPath;
+                Properties.Settings.Default.Save();
+            }
+        }
+
         private void NUDtoDAE_Click(object sender, RoutedEventArgs e)
         {
-            new ModelConverter().fromNUDtoDAE();
+            debugMessageBox.AppendText(Environment.NewLine);
+            debugMessageBox.AppendText("Starting NUD to DAE conversion");
+            try
+            {
+                new ModelConverter().fromNUDtoDAE();
+            }
+            catch (Exception exp)
+            {
+                debugMessageBox.AppendText(Environment.NewLine);
+                debugMessageBox.AppendText("Error: " + exp + "." + @"\n Please restart the application.");
+            }
+            debugMessageBox.AppendText(Environment.NewLine);
+            debugMessageBox.AppendText("NUD to DAE conversion complete");
         }
 
         private void DAEtoNUD_Click(object sender, RoutedEventArgs e)
         {
-            new ModelConverter().fromDAEtoNUD();
+            debugMessageBox.AppendText(Environment.NewLine);
+            debugMessageBox.AppendText("Starting DAE to NUD conversion");
+            try
+            {
+                new ModelConverter().fromDAEtoNUD();
+            }
+            catch (Exception exp)
+            {
+                debugMessageBox.AppendText(Environment.NewLine);
+                debugMessageBox.AppendText("Error: " + exp + "." + @"\n Please restart the application.");
+            }
+            debugMessageBox.AppendText(Environment.NewLine);
+            debugMessageBox.AppendText("DAE to NUD conversion complete");
+        }
+
+        private void MBON_to_FB_Data_Click(object sender, RoutedEventArgs e)
+        {
+            debugMessageBox.AppendText(Environment.NewLine);
+            debugMessageBox.AppendText("Starting MBON to FB Data conversion");
+            try
+            {
+                new Unit_Data();
+                //new ModelConverter().fromDAEtoNUD();
+            }
+            catch (Exception exp)
+            {
+                debugMessageBox.AppendText(Environment.NewLine);
+                debugMessageBox.AppendText("Error: " + exp + "." + @"\n Please restart the application.");
+            }
+            debugMessageBox.AppendText(Environment.NewLine);
+            debugMessageBox.AppendText("MBON to FB Data conversion complete");
         }
 
         private void extractPAC_Click(object sender, RoutedEventArgs e)
         {
-
             if (filePath != string.Empty && filePath != null)
             {
                 DialogResult askMultiplePAC = System.Windows.Forms.MessageBox.Show("Extract Multiple FHM?", "Extract Multiple FHM?", MessageBoxButtons.YesNo);
@@ -244,7 +377,10 @@ namespace FBRepacker
                 long streamSize = stream.Length;
                 stream.Close();
 
-                string baseExtractPath = Properties.Settings.Default.ExtractPath + @"\" + Path.GetFileNameWithoutExtension(filePath);
+                string baseExtractPath = Properties.Settings.Default.OutputExtractPAC + @"\" + Path.GetFileNameWithoutExtension(filePath);
+
+                debugMessageBox.AppendText(Environment.NewLine);
+                debugMessageBox.AppendText("Starts Extracting " + filePath);
 
                 if (askMultiplePAC == System.Windows.Forms.DialogResult.Yes)
                 {
@@ -253,27 +389,208 @@ namespace FBRepacker
                     do
                     {
                         string extractPath = baseExtractPath + @"\" + i.ToString();
-                        new PAC.Extract.ExtractPAC(filePath, PAC).extractPAC(PACEndPosition, out PACEndPosition, extractPath);
+                        try
+                        {
+                            new PAC.Extract.ExtractPAC(filePath, PAC).extractPAC(PACEndPosition, out PACEndPosition, extractPath);
+                        }
+                        catch(Exception exp)
+                        {
+                            debugMessageBox.AppendText(Environment.NewLine);
+                            debugMessageBox.AppendText("Error: " + exp + "." + @"\n Please restart the application.");
+                        }
                         i++;
                     } while (PACEndPosition < streamSize);
                 }
                 else
                 {
                     new PAC.Extract.ExtractPAC(filePath, PAC).extractPAC(0, out long unused, baseExtractPath);
+                    try
+                    {
+                        
+                    }
+                    catch (Exception exp)
+                    {
+                        debugMessageBox.AppendText(Environment.NewLine);
+                        debugMessageBox.AppendText("Error: " + exp + "." + @"\n Please restart the application.");
+                    }
                 }
             }
+            debugMessageBox.AppendText(Environment.NewLine);
+            debugMessageBox.AppendText("Extract complete");
+        }
+
+        private void Button_Click(object sender, RoutedEventArgs e)
+        {
+            debugMessageBox.Text = "Log: ";
         }
 
         private void repackPAC_Click(object sender, RoutedEventArgs e)
         {
-            RepackPAC repackInstance = new RepackPAC(Properties.Settings.Default.RepackPath);
-            PACInfoWindow pacInfoUI = new PACInfoWindow(repackInstance);
-            pacInfoUI.ShowDialog();
+            debugMessageBox.AppendText(Environment.NewLine);
+            debugMessageBox.AppendText("Starts Repack PAC to: " + Properties.Settings.Default.OutputRepackPAC);
+            try
+            {
+                RepackPAC repackInstance = new RepackPAC(Properties.Settings.Default.OutputRepackPAC);
+                PACInfoWindow pacInfoUI = new PACInfoWindow(repackInstance);
+                pacInfoUI.ShowDialog();
+            }
+            catch (Exception exp)
+            {
+                debugMessageBox.AppendText(Environment.NewLine);
+                debugMessageBox.AppendText("Error: " + exp + "." + @"\n Please restart the application.");
+            }
+            debugMessageBox.AppendText(Environment.NewLine);
+            debugMessageBox.AppendText("Repack complete");
+        }
+
+        private void TabControl_Selected(object sender, RoutedEventArgs e)
+        {
+            Properties.Settings.Default.SelectedTab = tabCont.SelectedIndex;
+            Properties.Settings.Default.Save();
+        }
+
+        private void Copy_PAC_to_Psarc_Repack_Folder(object sender, RoutedEventArgs e)
+        {
+            new CopyPACFiles(Properties.Settings.Default.PsarcPACFilePathList, Properties.Settings.Default.PsarcRepackFolder);
         }
 
         private void repackPsarc_Click(object sender, RoutedEventArgs e)
         {
-            new RepackPsarc();
+            debugMessageBox.AppendText(Environment.NewLine);
+            debugMessageBox.AppendText("Starts Repack Psarc to: " + Properties.Settings.Default.OutputRepackPsarc);
+            try
+            {
+                Properties.Settings.Default.PsarcOutputFileName = PsarcFileName.Text;
+                Properties.Settings.Default.Save();
+                bool? done = new PsarcFileInfo(PsarcFileName.Text).ShowDialog();
+                if (done == true)
+                {
+                    debugMessageBox.AppendText(Environment.NewLine);
+                    debugMessageBox.AppendText("Psarc Repack Complete!");
+                }
+                else
+                {
+                    debugMessageBox.AppendText(Environment.NewLine);
+                    debugMessageBox.AppendText("Psarc Repack Aborted!");
+                }
+            }
+            catch (Exception exp)
+            {
+                debugMessageBox.AppendText(Environment.NewLine);
+                debugMessageBox.AppendText("Error: " + exp + "." + @"\n Please restart the application.");
+            }
+        }
+
+        private void Link_Script_Click(object sender, RoutedEventArgs e)
+        {
+            debugMessageBox.AppendText(Environment.NewLine);
+            debugMessageBox.AppendText("Linking Script from: " + Properties.Settings.Default.CScriptFilePath + " with BABB from " + Properties.Settings.Default.BABBFilePath);
+            try
+            {
+                new LinkScriptFunc();
+                //new ModelConverter().fromDAEtoNUD();
+            }
+            catch (Exception exp)
+            {
+                debugMessageBox.AppendText(Environment.NewLine);
+                debugMessageBox.AppendText("Error: " + exp + "." + @"\n Please restart the application.");
+            }
+            debugMessageBox.AppendText(Environment.NewLine);
+            debugMessageBox.AppendText("Linking Script Complete!");
+        }
+
+        private void Generate_B4AC_Click(object sender, RoutedEventArgs e)
+        {
+            debugMessageBox.AppendText(Environment.NewLine);
+            debugMessageBox.AppendText("Generating B4AC from: " + Properties.Settings.Default.B4ACFilePath);
+            try
+            {
+                new Generate_Script_B4AC();
+            }
+            catch (Exception exp)
+            {
+                debugMessageBox.AppendText(Environment.NewLine);
+                debugMessageBox.AppendText("Error: " + exp + "." + @"\n Please restart the application.");
+            }
+            debugMessageBox.AppendText(Environment.NewLine);
+            debugMessageBox.AppendText("B4AC Generate Complete!");
+        }
+
+        private void Debug_Click(object sender, RoutedEventArgs e)
+        {
+            new Voice_Line_Logic();
+            //new ParseALEO();
+            //new MBON_Image_List();
+            /*
+            string[] allfiles = Directory.GetFiles(@"G:\Games\PS3\EXVSFB JPN\Pkg research\FB Repacker\Extract\Input\MBON\v2\All Local Sound", "*.*", SearchOption.AllDirectories);
+            for(int i = 0; i < allfiles.Length; i++)
+            {
+                filePath = allfiles[i];
+                string baseExtractPath = Properties.Settings.Default.OutputExtractPAC + @"\" + Directory.GetParent(filePath).Name + " - " + Path.GetFileNameWithoutExtension(filePath) + @"\" + Path.GetFileNameWithoutExtension(filePath);
+                try
+                {
+                    new PAC.Extract.ExtractPAC(filePath, PAC).extractPAC(0, out long unused, Path.GetDirectoryName(baseExtractPath));
+                }
+                catch (Exception exp)
+                {
+                    debugMessageBox.AppendText(Environment.NewLine);
+                    debugMessageBox.AppendText("Error: " + exp + "." + @"\n Please restart the application.");
+                }
+            }            
+             
+             */
+            /*
+            string[] allfiles = Directory.GetFiles(@"G:\Games\PS3\EXVSFB JPN\Pkg research\FB Repacker\Extract\Input\MBON\v2\All Boss Unit Image", "*.*", SearchOption.AllDirectories);
+            for (int i = 0; i < allfiles.Length; i++)
+            {
+                filePath = allfiles[i];
+                string baseExtractPath = Properties.Settings.Default.OutputExtractPAC + @"\" + Directory.GetParent(filePath).Name + @"\" + Path.GetFileNameWithoutExtension(filePath) + @"\";
+                try
+                {
+                    new PAC.Extract.ExtractPAC(filePath, PAC).extractPAC(0, out long unused, Path.GetDirectoryName(baseExtractPath));
+                }
+                catch (Exception exp)
+                {
+                    debugMessageBox.AppendText(Environment.NewLine);
+                    debugMessageBox.AppendText("Error: " + exp + "." + @"\n Please restart the application.");
+                }
+            }
+             */
+            /*
+            string[] allfiles = Directory.GetFiles(@"G:\Games\PS3\EXVSFB JPN\Pkg research\FB Repacker\Extract\Input\MBON\v2\All Playable Unit Image", "*.*", SearchOption.AllDirectories);
+            for (int i = 0; i < allfiles.Length; i++)
+            {
+                filePath = allfiles[i];
+                string baseExtractPath = Properties.Settings.Default.OutputExtractPAC + @"\" + Directory.GetParent(filePath).Name + @"\" + Path.GetFileNameWithoutExtension(filePath) + @"\";
+                try
+                {
+                    new PAC.Extract.ExtractPAC(filePath, PAC).extractPAC(0, out long unused, Path.GetDirectoryName(baseExtractPath));
+                }
+                catch (Exception exp)
+                {
+                    debugMessageBox.AppendText(Environment.NewLine);
+                    debugMessageBox.AppendText("Error: " + exp + "." + @"\n Please restart the application.");
+                }
+            }
+             */
+
+            /*
+            string[] allfiles = Directory.GetFiles(@"G:\Games\PS3\EXVSFB JPN\Pkg research\FB Repacker\Extract\Input\MBON\v2\All Pilot Image", "*.*", SearchOption.AllDirectories);
+            for (int i = 0; i < allfiles.Length; i++)
+            {
+                filePath = allfiles[i];
+                string baseExtractPath = Properties.Settings.Default.OutputExtractPAC + @"\" + Directory.GetParent(filePath).Name + @"\" + Path.GetFileNameWithoutExtension(filePath) + @"\";
+                try
+                {
+                    new PAC.Extract.ExtractPAC(filePath, PAC).extractPAC(0, out long unused, Path.GetDirectoryName(baseExtractPath));
+                }
+                catch (Exception exp)
+                {
+                    debugMessageBox.AppendText(Environment.NewLine);
+                    debugMessageBox.AppendText("Error: " + exp + "." + @"\n Please restart the application.");
+                }
+            }
+             */
         }
 
         /*
@@ -299,5 +616,29 @@ namespace FBRepacker
             
         }
         */
+
+    }
+
+    [ValueConversion(typeof(bool), typeof(bool))]
+    public class InverseBooleanConverter : IValueConverter
+    {
+        #region IValueConverter Members
+
+        public object Convert(object value, Type targetType, object parameter,
+            System.Globalization.CultureInfo culture)
+        {
+            if (targetType != typeof(bool))
+                throw new InvalidOperationException("The target must be a boolean");
+
+            return !(bool)value;
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter,
+            System.Globalization.CultureInfo culture)
+        {
+            throw new NotSupportedException();
+        }
+
+        #endregion
     }
 }

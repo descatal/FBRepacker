@@ -93,7 +93,6 @@ namespace FBRepacker.PACInfoUI
             lbl.Content = fileInfo.fileNo.ToString("000") + " - " + fileInfo.fileName;
             //stack.Children.Add(border);
             
-
             if (fileInfo.header == "NTP3" && !fileInfo.isLinked)
             {
                 if (!repackInstance.repackNTP3.NTP3FileInfoDic.ContainsKey(fileInfo.fileNo))
@@ -124,6 +123,33 @@ namespace FBRepacker.PACInfoUI
                 }
             }
 
+            if (fileInfo.header == "STREAM")
+            {
+                lbl.Content = fileInfo.fileNo.ToString("000") + "-STREAM";
+
+                var STREAMFileInfoList = repackInstance.repackSTREAM.streamFileInfoList;
+
+                foreach (var audioFile in STREAMFileInfoList)
+                {
+                    TreeViewItem itemAudio = new TreeViewItem();
+                    itemAudio.IsExpanded = true;
+
+                    // create stack panel
+                    StackPanel stackAudio = new StackPanel();
+                    stackAudio.Orientation = Orientation.Horizontal;
+
+                    // Label
+                    Label lblDDS = new Label();
+                    lblDDS.Content = audioFile.file_Name;
+
+                    stackAudio.Children.Add(lblDDS);
+                    itemAudio.Header = stackAudio;
+                    //itemAudio.Tag = audioFile;
+
+                    item.Items.Add(itemAudio);
+                }
+            }
+
             /*// create Image
             Border border = new Border();
             border.Width = 8;
@@ -146,6 +172,7 @@ namespace FBRepacker.PACInfoUI
 
         private void AddButton_Click(object sender, RoutedEventArgs e)
         {
+            /*
             newFileWindow newFileWindow = new newFileWindow();
             var completed = newFileWindow.ShowDialog();
             
@@ -153,6 +180,7 @@ namespace FBRepacker.PACInfoUI
             {
 
             }
+            */
         }
 
         private void DeleteLast_Click(object sender, RoutedEventArgs e)
@@ -162,9 +190,9 @@ namespace FBRepacker.PACInfoUI
 
         private void RebuildInfoButton_Click(object sender, RoutedEventArgs e)
         {
-            repackInstance.initializePACInfoFileExtract();
-            repackInstance.rebuildPACInfo(parsedFileInfo);
-            repackInstance.writePACInfo();
+            //repackInstance.initializePACInfoFileExtract();
+            //repackInstance.rebuildPACInfo(parsedFileInfo);
+            //repackInstance.writePACInfo();
         }
 
         private void RepackButton_Click(object sender, RoutedEventArgs e)

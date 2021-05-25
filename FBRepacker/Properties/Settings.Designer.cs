@@ -25,7 +25,7 @@ namespace FBRepacker.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        [global::System.Configuration.DefaultSettingValueAttribute("C:\\")]
         public string OpenExtractPath {
             get {
                 return ((string)(this["OpenExtractPath"]));
@@ -37,25 +37,25 @@ namespace FBRepacker.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("")]
-        public string ExtractPath {
+        [global::System.Configuration.DefaultSettingValueAttribute("C:\\")]
+        public string OutputExtractPAC {
             get {
-                return ((string)(this["ExtractPath"]));
+                return ((string)(this["OutputExtractPAC"]));
             }
             set {
-                this["ExtractPath"] = value;
+                this["OutputExtractPAC"] = value;
             }
         }
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("")]
-        public string RepackPath {
+        [global::System.Configuration.DefaultSettingValueAttribute("C:\\")]
+        public string OutputRepackPAC {
             get {
-                return ((string)(this["RepackPath"]));
+                return ((string)(this["OutputRepackPAC"]));
             }
             set {
-                this["RepackPath"] = value;
+                this["OutputRepackPAC"] = value;
             }
         }
         
@@ -73,7 +73,7 @@ namespace FBRepacker.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        [global::System.Configuration.DefaultSettingValueAttribute("C:\\")]
         public string OpenRepackPath {
             get {
                 return ((string)(this["OpenRepackPath"]));
@@ -85,7 +85,7 @@ namespace FBRepacker.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        [global::System.Configuration.DefaultSettingValueAttribute("C:\\")]
         public string VBNPathNUDtoDAE {
             get {
                 return ((string)(this["VBNPathNUDtoDAE"]));
@@ -97,7 +97,7 @@ namespace FBRepacker.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        [global::System.Configuration.DefaultSettingValueAttribute("C:\\")]
         public string NUDPathNUDtoDAE {
             get {
                 return ((string)(this["NUDPathNUDtoDAE"]));
@@ -109,7 +109,7 @@ namespace FBRepacker.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        [global::System.Configuration.DefaultSettingValueAttribute("C:\\")]
         public string OutputPathNUDtoDAE {
             get {
                 return ((string)(this["OutputPathNUDtoDAE"]));
@@ -121,7 +121,7 @@ namespace FBRepacker.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        [global::System.Configuration.DefaultSettingValueAttribute("C:\\")]
         public string DAEPathDAEtoNUD {
             get {
                 return ((string)(this["DAEPathDAEtoNUD"]));
@@ -133,7 +133,7 @@ namespace FBRepacker.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        [global::System.Configuration.DefaultSettingValueAttribute("C:\\")]
         public string OutputPathDAEtoNUD {
             get {
                 return ((string)(this["OutputPathDAEtoNUD"]));
@@ -145,7 +145,7 @@ namespace FBRepacker.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        [global::System.Configuration.DefaultSettingValueAttribute("C:\\")]
         public string VBNPathDAEtoNUD {
             get {
                 return ((string)(this["VBNPathDAEtoNUD"]));
@@ -164,6 +164,174 @@ namespace FBRepacker.Properties {
             }
             set {
                 this["exportVBN"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("C:\\")]
+        public string OutputRepackPsarc {
+            get {
+                return ((string)(this["OutputRepackPsarc"]));
+            }
+            set {
+                this["OutputRepackPsarc"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("C:\\")]
+        public string PsarcRepackFolder {
+            get {
+                return ((string)(this["PsarcRepackFolder"]));
+            }
+            set {
+                this["PsarcRepackFolder"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("C:\\")]
+        public string PsarcPACFilePathList {
+            get {
+                return ((string)(this["PsarcPACFilePathList"]));
+            }
+            set {
+                this["PsarcPACFilePathList"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("patch")]
+        public string PsarcOutputFileName {
+            get {
+                return ((string)(this["PsarcOutputFileName"]));
+            }
+            set {
+                this["PsarcOutputFileName"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("0")]
+        public int SelectedTab {
+            get {
+                return ((int)(this["SelectedTab"]));
+            }
+            set {
+                this["SelectedTab"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("C:\\")]
+        public string MBONDataFolderPath {
+            get {
+                return ((string)(this["MBONDataFolderPath"]));
+            }
+            set {
+                this["MBONDataFolderPath"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("C:\\")]
+        public string FBDataFolderPath {
+            get {
+                return ((string)(this["FBDataFolderPath"]));
+            }
+            set {
+                this["FBDataFolderPath"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("C:\\")]
+        public string outputDataFolderPath {
+            get {
+                return ((string)(this["outputDataFolderPath"]));
+            }
+            set {
+                this["outputDataFolderPath"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("C:\\")]
+        public string CScriptFilePath {
+            get {
+                return ((string)(this["CScriptFilePath"]));
+            }
+            set {
+                this["CScriptFilePath"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("C:\\")]
+        public string BABBFilePath {
+            get {
+                return ((string)(this["BABBFilePath"]));
+            }
+            set {
+                this["BABBFilePath"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("C:\\")]
+        public string outputScriptFolderPath {
+            get {
+                return ((string)(this["outputScriptFolderPath"]));
+            }
+            set {
+                this["outputScriptFolderPath"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool scriptBigEndian {
+            get {
+                return ((bool)(this["scriptBigEndian"]));
+            }
+            set {
+                this["scriptBigEndian"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("100000")]
+        public int MinScriptPointer {
+            get {
+                return ((int)(this["MinScriptPointer"]));
+            }
+            set {
+                this["MinScriptPointer"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("C:\\")]
+        public string B4ACFilePath {
+            get {
+                return ((string)(this["B4ACFilePath"]));
+            }
+            set {
+                this["B4ACFilePath"] = value;
             }
         }
     }

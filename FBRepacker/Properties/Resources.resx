@@ -121,4 +121,31 @@
   <data name="ColladaDAESchema" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\ColladaDAESchema.xml;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
   </data>
+  <data name="DATA" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Psarc\DATA.TBL;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="Unit_IDs" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\data\json\unit_ids.json;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
+  </data>
+  <data name="Voice_Unit_ID_Group" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\data\json\voice_unit_id_group.json;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
+  </data>
+  <data name="_01_PATCH" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Psarc\01_PATCH.TBL;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="_02_PATCH" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Psarc\02_PATCH.TBL;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="_03_PATCH" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Psarc\03_PATCH.TBL;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="_04_PATCH" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Psarc\04_PATCH.TBL;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="_05_PATCH" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Psarc\05_PATCH.TBL;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="_06_PATCH" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Psarc\06_PATCH.TBL;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
 </root>

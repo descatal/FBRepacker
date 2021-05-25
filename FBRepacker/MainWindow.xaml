@@ -3,111 +3,310 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:pro="clr-namespace:FBRepacker.Properties"
         xmlns:local="clr-namespace:FBRepacker"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800">
-
-    <WrapPanel>
-        <Menu HorizontalAlignment="Left" Height="23" VerticalAlignment="Top" Width="792">
+        Title="FBRepacker" 
+        SizeToContent="WidthAndHeight">
+    <Window.Resources>
+        <local:InverseBooleanConverter x:Key="InverseBooleanConverter" />
+    </Window.Resources>
+    <StackPanel>
+        <Menu Height="23" Width="Auto" HorizontalAlignment="Stretch" VerticalAlignment="Top">
             <MenuItem Header="File">
-                <MenuItem Header="Open Extract" Click="OpenExtractFileMenu_Click"></MenuItem>
-                <MenuItem Header="Open Repack" Click="OpenRepackFileMenu_Click"></MenuItem>
-                <MenuItem Header="Open NUD and VBN File" Click="OpenNUDandVBNFile_Click"></MenuItem>
-                <MenuItem Header="Open DAE File" Click="OpenDAEandVBNFile_Click"></MenuItem>
+                <MenuItem Header="Open Extract" Click="Open_Extract_PAC_File_Click"></MenuItem>
+                <MenuItem Header="Open Repack" Click="Open_Repack_PAC_Folder_Click"></MenuItem>
+                <MenuItem Header="Open NUD and VBN File" Click="OpenNUDFile_Click"></MenuItem>
+                <MenuItem Header="Open DAE File" Click="OpenDAEFile_Click"></MenuItem>
             </MenuItem>
             <MenuItem Header="Settings">
                 <MenuItem Header="Options" Click="OpenSettings_Click"></MenuItem>
             </MenuItem>
         </Menu>
-        
-        <Grid Width="791">
+
+        <Grid HorizontalAlignment="Stretch">
             <Grid.RowDefinitions>
-                <RowDefinition Height="*"/>
+                <RowDefinition Height="8*"/>
                 <RowDefinition Height="*"/>
             </Grid.RowDefinitions>
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*"></ColumnDefinition>
             </Grid.ColumnDefinitions>
 
-            <Grid Grid.Row="0" Grid.Column="0" >
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="*"></RowDefinition>
-                    <RowDefinition Height="*"></RowDefinition>
-                    <RowDefinition Height="*"></RowDefinition>
-                    <RowDefinition Height="*"></RowDefinition>
-                </Grid.RowDefinitions>
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="12*"></ColumnDefinition>
-                    <ColumnDefinition Width="1*"></ColumnDefinition>
-                </Grid.ColumnDefinitions>
+            <TabControl x:Name="tabCont" Grid.Row="0" Grid.Column="0" SelectionChanged="TabControl_Selected">
+                <TabItem Header="Extract PAC">
+                    <StackPanel Orientation="Vertical" Margin="0,10,0,10">
+                        <StackPanel.Resources>
+                            <Style TargetType="{x:Type DockPanel}">
+                                <Setter Property="Margin" Value="0,10,0,0"/>
+                            </Style>
+                        </StackPanel.Resources>
 
-                <Grid Grid.Row="0" VerticalAlignment="Center">
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="1*"></ColumnDefinition>
-                        <ColumnDefinition Width="8*"></ColumnDefinition>
-                    </Grid.ColumnDefinitions>
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="*"></RowDefinition>
-                    </Grid.RowDefinitions>
-                    <TextBlock Text="Extract Path: " Width="70" TextAlignment="Center" Margin="5,0,0,0" Grid.Column="0"/>
-                    <TextBlock HorizontalAlignment="Center" TextWrapping="Wrap" Name="ExtractPath" Margin="10,0,0,0" Grid.Column="1"/>
-                </Grid>
+                        <DockPanel>
+                            <TextBlock Text="PAC File Path:" Width="100" Margin="10,0,10,0" TextAlignment="Right"/>
+                            <TextBlock x:Name="extractPACFilePath" Text="{Binding OpenExtractPath, Mode=TwoWay, Source={x:Static pro:Settings.Default}, UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Stretch" Margin="10,0,10,0" TextAlignment="Right"/>
+                            <Button Content="Open PAC File" Click="Open_Extract_PAC_File_Click" HorizontalAlignment="Right" Width="100"/>
+                        </DockPanel>
 
-                <Button Content="..." Width="35" HorizontalContentAlignment="Center" Margin="10,0,0,0" Click="selectExtractPathButton" Grid.Row="0" Grid.Column="1"/>
-                
-                <Grid Grid.Row="1" VerticalAlignment="Center">
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="1*"></ColumnDefinition>
-                        <ColumnDefinition Width="8*"></ColumnDefinition>
-                    </Grid.ColumnDefinitions>
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="*"></RowDefinition>
-                    </Grid.RowDefinitions>
-                    <TextBlock Text="Repack Path: "  Width="70" TextAlignment="Center" Margin="5,0,0,0" Grid.Column="0"/>
-                    <TextBlock HorizontalAlignment="Center" TextWrapping="Wrap" Name="RepackPath" Margin="10,0,0,0" Grid.Column="1"/>
-                </Grid>
+                        <DockPanel>
+                            <TextBlock Text="Output Folder:" Width="100" Margin="10,0,10,0" TextAlignment="Right"/>
+                            <TextBlock x:Name="outputExtractPACFolder" Text="{Binding OutputExtractPAC, Mode=TwoWay, Source={x:Static pro:Settings.Default}, UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Stretch" Margin="10,0,10,0" TextAlignment="Right"/>
+                            <Button Content="Change" Click="change_Extract_Output_Folder_Button" HorizontalAlignment="Right" Width="100"/>
+                        </DockPanel>
 
-                <Button Content="..." Width="35" HorizontalContentAlignment="Center" Margin="10,0,0,0" Click="selectRepackPathButton" Grid.Row="1" Grid.Column="1"/>
+                        <DockPanel>
+                            <Button Content="Extract" Click="extractPAC_Click" Width="100"/>
+                        </DockPanel>
 
-                <Grid Grid.Row="2" VerticalAlignment="Center">
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="1*"></ColumnDefinition>
-                        <ColumnDefinition Width="4*"></ColumnDefinition>
-                    </Grid.ColumnDefinitions>
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="*"></RowDefinition>
-                    </Grid.RowDefinitions>
-                    <TextBlock Text="NUD to DAE Output Path: "  Width="137" TextAlignment="Left" Margin="5,0,0,0" Grid.Column="0"/>
-                    <TextBlock HorizontalAlignment="Center" TextWrapping="Wrap" Name="NUDtoDAEOutputPath" Margin="10,0,0,0" Grid.Column="1"/>
-                </Grid>
+                    </StackPanel>
+                </TabItem>
+                <TabItem Header="Repack PAC">
+                    <StackPanel Orientation="Vertical" Margin="0,10,0,10">
+                        <StackPanel.Resources>
+                            <Style TargetType="{x:Type DockPanel}">
+                                <Setter Property="Margin" Value="0,10,0,0"/>
+                            </Style>
+                        </StackPanel.Resources>
 
-                <Button Content="..." Width="35" HorizontalContentAlignment="Center" Margin="10,0,0,0" Click="selectNUDtoDAEOutputPathButton" Grid.Row="2" Grid.Column="1"/>
+                        <DockPanel>
+                            <TextBlock Text="Repack File Folder:" Width="100" Margin="10,0,10,0" TextAlignment="Right"/>
+                            <TextBlock x:Name="repackPACFilePath" Text="{Binding OpenRepackPath, Mode=TwoWay, Source={x:Static pro:Settings.Default}, UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Stretch" Margin="10,0,10,0" TextAlignment="Right"/>
+                            <Button Content="Open Folder" Click="Open_Repack_PAC_Folder_Click" HorizontalAlignment="Right" Width="100"/>
+                        </DockPanel>
 
-                <Grid Grid.Row="3" VerticalAlignment="Center">
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="1*"></ColumnDefinition>
-                        <ColumnDefinition Width="4*"></ColumnDefinition>
-                    </Grid.ColumnDefinitions>
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="*"></RowDefinition>
-                    </Grid.RowDefinitions>
-                    <TextBlock Text="DAE to NUD Output Path: "  Width="137" TextAlignment="Left" Margin="5,0,0,0" Grid.Column="0"/>
-                    <TextBlock HorizontalAlignment="Center" TextWrapping="Wrap" Name="DAEtoNUDOutputPath" Margin="10,0,0,0" Grid.Column="1"/>
-                </Grid>
+                        <DockPanel>
+                            <TextBlock Text="Output Folder:" Width="100" Margin="10,0,10,0" TextAlignment="Right"/>
+                            <TextBlock x:Name="outputRepackPACFolder" Text="{Binding OutputRepackPAC, Mode=TwoWay, Source={x:Static pro:Settings.Default}, UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Stretch" Margin="10,0,10,0" TextAlignment="Right"/>
+                            <Button Content="Change" Click="change_Repack_Output_Folder_Button" HorizontalAlignment="Right" Width="100"/>
+                        </DockPanel>
 
-                <Button Content="..." Width="35" HorizontalContentAlignment="Center" Margin="10,0,0,0" Click="selectDAEtoNUDOutputPathButton" Grid.Row="3" Grid.Column="1"/>
+                        <DockPanel>
+                            <Button Content="Repack" Click="repackPAC_Click" Width="100"/>
+                        </DockPanel>
 
-            </Grid>
+                    </StackPanel>
+                </TabItem>
+                <TabItem Header="Psarc">
+                    <StackPanel Orientation="Vertical" Margin="0,10,0,10">
+                        <StackPanel.Resources>
+                            <Style TargetType="{x:Type DockPanel}">
+                                <Setter Property="Margin" Value="0,10,0,0"/>
+                            </Style>
+                        </StackPanel.Resources>
 
-            <StackPanel Grid.Row="1">
-                <TextBlock TextWrapping="Wrap" Text="debug" Name="debugmsg" Height="50"/>
-                <Button Content="Extract" Click="extractPAC_Click"></Button>
-                <Button Content="Repack PAC" Click="repackPAC_Click"></Button>
-                <Button Content="Convert NUD to DAE" Click="NUDtoDAE_Click"/>
-                <Button Content="Convert DAE to NUD" Click="DAEtoNUD_Click"></Button>
-                <Button Content="Repack Psarc" Click="repackPsarc_Click"></Button>
-            </StackPanel>
+                        <DockPanel>
+                            <TextBlock Text="PAC File Path List:" Width="120" Margin="10,0,10,0" TextAlignment="Right"/>
+                            <TextBlock Text="{Binding PsarcPACFilePathList, Mode=TwoWay, Source={x:Static pro:Settings.Default}, UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Stretch" Margin="10,0,10,0" TextAlignment="Right"/>
+                            <Button Content="Open txt" Click="Open_Psarc_PAC_File_List_Click" HorizontalAlignment="Right" Width="100"/>
+                        </DockPanel>
+
+                        <DockPanel>
+                            <Button Content="Copy PAC Files to Repack Folder" Click="Copy_PAC_to_Psarc_Repack_Folder" HorizontalAlignment="Center" Width="200"></Button>
+                        </DockPanel>
+
+                        <DockPanel>
+                            <Separator />
+                        </DockPanel>
+
+                        <DockPanel>
+                            <TextBlock Text="Repack Psarc Folder:" Width="120" Margin="10,0,10,0" TextAlignment="Right"/>
+                            <TextBlock Text="{Binding PsarcRepackFolder, Mode=TwoWay, Source={x:Static pro:Settings.Default}, UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Stretch" Margin="10,0,10,0" TextAlignment="Right"/>
+                            <Button Content="Open Folder" Click="Open_Psarc_PAC_Repack_Folder_Click" HorizontalAlignment="Right" Width="100"/>
+                        </DockPanel>
+
+                        <DockPanel HorizontalAlignment="Center">
+                            <TextBlock Text="Psarc File Name: " Width="100" TextAlignment="Right" />
+                            <TextBox x:Name="PsarcFileName" Text="{Binding PsarcOutputFileName, Mode=TwoWay, Source={x:Static pro:Settings.Default}, UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Stretch" Margin="10,0,10,0" TextAlignment="Center" MinWidth="120"/>
+                        </DockPanel>
+
+                        <DockPanel>
+                            <TextBlock Text="Output Folder:" Width="120" Margin="10,0,10,0" TextAlignment="Right"/>
+                            <TextBlock Text="{Binding OutputRepackPsarc, Mode=TwoWay, Source={x:Static pro:Settings.Default}, UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Stretch" Margin="10,0,10,0" TextAlignment="Right"/>
+                            <Button Content="Change" Click="change_Psarc_Repack_Output_Folder_Button" HorizontalAlignment="Right" Width="100"/>
+                        </DockPanel>
+
+                        <DockPanel>
+                            <Button Content="Repack Psarc" Click="repackPsarc_Click" Width="100"/>
+                        </DockPanel>
+
+                    </StackPanel>
+                </TabItem>
+                <TabItem Header="NUD to DAE">
+                    <StackPanel Orientation="Vertical" Margin="0,10,0,10">
+                        <StackPanel.Resources>
+                            <Style TargetType="{x:Type DockPanel}">
+                                <Setter Property="Margin" Value="0,10,0,0"/>
+                            </Style>
+                        </StackPanel.Resources>
+
+                        <DockPanel>
+                            <TextBlock Text="NUD File Path: " Width="100" Margin="10,0,10,0" TextAlignment="Right"/>
+                            <TextBlock x:Name="NUDFilePath" Text="{Binding NUDPathNUDtoDAE, Mode=TwoWay, Source={x:Static pro:Settings.Default}, UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Stretch" Margin="10,0,10,0" TextAlignment="Right"/>
+                            <Button Content="Open NUD File" Click="OpenNUDFile_Click" HorizontalAlignment="Right" Width="100"/>
+                        </DockPanel>
+
+                        <DockPanel>
+                            <TextBlock Text="VBN File Path: " Width="100" Margin="10,0,10,0" TextAlignment="Right"/>
+                            <TextBlock x:Name="VBNFilePath" Text="{Binding VBNPathNUDtoDAE, Mode=TwoWay, Source={x:Static pro:Settings.Default}, UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Stretch" Margin="10,0,10,0" TextAlignment="Right"/>
+                            <Button Content="Open VBN File" Click="OpenVBNFile_Click" HorizontalAlignment="Right" Width="100"/>
+                        </DockPanel>
+
+                        <DockPanel>
+                            <TextBlock Text="Output Folder:" Width="100" Margin="10,0,10,0" TextAlignment="Right"/>
+                            <TextBlock x:Name="outputNUDtoDAEFolder" Text="{Binding OutputPathNUDtoDAE, Mode=TwoWay, Source={x:Static pro:Settings.Default}, UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Stretch" Margin="10,0,10,0" TextAlignment="Right"/>
+                            <Button Content="Change" Click="change_NUD_to_DAE_Output_Path_Button" HorizontalAlignment="Right" Width="100"/>
+                        </DockPanel>
+
+                        <DockPanel>
+                            <Button Content="Convert NUD to DAE" Click="NUDtoDAE_Click" Width="150"/>
+                        </DockPanel>
+
+                    </StackPanel>
+                </TabItem>
+                <TabItem Header="DAE to NUD">
+                    <StackPanel Orientation="Vertical" Margin="0,10,0,10">
+                        <StackPanel.Resources>
+                            <Style TargetType="{x:Type DockPanel}">
+                                <Setter Property="Margin" Value="0,10,0,0"/>
+                            </Style>
+                        </StackPanel.Resources>
+
+                        <DockPanel>
+                            <TextBlock Text="DAE File Path: " Width="100" Margin="10,0,10,0" TextAlignment="Right"/>
+                            <TextBlock x:Name="DAEFilePath" Text="{Binding DAEPathDAEtoNUD, Mode=TwoWay, Source={x:Static pro:Settings.Default}, UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Stretch" Margin="10,0,10,0" TextAlignment="Right"/>
+                            <Button Content="Open DAE File" Click="OpenDAEFile_Click" HorizontalAlignment="Right" Width="100"/>
+                        </DockPanel>
+
+                        <DockPanel HorizontalAlignment="Right">
+                            <CheckBox Content="Export new VBN file" IsChecked="{Binding exportVBN, Mode=TwoWay, Source={x:Static pro:Settings.Default}, UpdateSourceTrigger=PropertyChanged}" x:Name="exportNewVBNFile" Margin="0,10,0,0"/>
+                        </DockPanel>
+
+                        <DockPanel IsEnabled="{Binding exportVBN, Converter={StaticResource InverseBooleanConverter}, Mode=TwoWay, Source={x:Static pro:Settings.Default}, UpdateSourceTrigger=PropertyChanged }">
+                            <TextBlock Text="VBN File Path: " Width="100" Margin="10,0,10,0" TextAlignment="Right"/>
+                            <TextBlock x:Name="DAEVBNFilePath" Text="{Binding VBNPathDAEtoNUD, Mode=TwoWay, Source={x:Static pro:Settings.Default}, UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Stretch" Margin="10,0,10,0" TextAlignment="Right"/>
+                            <Button Content="Open VBN File" Click="OpenDAEVBNFile_Click" HorizontalAlignment="Right" Width="100"/>
+                        </DockPanel>
+
+                        <DockPanel>
+                            <TextBlock Text="Output Folder:" Width="100" Margin="10,0,10,0" TextAlignment="Right"/>
+                            <TextBlock x:Name="outputDAEtoNUDFolder" Text="{Binding OutputPathDAEtoNUD, Mode=TwoWay, Source={x:Static pro:Settings.Default}, UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Stretch" Margin="10,0,10,0" TextAlignment="Right"/>
+                            <Button Content="Change" Click="change_DAE_to_NUD_Output_Path_Button" HorizontalAlignment="Right" Width="100"/>
+                        </DockPanel>
+
+                        <DockPanel>
+                            <Button Content="Convert DAE to NUD" Click="DAEtoNUD_Click" Width="150"/>
+                        </DockPanel>
+                    </StackPanel>
+                </TabItem>
+
+                <TabItem Header="MBON to FB Data">
+                    <StackPanel Orientation="Vertical" Margin="0,10,0,10">
+                        <StackPanel.Resources>
+                            <Style TargetType="{x:Type DockPanel}">
+                                <Setter Property="Margin" Value="0,10,0,0"/>
+                            </Style>
+                        </StackPanel.Resources>
+
+                        <DockPanel>
+                            <TextBlock Text="MBON Data Folder: " Width="100" Margin="10,0,10,0" TextAlignment="Right"/>
+                            <TextBlock x:Name="MBONDataFolder" Text="{Binding MBONDataFolderPath, Mode=TwoWay, Source={x:Static pro:Settings.Default}, UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Stretch" Margin="10,0,10,0" TextAlignment="Right"/>
+                            <Button Content="Open MBON Folder" Click="OpenMBONDataFile_Click" HorizontalAlignment="Right" Width="100"/>
+                        </DockPanel>
+
+                        <DockPanel>
+                            <TextBlock Text="FB Data Folder: " Width="100" Margin="10,0,10,0" TextAlignment="Right"/>
+                            <TextBlock x:Name="FBDataFolder" Text="{Binding FBDataFolderPath, Mode=TwoWay, Source={x:Static pro:Settings.Default}, UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Stretch" Margin="10,0,10,0" TextAlignment="Right"/>
+                            <Button Content="Open FB Folder" Click="OpenFBDataFile_Click" HorizontalAlignment="Right" Width="100"/>
+                        </DockPanel>
+
+                        <DockPanel>
+                            <TextBlock Text="Output Folder:" Width="100" Margin="10,0,10,0" TextAlignment="Right"/>
+                            <TextBlock x:Name="outputDataFolder" Text="{Binding outputDataFolderPath, Mode=TwoWay, Source={x:Static pro:Settings.Default}, UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Stretch" Margin="10,0,10,0" TextAlignment="Right"/>
+                            <Button Content="Change" Click="change_MBON_to_FB_Data_Output_Path_Click" HorizontalAlignment="Right" Width="100"/>
+                        </DockPanel>
+
+                        <DockPanel>
+                            <Button Content="Convert MBON to FB Data" Click="MBON_to_FB_Data_Click" Width="150"/>
+                        </DockPanel>
+
+                    </StackPanel>
+                </TabItem>
+
+                <TabItem Header="MBON Script Helper">
+                    <StackPanel Orientation="Vertical" Margin="0,10,0,10">
+                        <StackPanel.Resources>
+                            <Style TargetType="{x:Type DockPanel}">
+                                <Setter Property="Margin" Value="0,10,0,0"/>
+                            </Style>
+                        </StackPanel.Resources>
+
+                        <DockPanel>
+                            <TextBlock Text="C File Path: " Width="100" Margin="10,0,10,0" TextAlignment="Right"/>
+                            <TextBlock x:Name="CScriptFilePath" Text="{Binding CScriptFilePath, Mode=TwoWay, Source={x:Static pro:Settings.Default}, UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Stretch" Margin="10,0,10,0" TextAlignment="Right"/>
+                            <Button Content="Open C Script File" Click="OpenCScriptFile_Click" HorizontalAlignment="Right" Width="100"/>
+                        </DockPanel>
+
+ 
+
+                        <DockPanel HorizontalAlignment="Center">
+                            <DockPanel HorizontalAlignment="Center">
+                                <TextBlock Text="Min Pointer: " Width="100" TextAlignment="Right" />
+                                <TextBox x:Name="Min_Pointer" Text="{Binding MinScriptPointer, Mode=TwoWay, Source={x:Static pro:Settings.Default}, UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Stretch" Margin="10,0,10,0" TextAlignment="Center" MinWidth="120"/>
+                            </DockPanel>
+
+                            <CheckBox Content="Big Endian" IsChecked="{Binding scriptBigEndian, Mode=TwoWay, Source={x:Static pro:Settings.Default}, UpdateSourceTrigger=PropertyChanged}" x:Name="scriptBigEndian" Margin="0,10,0,0" />
+                        </DockPanel>
+
+                        <DockPanel>
+                            <TextBlock Text="BABB File Path: " Width="100" Margin="10,0,10,0" TextAlignment="Right"/>
+                            <TextBlock x:Name="CompiledFilePath" Text="{Binding BABBFilePath, Mode=TwoWay, Source={x:Static pro:Settings.Default}, UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Stretch" Margin="10,0,10,0" TextAlignment="Right"/>
+                            <Button Content="Open BABB File" Click="OpenBABBFile_Click" HorizontalAlignment="Right" Width="100"/>
+                        </DockPanel>
+
+                        <DockPanel>
+                            <TextBlock Text="Output Folder:" Width="100" Margin="10,0,10,0" TextAlignment="Right"/>
+                            <TextBlock x:Name="outputScriptFileFolder" Text="{Binding outputScriptFolderPath, Mode=TwoWay, Source={x:Static pro:Settings.Default}, UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Stretch" Margin="10,0,10,0" TextAlignment="Right"/>
+                            <Button Content="Change" Click="change_Script_Output_Path_Click" HorizontalAlignment="Right" Width="100"/>
+                        </DockPanel>
+
+                        <DockPanel>
+                            <Button Content="Link Script" Click="Link_Script_Click" Width="150"/>
+                        </DockPanel>
+
+                        <DockPanel>
+                            <TextBlock Text="B4AC File Path:" Width="100" Margin="10,0,10,0" TextAlignment="Right"/>
+                            <TextBlock Text="{Binding B4ACFilePath, Mode=TwoWay, Source={x:Static pro:Settings.Default}, UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Stretch" Margin="10,0,10,0" TextAlignment="Right"/>
+                            <Button Content="Open B4AC" Click="OpenB4ACFile_Click" HorizontalAlignment="Right" Width="100"/>
+                        </DockPanel>
+
+                        <DockPanel>
+                            <Button Content="Generate sys__2D" Click="Generate_B4AC_Click" Width="150"/>
+                        </DockPanel>
+
+                    </StackPanel>
+                </TabItem>
+
+                <TabItem Header="Debug">
+                    <StackPanel Orientation="Vertical" Margin="0,10,0,10">
+                        <StackPanel.Resources>
+                            <Style TargetType="{x:Type DockPanel}">
+                                <Setter Property="Margin" Value="0,10,0,0"/>
+                            </Style>
+                        </StackPanel.Resources>
+
+                        <DockPanel>
+                            <Button Content="Debug" Click="Debug_Click" Width="150"/>
+                        </DockPanel>
+
+                    </StackPanel>
+                </TabItem>
+
+            </TabControl>
+
+            <DockPanel Grid.Column="0" Grid.Row="1">
+                <Button DockPanel.Dock="Top" Content="Clear Log" Click="Button_Click" Margin="10,10,10,10"></Button>
+                <TextBox DockPanel.Dock="Bottom" Text="Log: " x:Name="debugMessageBox" IsReadOnly="True" Margin="0,0,0,10"/>
+            </DockPanel>
         </Grid>
-    </WrapPanel>
-   
+    </StackPanel>
 </Window>

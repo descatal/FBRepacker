@@ -545,6 +545,11 @@ namespace FBRepacker.NUD
 
             for(int i = 2; i < primitiveIndiceValueList.Count; i++)
             {
+                if (i == 2000)
+                {
+
+                }
+
                 ushort face3 = (primitiveIndiceValueList[i]);
                 if(face3 == 0)
                 {
@@ -1998,17 +2003,14 @@ namespace FBRepacker.NUD
         {
             List<uint> trianglularsPrimitiveIndex = dataset[FixedSemantics.GEO_VERTEX];
             List<ushort> triStripPrimitiveIndex = parsePrimitiveVertexIndicesReversed(trianglularsPrimitiveIndex); // turn into tristrips
+            triStripNo = triStripPrimitiveIndex.Count;
 
-            for(int i = 0; i < triStripPrimitiveIndex.Count; i++)
+            for (int i = 0; i < triStripPrimitiveIndex.Count; i++)
             {
                 ushort triStrip = triStripPrimitiveIndex[i];
-                if(!((i == triStripPrimitiveIndex.Count - 1) && triStrip == 0xFFFF))
-                {
-                    appendUShortMemoryStream(vertexIndicesStream, triStrip, true);
-                }
+                appendUShortMemoryStream(vertexIndicesStream, triStrip, true);
             }
 
-            triStripNo = triStripPrimitiveIndex.Count;
             sizeWithoutPadding = (int)vertexIndicesStream.Length;
         }
 
@@ -2020,12 +2022,18 @@ namespace FBRepacker.NUD
             string inputPath = Path.Combine(Environment.CurrentDirectory, "Helpers", "inputPrimitiveTriangles.txt");
             string outputPath = Path.Combine(Environment.CurrentDirectory, "Helpers", "outputPrimitiveTriangleStrips.txt");
 
+            if (triangularsPrimitiveIndex.Count() > 0x030000)
+                throw new Exception("Cannot convert Strips with more than 196608 verts!");
+
             // writing into input txt
             StringBuilder lineStr = new StringBuilder();
             StringBuilder baseStr = new StringBuilder();
             int count = 1;
-            foreach (ushort value in triangularsPrimitiveIndex)
+            foreach (uint value in triangularsPrimitiveIndex)
             {
+                if (value > 0xFFFF)
+                    throw new Exception("Debug");
+
                 if (count <= 3)
                 {
                     lineStr.Append(value);
@@ -2080,8 +2088,11 @@ namespace FBRepacker.NUD
                         ushort.TryParse(primitive, out ushort res);
                         triStripPrimitives.Add(res);
                     }
-                    triStripPrimitives.Add(0xFFFF);
                     line = sr.ReadLine();
+                    if (line != null) // Checks if end 
+                    {
+                        triStripPrimitives.Add(0xFFFF);
+                    }
                 }
             }
             else

@@ -72,11 +72,6 @@ namespace FBRepacker.PAC.Repack.FileTypes
                 StreamReader DDSInfoStream = new StreamReader(DDSStreamMem);
                 */
 
-                if(fileNo == numberofFiles)
-                {
-
-                }
-
                 NTP3FileInfo newFileInfo = new NTP3FileInfo();
 
                 newFileInfo.fileNo = fileNo;

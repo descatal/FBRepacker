@@ -61,6 +61,66 @@ namespace FBRepacker.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized resource of type System.Byte[].
+        /// </summary>
+        internal static byte[] _01_PATCH {
+            get {
+                object obj = ResourceManager.GetObject("_01_PATCH", resourceCulture);
+                return ((byte[])(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Byte[].
+        /// </summary>
+        internal static byte[] _02_PATCH {
+            get {
+                object obj = ResourceManager.GetObject("_02_PATCH", resourceCulture);
+                return ((byte[])(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Byte[].
+        /// </summary>
+        internal static byte[] _03_PATCH {
+            get {
+                object obj = ResourceManager.GetObject("_03_PATCH", resourceCulture);
+                return ((byte[])(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Byte[].
+        /// </summary>
+        internal static byte[] _04_PATCH {
+            get {
+                object obj = ResourceManager.GetObject("_04_PATCH", resourceCulture);
+                return ((byte[])(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Byte[].
+        /// </summary>
+        internal static byte[] _05_PATCH {
+            get {
+                object obj = ResourceManager.GetObject("_05_PATCH", resourceCulture);
+                return ((byte[])(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Byte[].
+        /// </summary>
+        internal static byte[] _06_PATCH {
+            get {
+                object obj = ResourceManager.GetObject("_06_PATCH", resourceCulture);
+                return ((byte[])(obj));
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to &lt;?xml version=&quot;1.0&quot; encoding=&quot;utf-8&quot;?&gt;
         ///&lt;xs:schema xmlns=&quot;http://www.collada.org/2005/11/COLLADASchema&quot; xmlns:xs=&quot;http://www.w3.org/2001/XMLSchema&quot; xmlns:xsi=&quot;http://www.w3.org/2001/XMLSchema-instance&quot; targetNamespace=&quot;http://www.collada.org/2005/11/COLLADASchema&quot; elementFormDefault=&quot;qualified&quot; version=&quot;1.4.1&quot; xml:lang=&quot;EN&quot; xsi:schemaLocation=&quot;http://www.w3.org/2001/XMLSchema http://www.w3.org/2001/XMLSchema.xsd&quot;&gt;
         ///  &lt;!-- BEGIN COLLADA Format Schema --&gt;
@@ -71,6 +131,86 @@ namespace FBRepacker.Properties {
         internal static string ColladaDAESchema {
             get {
                 return ResourceManager.GetString("ColladaDAESchema", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Byte[].
+        /// </summary>
+        internal static byte[] DATA {
+            get {
+                object obj = ResourceManager.GetObject("DATA", resourceCulture);
+                return ((byte[])(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to {
+        ///    &quot;Unit_ID&quot;: [
+        ///        {
+        ///            &quot;id&quot;: &quot;1011&quot;,
+        ///            &quot;name_english&quot;: &quot;Gundam&quot;,
+        ///            &quot;name_japanese&quot;: &quot;ガンダム&quot;,
+        ///            &quot;name_chinese&quot;: &quot;高达&quot;
+        ///        },
+        ///        {
+        ///            &quot;id&quot;: &quot;1021&quot;,
+        ///            &quot;name_english&quot;: &quot;Char&apos;s Gelgoog&quot;,
+        ///            &quot;name_japanese&quot;: &quot;シャア専用ゲルググ&quot;,
+        ///            &quot;name_chinese&quot;: &quot;夏亚专用勇士&quot;
+        ///        },
+        ///        {
+        ///            &quot;id&quot;: &quot;1031&quot;,
+        ///            &quot;name_english&quot;: &quot;Acguy&quot;,
+        ///            &quot;name_japanese&quot;: &quot;アッガイ&quot;,
+        ///            &quot;name_chinese&quot;: &quot;龟霸&quot;
+        ///        },
+        ///        {
+        ///   [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string Unit_IDs {
+            get {
+                return ResourceManager.GetString("Unit_IDs", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to {
+        ///  &quot;soundLogicUnitIDGroupList&quot;: [
+        ///    {
+        ///      &quot;groupID&quot;: 1,
+        ///      &quot;groupPointer&quot;: 4088,
+        ///      &quot;unitIDs&quot;: [
+        ///        1021,
+        ///        1041,
+        ///        3021,
+        ///        3031,
+        ///        10021,
+        ///        14041,
+        ///        14051,
+        ///        15021,
+        ///        17011,
+        ///        17021,
+        ///        18031,
+        ///        20031,
+        ///        21011,
+        ///        26011,
+        ///        27011,
+        ///        27021,
+        ///        80011,
+        ///        80032,
+        ///        80033,
+        ///        80021,
+        ///        80052,
+        ///        80061,
+        ///        80081,
+        ///        80101,
+        ///        80131,
+        ///   [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string Voice_Unit_ID_Group {
+            get {
+                return ResourceManager.GetString("Voice_Unit_ID_Group", resourceCulture);
             }
         }
     }

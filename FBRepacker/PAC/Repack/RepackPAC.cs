@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Automation.Peers;
@@ -39,6 +40,7 @@ namespace FBRepacker.PAC.Repack
 
         public NTP3 repackNTP3 = new NTP3();
         public EIDX repackEIDX = new EIDX();
+        public STREAM repackSTREAM = new STREAM();
 
         int fileNumberinInfoFile = 1;
 
@@ -82,13 +84,29 @@ namespace FBRepacker.PAC.Repack
         public void parseInfo()
         {
             int fileNumber = 1;
-            while(infoStreamRead.ReadLine() != null)
+            string line;
+            List<string> retrievedProperties = new List<string>();
+            bool takeIn = false;
+            while ((line = infoStreamRead.ReadLine()) != null)
             {
-                string[] retrievedProperties = getFileInfoProperties("--" + fileNumber + "--");
-                if (retrievedProperties.Length > 0)
+                //string[] retrievedProperties = getFileInfoProperties("--" + fileNumber + "--");
+                Match m = Regex.Match(line, @"(--\d{1,10}--)");
+                if (m.Success)
+                    takeIn = true;
+
+                if (line != @"//" && takeIn)
                 {
-                    fileInfoDic[fileNumber] = retrievedProperties;
-                    fileNumber++;
+                    retrievedProperties.Add(line);
+                }
+                else
+                {
+                    if (retrievedProperties.Count > 0)
+                    {
+                        fileInfoDic[fileNumber] = retrievedProperties.ToArray();
+                        fileNumber++;
+                    }
+                    retrievedProperties = new List<string>();
+                    takeIn = false;
                 }
             }
 
@@ -101,7 +119,7 @@ namespace FBRepacker.PAC.Repack
                     parseFHMFileInfoReferences(parsedFileInfo[1]); // always pass the 1st file, as the first file is the first FHM.
                     break;
                 case "--STREAM--":
-                    // TODO: Read Stream file infos
+                    parseSTREAMInfo(fileNumberinInfoFile, true);
                     break;
                 default:
                     break;
@@ -169,6 +187,30 @@ namespace FBRepacker.PAC.Repack
                     }
                 }
             }
+        }
+
+        private void parseSTREAMInfo(int fileNumber, bool isRootSTREAM)
+        {
+            string[] STREAMInfo = fileInfoDic[fileNumber];
+
+            GeneralFileInfo streamFile = new GeneralFileInfo();
+
+            if (parsedFileInfo.ContainsKey(fileNumber))
+                streamFile = parsedFileInfo[fileNumber];
+
+            streamFile.totalFileSize = 0;
+            streamFile.numberofFiles = 1;
+            streamFile.FHMChunkSize = 0;
+            streamFile.additionalInfoFlag = 0;
+            streamFile.fileName = getSpecificFileInfoProperties("fileName: ", STREAMInfo);
+            streamFile.fileNo = fileNumber;
+            streamFile.header = "STREAM";
+
+            parsedFileInfo[fileNumber] = streamFile;
+
+            // stream
+            string[] newFileInfos = fileInfoDic[fileNumberinInfoFile];
+            repackSTREAM.parseSTREAMMetadata(newFileInfos);
         }
 
         private void parseFHMInfo(int fileNumber, bool isRootFHM)
@@ -281,6 +323,9 @@ namespace FBRepacker.PAC.Repack
                     case "EIDX":
                         repackEIDX.parseEIDXMetadata(newFileInfos);
                         break;
+                    case "STREAM":
+                        repackSTREAM.parseSTREAMMetadata(newFileInfos);
+                        break;
                     default:
                         break;
                 }
@@ -343,7 +388,7 @@ namespace FBRepacker.PAC.Repack
             byte[] repackedFile = repackFHMFiles(parsedFileInfo.First().Value, out int unused);
             repackedFile = appendEndFile(repackedFile, parsedFileInfo.FirstOrDefault(s => s.Value.header == "endfile").Value);
 
-            string repackPath = Path.Combine(Properties.Settings.Default.RepackPath, (repackName + ".PAC"));
+            string repackPath = Path.Combine(Properties.Settings.Default.OutputRepackPAC, (repackName + ".PAC"));
             FileStream PAC = File.Create(repackPath);
             PAC.Write(repackedFile, 0, repackedFile.Length);
             PAC.Close();
@@ -467,20 +512,30 @@ namespace FBRepacker.PAC.Repack
                         EIDXBuffer = addPaddingArrayBuffer(EIDXBuffer);
                         return EIDXBuffer;
 
+                    case "STREAM":
+                        byte[] STREAMBuffer = repackSTREAM.repackSTREAM(file);
+                        beforeAppendSize = STREAMBuffer.Length;
+                        STREAMBuffer = addPaddingArrayBuffer(STREAMBuffer);
+                        return STREAMBuffer;
+
                     default:
-                        byte[] generalBuffer = new byte[file.OpenRead().Length];
-                        file.OpenRead().Read(generalBuffer, 0, generalBuffer.Length);
+                        FileStream fileOpen = file.OpenRead();
+                        byte[] generalBuffer = new byte[fileOpen.Length];
+                        fileOpen.Read(generalBuffer, 0, generalBuffer.Length);
                         beforeAppendSize = generalBuffer.Length;
                         generalBuffer = addPaddingArrayBuffer(generalBuffer);
+                        fileOpen.Close();
                         return generalBuffer;
                 }
-
-                
             }
         }
 
         private byte[] appendEndFile(byte[] arraytoAppend, GeneralFileInfo endFileInfo)
         {
+            // For files without endfiles (STREAM)
+            if (endFileInfo == null)
+                return arraytoAppend;
+
             bool ifFileExist = realFileInfos.Any(s => s.Name == endFileInfo.fileName);
 
             if(!ifFileExist)

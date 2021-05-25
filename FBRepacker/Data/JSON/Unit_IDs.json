@@ -1,0 +1,1810 @@
+﻿{
+    "Unit_ID": [
+        {
+            "id": "1011",
+            "name_english": "Gundam",
+            "name_japanese": "ガンダム",
+            "name_chinese": "高达"
+        },
+        {
+            "id": "1021",
+            "name_english": "Char's Gelgoog",
+            "name_japanese": "シャア専用ゲルググ",
+            "name_chinese": "夏亚专用勇士"
+        },
+        {
+            "id": "1031",
+            "name_english": "Acguy",
+            "name_japanese": "アッガイ",
+            "name_chinese": "龟霸"
+        },
+        {
+            "id": "1041",
+            "name_english": "Zeong",
+            "name_japanese": "ジオング",
+            "name_chinese": "吉恩号（囧）"
+        },
+        {
+            "id": "1051",
+            "name_english": "Gyan",
+            "name_japanese": "ギャン",
+            "name_chinese": "强人"
+        },
+        {
+            "id": "1061",
+            "name_english": "Gundam (G Mecha)",
+            "name_japanese": "ガンダム(Gメカ)",
+            "name_chinese": "高达（G战机）"
+        },
+        {
+            "id": "1071",
+            "name_english": "Doan's Zaku",
+            "name_japanese": "ザクII （ドアン）",
+            "name_chinese": "多安扎古II"
+        },
+        {
+            "id": "1081",
+            "name_english": "Char's Zaku",
+            "name_japanese": "シャア専用ザクII",
+            "name_chinese": "夏亚专用扎古Ⅱ"
+        },
+        {
+            "id": "1091",
+            "name_english": "Zaku II High Mobility Type (Johnny Ridden)",
+            "name_japanese": "高機動型ザクII （ライデン）",
+            "name_chinese": "高机动型扎古II后期型"
+        },
+        {
+            "id": "1133",
+            "name_english": "Zaku II High Mobility Type (Shin Matsunaga)",
+            "name_japanese": "高機動型ザクII （マツナガ）",
+            "name_chinese": "高机动型扎古II改"
+        },
+        {
+            "id": "1131",
+            "name_english": "Perfect Gundam",
+            "name_japanese": "パーフェクトガンダム",
+            "name_chinese": "完美高达"
+        },
+        {
+            "id": "2011",
+            "name_english": "Zeta Gundam",
+            "name_japanese": "Z ガンダム",
+            "name_chinese": "Z 高达"
+        },
+        {
+            "id": "2021",
+            "name_english": "Hyaku Shiki",
+            "name_japanese": "百式",
+            "name_chinese": "百式"
+        },
+        {
+            "id": "2031",
+            "name_english": "Messala",
+            "name_japanese": "メッサーラ",
+            "name_chinese": "梅萨拉"
+        },
+        {
+            "id": "2041",
+            "name_english": "The.O",
+            "name_japanese": "ジ・O",
+            "name_chinese": " 铁奥"
+        },
+        {
+            "id": "2051",
+            "name_english": "Gundam Mk-II",
+            "name_japanese": "ガンダムMk-II",
+            "name_chinese": "高达Mk-Ⅱ"
+        },
+        {
+            "id": "2061",
+            "name_english": "Hambrabi",
+            "name_japanese": "ハンブラビ",
+            "name_chinese": "汉布拉比"
+        },
+        {
+            "id": "2091",
+            "name_english": "Gundam Mk-II (Kamile)",
+            "name_japanese": "ガンダムMk-II （カミーユ）",
+            "name_chinese": "高达Mk-Ⅱ（卡缪）"
+        },
+        {
+            "id": "2101",
+            "name_english": " Marasai & Gabthley",
+            "name_japanese": "マラサイ&ガブスレイ",
+            "name_chinese": "马拉塞 & 加布斯雷"
+        },
+        {
+            "id": "2161",
+            "name_english": "Baund Doc",
+            "name_japanese": "バウンド・ドック",
+            "name_chinese": "猎犬"
+        },
+        {
+            "id": "3011",
+            "name_english": "Full Armor ZZ Gundam",
+            "name_japanese": "フルアーマーZZガンダム",
+            "name_chinese": "全装备ZZ高达"
+        },
+        {
+            "id": "3021",
+            "name_english": "Qubeley Mk-II (Ple-Two)",
+            "name_japanese": "キュベレイMk-II(プルツー)",
+            "name_chinese": "卡碧尼Mk-II（普露兹）"
+        },
+        {
+            "id": "3031",
+            "name_english": "Qubeley",
+            "name_japanese": "キュベレイ",
+            "name_chinese": "卡碧尼"
+        },
+        {
+            "id": "3041",
+            "name_english": "Zaku III Kai",
+            "name_japanese": "ザクIII 改",
+            "name_chinese": "扎古III 改"
+        },
+        {
+            "id": "3051",
+            "name_english": "Acguy (Haman)",
+            "name_japanese": "アッガイ(ハマーン搭乗)",
+            "name_chinese": "龟霸（哈曼搭乘）"
+        },
+        {
+            "id": "3061",
+            "name_english": "Zeta Gundam (Roux)",
+            "name_japanese": "Zガンダム(ルー搭乗)",
+            "name_chinese": "Z高达（露搭乘）"
+        },
+        {
+            "id": "3071",
+            "name_english": " Zaku Head Zeta Gundam",
+            "name_japanese": "ザク頭Zガンダム",
+            "name_chinese": "扎古头 Z 高达"
+        },
+        {
+            "id": "3091",
+            "name_english": "Gundam Mk-II (Elle)",
+            "name_japanese": "ガンダムMk-Ⅱ(エル搭乗)",
+            "name_chinese": "高达Mk-Ⅱ（艾露搭乘）"
+        },
+        {
+            "id": "3121",
+            "name_english": "ZZ Gundam",
+            "name_japanese": "ZZガンダム",
+            "name_chinese": "ZZ高达"
+        },
+        {
+            "id": "3131",
+            "name_english": "Qubeley Mk-II （Puru)",
+            "name_japanese": "キュベレイMk-Ⅱ(プル)",
+            "name_chinese": "卡碧尼Mk-II (普露)"
+        },
+        {
+            "id": "4011",
+            "name_english": "F91 Gundam",
+            "name_japanese": "ガンダムF91",
+            "name_chinese": "F91 高达"
+        },
+        {
+            "id": "4021",
+            "name_english": "Berga Giros",
+            "name_japanese": "ベルガ・ギロス",
+            "name_chinese": "贝尔格・基罗斯"
+        },
+        {
+            "id": "5011",
+            "name_english": "V2 Gundam",
+            "name_japanese": "V2 ガンダム",
+            "name_chinese": "V2 高达"
+        },
+        {
+            "id": "5021",
+            "name_english": "Gun EZ",
+            "name_japanese": "ガンイージ",
+            "name_chinese": "钢伊吉"
+        },
+        {
+            "id": "5031",
+            "name_english": "Gottrlatan",
+            "name_japanese": "ゴトラタン",
+            "name_chinese": "戈托拉坦"
+        },
+        {
+            "id": "5041",
+            "name_english": "Victory Gundam",
+            "name_japanese": "ヴィクトリーガンダム",
+            "name_chinese": "胜利高达"
+        },
+        {
+            "id": "5111",
+            "name_english": "Victory Gundam Hexa",
+            "name_japanese": "Vダッシュガンダム",
+            "name_chinese": "V高达HEXA"
+        },
+        {
+            "id": "5131",
+            "name_english": "Gedlav",
+            "name_japanese": "ゲドラフ",
+            "name_chinese": "葛德拉夫"
+        },
+        {
+            "id": "7011",
+            "name_english": "Gundam Double X",
+            "name_japanese": "ガンダムDX",
+            "name_chinese": "高达DX"
+        },
+        {
+            "id": "7021",
+            "name_english": "Gundam Virsago Chest Break",
+            "name_japanese": "ガンダムヴァサーゴ・CB",
+            "name_chinese": "高达维萨戈·破坏者"
+        },
+        {
+            "id": "7031",
+            "name_english": "Gundam X Divider",
+            "name_japanese": "ガンダムXディバイダー",
+            "name_chinese": "高达X分裂者"
+        },
+        {
+            "id": "7041",
+            "name_english": "Gundam X",
+            "name_japanese": "ガンダムX",
+            "name_chinese": "高达X"
+        },
+        {
+            "id": "8011",
+            "name_english": "Gundam Ez8",
+            "name_japanese": "ガンダムEz8",
+            "name_chinese": "高达Ez8"
+        },
+        {
+            "id": "8021",
+            "name_english": "Gouf Custom",
+            "name_japanese": "グフ・カスタム",
+            "name_chinese": "老虎·特装型"
+        },
+        {
+            "id": "8031",
+            "name_english": "Gundam Ground Type",
+            "name_japanese": "陸戦型ガンダム",
+            "name_chinese": "陆战型高达"
+        },
+        {
+            "id": "10011",
+            "name_english": "∀ Gundam",
+            "name_japanese": "∀ガンダム",
+            "name_chinese": "∀高达"
+        },
+        {
+            "id": "10021",
+            "name_english": "Turn X Gundam",
+            "name_japanese": "ターンX",
+            "name_chinese": "倒 X 高达"
+        },
+        {
+            "id": "10031",
+            "name_english": "Gold SUMO",
+            "name_japanese": "ゴールドスモー",
+            "name_chinese": "金色苏摩"
+        },
+        {
+            "id": "10041",
+            "name_english": "Kapool & Kapool Corin",
+            "name_japanese": "カプル&コレンカプル",
+            "name_chinese": "卡普鲁&柯林卡普鲁"
+        },
+        {
+            "id": "10061",
+            "name_english": "Silver SUMO",
+            "name_japanese": "シルバースモー",
+            "name_chinese": "银色苏摩"
+        },
+        {
+            "id": "12011",
+            "name_english": "Gundam \"Alex\"",
+            "name_japanese": "アレックス",
+            "name_chinese": "阿列克斯"
+        },
+        {
+            "id": "12021",
+            "name_english": "Zaku II Custom",
+            "name_japanese": "ザクII改",
+            "name_chinese": "扎古II改"
+        },
+        {
+            "id": "12041",
+            "name_english": "Kämpfer",
+            "name_japanese": "ケンプファー",
+            "name_chinese": "京宝梵"
+        },
+        {
+            "id": "13011",
+            "name_english": "Gundam GP01 Full Burnern",
+            "name_japanese": "ガンダム試作1号機Fb",
+            "name_chinese": "高达试作1号机Fb"
+        },
+        {
+            "id": "13021",
+            "name_english": "GP02A Gundam \"Physalis\"",
+            "name_japanese": "ガンダム試作2号機",
+            "name_chinese": "高达试作2号机"
+        },
+        {
+            "id": "13031",
+            "name_english": "Gerbera Tetra",
+            "name_japanese": "ガーベラ・テトラ",
+            "name_chinese": "红色·角马"
+        },
+        {
+            "id": "13041",
+            "name_english": "GP03 Gundam \"Dendrobium Stamen\"",
+            "name_japanese": "ガンダム試作3号機",
+            "name_chinese": "高达试作3号机"
+        },
+        {
+            "id": "13051",
+            "name_english": "Gelgoog (Anavel Gato)",
+            "name_japanese": "ゲルググ(ガトー)",
+            "name_chinese": "格鲁古古（阿纳贝尔·卡多机）"
+        },
+        {
+            "id": "14011",
+            "name_english": "Exia Gundam",
+            "name_japanese": "能天使高达",
+            "name_chinese": "エクシア"
+        },
+        {
+            "id": "14031",
+            "name_english": "Susanowo",
+            "name_japanese": "スサノオ",
+            "name_chinese": "须佐之男"
+        },
+        {
+            "id": "14021",
+            "name_english": "00 Gundam",
+            "name_japanese": "ダブルオーガンダム",
+            "name_chinese": "00 高达"
+        },
+        {
+            "id": "14041",
+            "name_english": "Cherudim Gundam",
+            "name_japanese": "ケルディムガンダム",
+            "name_chinese": "智天使高达"
+        },
+        {
+            "id": "14051",
+            "name_english": "Arche Gundam",
+            "name_japanese": "アルケーガンダム",
+            "name_chinese": "权天使高达"
+        },
+        {
+            "id": "14061",
+            "name_english": "Dynames Gundam",
+            "name_japanese": "ガンダムデュナメス",
+            "name_chinese": "力天使高达"
+        },
+        {
+            "id": "14071",
+            "name_english": "Reborns Gundam",
+            "name_japanese": "リボーンズガンダム",
+            "name_chinese": "再生高达"
+        },
+        {
+            "id": "14081",
+            "name_english": "Gundam Throne Drei",
+            "name_japanese": "ガンダムスローネドライ",
+            "name_chinese": "座天使高达三号机"
+        },
+        {
+            "id": "14091",
+            "name_english": "Arios Gundam",
+            "name_japanese": "アリオスガンダム",
+            "name_chinese": "堕天使高达"
+        },
+        {
+            "id": "14111",
+            "name_english": "Gundam Avalanche Exia",
+            "name_japanese": "アヴァランチエクシア",
+            "name_chinese": "雪崩型能天使高达"
+        },
+        {
+            "id": "14121",
+            "name_english": "00 Gundam Seven Sword",
+            "name_japanese": "ダブルオーガンダム セブンソード/G",
+            "name_chinese": "00高达七剑G"
+        },
+        {
+            "id": "14131",
+            "name_english": "GN-X III",
+            "name_japanese": "ジンクスIII",
+            "name_chinese": "GN-X III"
+        },
+        {
+            "id": "14141",
+            "name_english": "Tieren Taozi",
+            "name_japanese": "ティエレンタオツー",
+            "name_chinese": "铁人桃子"
+        },
+        {
+            "id": "15011",
+            "name_english": "Unicorn Gundam",
+            "name_japanese": "ユニコーンガンダム",
+            "name_chinese": "独角兽高达"
+        },
+        {
+            "id": "15021",
+            "name_english": "Kshatriya",
+            "name_japanese": "クシャトリヤ",
+            "name_chinese": "刹帝利"
+        },
+        {
+            "id": "15031",
+            "name_english": "Sinanju",
+            "name_japanese": "シナンジュ",
+            "name_chinese": "新安洲"
+        },
+        {
+            "id": "15041",
+            "name_english": "Delta Plus",
+            "name_japanese": "デルタプラス",
+            "name_chinese": "Delta Plus"
+        },
+        {
+            "id": "15051",
+            "name_english": "Banshee",
+            "name_japanese": "バンシィ",
+            "name_chinese": "报丧女妖"
+        },
+        {
+            "id": "15061",
+            "name_english": "Rozen Zulu",
+            "name_japanese": "ローゼン・ズール",
+            "name_chinese": "玫瑰·祖鲁"
+        },
+        {
+            "id": "15081",
+            "name_english": "Full Armor Unicorn Gundam",
+            "name_japanese": "FA・ユニコーンガンダム",
+            "name_chinese": "全装备·独角兽高达"
+        },
+        {
+            "id": "15091",
+            "name_english": "Banshee Norn",
+            "name_japanese": "バンシィ・ノルン",
+            "name_chinese": "报丧女妖·命运女神"
+        },
+        {
+            "id": "16011",
+            "name_english": "Wing Gundam Zero (EW)",
+            "name_japanese": "ウイングガンダムゼロ(EW版)",
+            "name_chinese": "飞翼高达零式（EW版）"
+        },
+        {
+            "id": "16021",
+            "name_english": "Gundam Heavyarms Custom (EW)",
+            "name_japanese": "ヘビーアームズ改(EW版)",
+            "name_chinese": "重武装高达改（EW版）"
+        },
+        {
+            "id": "16031",
+            "name_english": "Deathscythe Hell",
+            "name_japanese": "デスサイズヘル(EW版)",
+            "name_chinese": "地狱死神高达（EW版）"
+        },
+        {
+            "id": "16041",
+            "name_english": "Tallgeese III",
+            "name_japanese": "トールギスIII(EW版)",
+            "name_chinese": " 多鲁基斯 III"
+        },
+        {
+            "id": "17011",
+            "name_english": "Nu Gundam",
+            "name_japanese": "νガンダム",
+            "name_chinese": "ν高达"
+        },
+        {
+            "id": "17021",
+            "name_english": "Sazabi",
+            "name_japanese": "サザビー",
+            "name_chinese": "沙扎比"
+        },
+        {
+            "id": "17031",
+            "name_english": "Re-GZ",
+            "name_japanese": "リ・ガズィ(BWS)",
+            "name_chinese": "灵·格斯"
+        },
+        {
+            "id": "17041",
+            "name_english": "Jagd Doga",
+            "name_japanese": "ヤクト・ドーガ",
+            "name_chinese": "雅克·多加"
+        },
+        {
+            "id": "18011",
+            "name_english": "God Gundam",
+            "name_japanese": "ゴッドガンダム",
+            "name_chinese": "神高达"
+        },
+        {
+            "id": "18031",
+            "name_english": "Master Gundam",
+            "name_japanese": "マスターガンダム",
+            "name_chinese": "尊者高达"
+        },
+        {
+            "id": "18021",
+            "name_english": "Dragon Gundam",
+            "name_japanese": "ドラゴンガンダム",
+            "name_chinese": "飞龙高达"
+        },
+        {
+            "id": "18041",
+            "name_english": "Shadow Gundam",
+            "name_japanese": "ガンダムシュピーゲル",
+            "name_chinese": "明镜高达"
+        },
+        {
+            "id": "18051",
+            "name_english": "Nobel Gundam",
+            "name_japanese": "ノーベルガンダム",
+            "name_chinese": "诺贝尔高达"
+        },
+        {
+            "id": "18061",
+            "name_english": "Shining Gundam",
+            "name_japanese": "シャイニングガンダム",
+            "name_chinese": "闪光高达"
+        },
+        {
+            "id": "18071",
+            "name_english": "Rising Gundam",
+            "name_japanese": "ライジングガンダム",
+            "name_chinese": "日升高达"
+        },
+        {
+            "id": "20011",
+            "name_english": "Strike Gundam",
+            "name_japanese": "ストライクガンダム",
+            "name_chinese": "强袭高达"
+        },
+        {
+            "id": "20021",
+            "name_english": "Forbidden Gundam",
+            "name_japanese": "フォビドゥンガンダム",
+            "name_chinese": "禁断高达"
+        },
+        {
+            "id": "20031",
+            "name_english": "Providence Gundam",
+            "name_japanese": "プロヴィデンスガンダム",
+            "name_chinese": "神意高达"
+        },
+        {
+            "id": "20041",
+            "name_english": "LaGOWE",
+            "name_japanese": "ラゴゥ",
+            "name_chinese": "拉寇"
+        },
+        {
+            "id": "20051",
+            "name_english": "Freedom Gundam",
+            "name_japanese": "フリーダムガンダム",
+            "name_chinese": "自由高达"
+        },
+        {
+            "id": "20061",
+            "name_english": "Duel Gundam Assault Shroud",
+            "name_japanese": "デュエルAS",
+            "name_chinese": "决斗高达强袭尸装"
+        },
+        {
+            "id": "20081",
+            "name_english": "Perfect Strike Gundam",
+            "name_japanese": "パーフェクトストライク",
+            "name_chinese": "完美强袭高达"
+        },
+        {
+            "id": "20091",
+            "name_english": "Blitz Gundam",
+            "name_japanese": "ブリッツガンダム",
+            "name_chinese": "迅雷高达"
+        },
+        {
+            "id": "20101",
+            "name_english": "Raider Gundam",
+            "name_japanese": "レイダーガンダム",
+            "name_chinese": "劫掠高达"
+        },
+        {
+            "id": "20111",
+            "name_english": "Buster Gundam",
+            "name_japanese": "バスターガンダム",
+            "name_chinese": "暴风高达"
+        },
+        {
+            "id": "21011",
+            "name_english": "Strike Freedom Gundam",
+            "name_japanese": "ストライクフリーダムガンダム",
+            "name_chinese": "强袭自由高达"
+        },
+        {
+            "id": "21021",
+            "name_english": "Infinite Justice Gundam",
+            "name_japanese": "インフィニットジャスティス",
+            "name_chinese": "无限正义高达"
+        },
+        {
+            "id": "21031",
+            "name_english": "Destiny Gundam",
+            "name_japanese": "デスティニーガンダム",
+            "name_chinese": "命运高达"
+        },
+        {
+            "id": "21041",
+            "name_english": "Gunner ZAKU Warrior",
+            "name_japanese": "ガナーザクウォーリア",
+            "name_chinese": "炮击型扎古勇士"
+        },
+        {
+            "id": "21051",
+            "name_english": "Impulse Gundam",
+            "name_japanese": "インパルスガンダム",
+            "name_chinese": "脉冲高达"
+        },
+        {
+            "id": "21061",
+            "name_english": "Gaia Gundam",
+            "name_japanese": "ガイアガンダム",
+            "name_chinese": "盖亚高达"
+        },
+        {
+            "id": "21071",
+            "name_english": "Legend Gundam",
+            "name_japanese": "レジェンドガンダム",
+            "name_chinese": "传说高达"
+        },
+        {
+            "id": "21081",
+            "name_english": "Impulse Gundam (Lunamaria)",
+            "name_japanese": "インパルス(ルナマリア)",
+            "name_chinese": "脉冲高达（露娜玛利亚搭乘）"
+        },
+        {
+            "id": "21091",
+            "name_english": "Infinite Justice Gundam (Lacus)",
+            "name_japanese": "インフィニットジャスティスガンダム(ラクス搭乗)",
+            "name_chinese": "无限正义高达（拉克丝搭乘）"
+        },
+        {
+            "id": "21101",
+            "name_english": "Gaia Gundam (Waldfeld)",
+            "name_japanese": "ガイアガンダム(バルトフェルド搭乗)",
+            "name_chinese": "盖亚高达（巴尔特菲尔德机）"
+        },
+        {
+            "id": "21111",
+            "name_english": "GOUF Ignited",
+            "name_japanese": "グフイグナイテッド",
+            "name_chinese": "烈焰老虎"
+        },
+        {
+            "id": "21121",
+            "name_english": "Strike Rouge (Ootori)",
+            "name_japanese": "ストライクルージュ(オオトリ)",
+            "name_chinese": "强袭嫣红（凤装备）"
+        },
+        {
+            "id": "21131",
+            "name_english": "Destiny Gundam (Heine)",
+            "name_japanese": "デスティニー(ハイネ搭乗)",
+            "name_chinese": "命运高达（海涅机）"
+        },
+        {
+            "id": "21151",
+            "name_english": "Akatsuki",
+            "name_japanese": "アカツキ",
+            "name_chinese": "拂晓"
+        },
+        {
+            "id": "22011",
+            "name_english": "Astray Red Frame",
+            "name_japanese": "アストレイレッドフレーム",
+            "name_chinese": "异端高达红色机"
+        },
+        {
+            "id": "22021",
+            "name_english": "Astray Blue Frame Second L",
+            "name_japanese": "アストレイブルーフレームSL",
+            "name_chinese": "异端高达蓝色机2L"
+        },
+        {
+            "id": "22031",
+            "name_english": "Astray Gold Frame Amatsu",
+            "name_japanese": "アストレイゴールドフレーム天",
+            "name_chinese": "异端高达金色机天"
+        },
+        {
+            "id": "22041",
+            "name_english": "Dreadnought Gundam",
+            "name_japanese": "ドレッドノートガンダム",
+            "name_chinese": "勇士高达（X异端）"
+        },
+        {
+            "id": "22051",
+            "name_english": "Hyperion Gundam",
+            "name_japanese": "ハイペリオンガンダム",
+            "name_chinese": "亥伯龙高达"
+        },
+        {
+            "id": "22061",
+            "name_english": "Astray Red Frame Custom",
+            "name_japanese": "アストレイレッドフレーム改",
+            "name_chinese": "异端高达红色机改"
+        },
+        {
+            "id": "22081",
+            "name_english": "Astray Red Frame (Red Dragon)",
+            "name_japanese": "アストレイレッドフレームRD",
+            "name_chinese": "异端高达红色机（红龙）"
+        },
+        {
+            "id": "22091",
+            "name_english": "Astray Gold Frame Amatsu Mina",
+            "name_japanese": "ゴールドフレーム天ミナ",
+            "name_chinese": "异端高达金色机天蜜娜"
+        },
+        {
+            "id": "23011",
+            "name_english": "Crossbone Gundam X1 Full Cloth",
+            "name_japanese": "クロスボーンX1フルクロス",
+            "name_chinese": "海盗高达X1全覆式披风"
+        },
+        {
+            "id": "23021",
+            "name_english": "Crossbone Gundam X1 Custom",
+            "name_japanese": "クロスボーン・ガンダムX1改",
+            "name_chinese": "海盗高达X1改"
+        },
+        {
+            "id": "23031",
+            "name_english": "Crossbone Gundam X2 Custom",
+            "name_japanese": "クロスボーン・ガンダムX2改",
+            "name_chinese": "海盗高达X2改"
+        },
+        {
+            "id": "23041",
+            "name_english": "Crossbone Gundam X3",
+            "name_japanese": "クロスボーン・ガンダムX3",
+            "name_chinese": "海盗高达X3"
+        },
+        {
+            "id": "23051",
+            "name_english": "Phantom Gundam",
+            "name_japanese": "ファントムガンダム",
+            "name_chinese": "幻影高达"
+        },
+        {
+            "id": "24011",
+            "name_english": "Blue Destiny Unit 1",
+            "name_japanese": "ブルーディスティニー1号機",
+            "name_chinese": "蓝色命运1号机"
+        },
+        {
+            "id": "24021",
+            "name_english": "Efreet Custom",
+            "name_japanese": "イフリート改",
+            "name_chinese": "伊夫里特改"
+        },
+        {
+            "id": "25011",
+            "name_english": "Zudah",
+            "name_japanese": "ヅダ",
+            "name_chinese": "兹达"
+        },
+        {
+            "id": "25021",
+            "name_english": "Hildolfr",
+            "name_japanese": "ヒルドルブ",
+            "name_chinese": "斗狼"
+        },
+        {
+            "id": "26011",
+            "name_english": "Hi-Nu Gundam",
+            "name_japanese": "Hi-νガンダム",
+            "name_chinese": "Hi-ν高达"
+        },
+        {
+            "id": "26021",
+            "name_english": "Nightingale",
+            "name_japanese": "ナイチンゲール",
+            "name_chinese": "夜莺"
+        },
+        {
+            "id": "27011",
+            "name_english": "00 QAN[T]",
+            "name_japanese": "ダブルオークアンタ",
+            "name_chinese": "量子型00"
+        },
+        {
+            "id": "27021",
+            "name_english": "Raphael Gundam",
+            "name_japanese": "ラファエルガンダム",
+            "name_chinese": "疗天使高达"
+        },
+        {
+            "id": "27031",
+            "name_english": "Brave Commander Test Type",
+            "name_japanese": "ブレイヴ指揮官用試験機",
+            "name_chinese": "勇气式指挥官用试验机"
+        },
+        {
+            "id": "27041",
+            "name_english": "00 QAN[T] Full Saber",
+            "name_japanese": "ダブルオークアンタ フルセイバー",
+            "name_chinese": "量子型00全刃型"
+        },
+        {
+            "id": "27051",
+            "name_english": "Gundam Zabanya",
+            "name_japanese": "ガンダムサバーニャ",
+            "name_chinese": "狱天使高达"
+        },
+        {
+            "id": "27061",
+            "name_english": "Gundam Harute",
+            "name_japanese": "ガンダムハルート",
+            "name_chinese": "妖天使高达"
+        },
+        {
+            "id": "28011",
+            "name_english": "Wing Gundam Zero",
+            "name_japanese": "ウイングガンダムゼロ",
+            "name_chinese": "飞翼高达零式"
+        },
+        {
+            "id": "28021",
+            "name_english": "Gundam Epyon",
+            "name_japanese": "ガンダムエピオン",
+            "name_chinese": "高达艾比安"
+        },
+        {
+            "id": "28031",
+            "name_english": "Wing Gundam Zero (Quatre)",
+            "name_japanese": "ウイングガンダムゼロ(カトル搭乗)",
+            "name_chinese": "飞翼高达零式（卡托鲁搭乘）"
+        },
+        {
+            "id": "28101",
+            "name_english": "Gundam Sandrock Custom",
+            "name_japanese": "ガンダムサンドロック改",
+            "name_chinese": "沙漠高达改"
+        },
+        {
+            "id": "28111",
+            "name_english": "Gundam Heavyarms Custom",
+            "name_japanese": "ガンダムヘビーアームズ改",
+            "name_chinese": "重武装高达改"
+        },
+        {
+            "id": "28121",
+            "name_english": "Gundam Deathscythe Hell",
+            "name_japanese": "ガンダムデスサイズヘル",
+            "name_chinese": "高达地狱死神"
+        },
+        {
+            "id": "28131",
+            "name_english": "Tallgeese II",
+            "name_japanese": "トールギスII",
+            "name_chinese": "托鲁基斯II"
+        },
+        {
+            "id": "28091",
+            "name_english": "Altron Gundam",
+            "name_japanese": "アルトロンガンダム",
+            "name_chinese": "双头龙高达"
+        },
+        {
+            "id": "29011",
+            "name_english": "Strike Noir",
+            "name_japanese": "ストライクノワール",
+            "name_chinese": "漆黑强袭"
+        },
+        {
+            "id": "29021",
+            "name_english": "Stargazer Gundam",
+            "name_japanese": "スターゲイザー",
+            "name_chinese": "观星者"
+        },
+        {
+            "id": "30011",
+            "name_english": "Ex-S Gundam",
+            "name_japanese": "Ex-Sガンダム",
+            "name_chinese": "Ex-S高达"
+        },
+        {
+            "id": "31011",
+            "name_english": "Xi Gundam",
+            "name_japanese": "Ξガンダム",
+            "name_chinese": "Ξ高达"
+        },
+        {
+            "id": "31021",
+            "name_english": "Penelope",
+            "name_japanese": "ペーネロペー",
+            "name_chinese": "佩涅罗佩"
+        },
+        {
+            "id": "33011",
+            "name_english": "Gundam AGE-1",
+            "name_japanese": "ガンダムAGE-1 ",
+            "name_chinese": "高达AGE-1"
+        },
+        {
+            "id": "33021",
+            "name_english": "Gundam AGE-2",
+            "name_japanese": "ガンダムAGE-2",
+            "name_chinese": "高达AGE-2"
+        },
+        {
+            "id": "33031",
+            "name_english": "Gundam AGE-3",
+            "name_japanese": "ガンダムAGE-3",
+            "name_chinese": "高达AGE-3"
+        },
+        {
+            "id": "33041",
+            "name_english": "Gundam AGE-FX",
+            "name_japanese": "ガンダムAGE-FX",
+            "name_chinese": "高达AGE-FX"
+        },
+        {
+            "id": "33051",
+            "name_english": "Zeydra",
+            "name_japanese": "ゼイドラ",
+            "name_chinese": "杰特拉"
+        },
+        {
+            "id": "33061",
+            "name_english": "Farsia",
+            "name_japanese": "ファルシア",
+            "name_chinese": "法尔西娅"
+        },
+        {
+            "id": "33071",
+            "name_english": "Gundam Legilis",
+            "name_japanese": "ガンダムレギルス",
+            "name_chinese": "高达雷基鲁斯"
+        },
+        {
+            "id": "33081",
+            "name_english": "Gundam AGE-2 Dark Hound",
+            "name_japanese": "ガンダムAGE-2ダークハウンド",
+            "name_chinese": "高达AGE-2黑猎犬"
+        },
+        {
+            "id": "34011",
+            "name_english": "Extreme Gundam Eclipse-F",
+            "name_japanese": "エクストリームガンダム エクリプス",
+            "name_chinese": "极限高达 type-雷奥斯 日蚀面"
+        },
+        {
+            "id": "34021",
+            "name_english": "Extreme Gundam Xenon-F",
+            "name_japanese": "エクストリームガンダム ゼノン",
+            "name_chinese": "极限高达 type-雷奥斯 异化面"
+        },
+        {
+            "id": "34031",
+            "name_english": "Extreme Gundam Agios-F",
+            "name_japanese": "エクストリームガンダム アイオス",
+            "name_chinese": "极限高达 type-雷奥斯 神圣面"
+        },
+        {
+            "id": "34041",
+            "name_english": "Extreme Gundam type-Leos II Vs.",
+            "name_japanese": "エクストリームガンダム type-レオスII Vs.",
+            "name_chinese": "极限高达 type-雷奥斯II Vs."
+        },
+        {
+            "id": "34051",
+            "name_english": "Extreme Gundam Excellia",
+            "name_japanese": "エクストリーム エクセリア",
+            "name_chinese": "极限高达TYPE-塞西娅 EXCELLIA"
+        },
+        {
+            "id": "42011",
+            "name_english": "G-Self",
+            "name_japanese": "G-セルフ ",
+            "name_chinese": "G-SELF"
+        },
+        {
+            "id": "42021",
+            "name_english": "Mack Knife",
+            "name_japanese": "マックナイフ",
+            "name_chinese": "马克刀"
+        },
+        {
+            "id": "42031",
+            "name_english": "G-Self Perfect Pack",
+            "name_japanese": "G-セルフ(パーフェクトパック)",
+            "name_chinese": "G-SELF（完美背包）"
+        },
+        {
+            "id": "42041",
+            "name_english": "G-Arcane Full Dress",
+            "name_japanese": "G-アルケイン(フルドレス)",
+            "name_chinese": "G-ARCANE（盛装型）"
+        },
+        {
+            "id": "42051",
+            "name_english": "Montero",
+            "name_japanese": "モンテーロ",
+            "name_chinese": "蒙特罗"
+        },
+        {
+            "id": "43011",
+            "name_english": "Gundam Barbatos",
+            "name_japanese": "ガンダム・バルバトス",
+            "name_chinese": "高达·巴巴托斯"
+        },
+        {
+            "id": "43041",
+            "name_english": "Gundam Kimaris Trooper",
+            "name_japanese": "ガンダム・キマリストルーパー",
+            "name_chinese": "高达·锡蒙利骑兵"
+        },
+        {
+            "id": "46011",
+            "name_english": "Full Armor Gundam ",
+            "name_japanese": "フルアーマー・ガンダム",
+            "name_chinese": "全装备·高达"
+        },
+        {
+            "id": "46021",
+            "name_english": "Psycho Zaku",
+            "name_japanese": "サイコ・ザク",
+            "name_chinese": "精神力·扎古"
+        },
+        {
+            "id": "46031",
+            "name_english": "Atlas Gundam",
+            "name_japanese": "アトラスガンダム",
+            "name_chinese": "阿特拉斯高达"
+        },
+        {
+            "id": "49011",
+            "name_english": "Gundam Barbatos Lupus",
+            "name_japanese": "ガンダム・バルバトスルプス",
+            "name_chinese": "高达·巴巴托斯天狼座"
+        },
+        {
+            "id": "49021",
+            "name_english": "Gundam Gusion Rebake Full City",
+            "name_japanese": "グシオンリベイクフルシティ",
+            "name_chinese": "高达·古辛深度重锻型"
+        },
+        {
+            "id": "49031",
+            "name_english": "Bael Gundam ",
+            "name_japanese": "ガンダム・バエル",
+            "name_chinese": "高达·巴耶力"
+        },
+        {
+            "id": "49041",
+            "name_english": "Gundam Barbatos Lupus Rex",
+            "name_japanese": "バルバトスルプスレクス",
+            "name_chinese": "高达·巴巴托斯狼王"
+        },
+        {
+            "id": "51011",
+            "name_english": "Build Strike Gundam Full Package",
+            "name_japanese": "ビルドストライクガンダム",
+            "name_chinese": "创制强袭高达（全装备）"
+        },
+        {
+            "id": "51021",
+            "name_english": "Zaku Amazing",
+            "name_japanese": "ザクアメイジング",
+            "name_chinese": "惊异扎古"
+        },
+        {
+            "id": "52011",
+            "name_english": "Hot Scramble Gundam",
+            "name_japanese": "ホットスクランブルガンダム",
+            "name_chinese": "炽热争夺高达"
+        },
+        {
+            "id": "60011",
+            "name_english": "White Base",
+            "name_japanese": "ホワイトベース",
+            "name_chinese": "白色基地  （ 白色木马 ）"
+        },
+        {
+            "id": "60021",
+            "name_english": "Salamis-class",
+            "name_japanese": "サラミス",
+            "name_chinese": "萨拉米斯 "
+        },
+        {
+            "id": "60031",
+            "name_english": "Musai-class",
+            "name_japanese": "ムサイ",
+            "name_chinese": "木塞号"
+        },
+        {
+            "id": "60041",
+            "name_english": "Argama-class",
+            "name_japanese": "アーガマ",
+            "name_chinese": " 阿伽玛 "
+        },
+        {
+            "id": "60051",
+            "name_english": "Ra Cailum",
+            "name_japanese": "ラー・カイラム",
+            "name_chinese": "拉·凯拉姆 "
+        },
+        {
+            "id": "60061",
+            "name_english": "Adrastea-class",
+            "name_japanese": "アドラステア",
+            "name_chinese": "阿德剌斯忒亚"
+        },
+        {
+            "id": "60071",
+            "name_english": "Archangel",
+            "name_japanese": "アークエンジェル",
+            "name_chinese": "大天使号"
+        },
+        {
+            "id": "60081",
+            "name_english": "Eternal",
+            "name_japanese": "エターナル",
+            "name_chinese": "永恒号 "
+        },
+        {
+            "id": "60091",
+            "name_english": "Ptolemaios 2",
+            "name_japanese": "プトレマイオス2",
+            "name_chinese": "托勒密2号舰"
+        },
+        {
+            "id": "60101",
+            "name_english": "Big Rang (IGLOO)",
+            "name_japanese": "ビグ・ラング",
+            "name_chinese": " 毕格.朗格 (一年战争秘录)   "
+        },
+        {
+            "id": "70011",
+            "name_english": "GM (Cannot Use)",
+            "name_japanese": "ジム",
+            "name_chinese": "吉姆"
+        },
+        {
+            "id": "70012",
+            "name_english": "GM (Cannot Use)",
+            "name_japanese": "ジム",
+            "name_chinese": "吉姆"
+        },
+        {
+            "id": "70013",
+            "name_english": "GM (Cannot Use)",
+            "name_japanese": "ジム",
+            "name_chinese": "吉姆"
+        },
+        {
+            "id": "70021",
+            "name_english": "Ball",
+            "name_japanese": "ボール",
+            "name_chinese": "铁球"
+        },
+        {
+            "id": "70031",
+            "name_english": "Gelgoog",
+            "name_japanese": "ゲルググ",
+            "name_chinese": "勇士"
+        },
+        {
+            "id": "70041",
+            "name_english": "Elmeth",
+            "name_japanese": "エルメス",
+            "name_chinese": "艾尔美斯"
+        },
+        {
+            "id": "70051",
+            "name_english": "Zaku II",
+            "name_japanese": "ザクII",
+            "name_chinese": "扎古II"
+        },
+        {
+            "id": "70061",
+            "name_english": "Dom",
+            "name_japanese": "ドム",
+            "name_chinese": "大魔"
+        },
+        {
+            "id": "70071",
+            "name_english": "Hizack",
+            "name_japanese": "ハイザック",
+            "name_chinese": "高扎古"
+        },
+        {
+            "id": "70081",
+            "name_english": "Gundam Mk-II (White)",
+            "name_japanese": "ガンダムMk-II",
+            "name_chinese": "高达Mk-II （白）"
+        },
+        {
+            "id": "70082",
+            "name_english": "Gundam Mk-II (Black)",
+            "name_japanese": "ガンダムMk-II",
+            "name_chinese": "高达Mk-II （黑）"
+        },
+        {
+            "id": "70091",
+            "name_english": "Rick Dias (Red)",
+            "name_japanese": "リック・ディアス",
+            "name_chinese": "力克戴亚斯（红）"
+        },
+        {
+            "id": "70092",
+            "name_english": "Rick Dias (Blue)",
+            "name_japanese": "リック・ディアス",
+            "name_chinese": "力克戴亚斯（蓝）"
+        },
+        {
+            "id": "70101",
+            "name_english": "Asshimar (Z)",
+            "name_japanese": "アッシマー",
+            "name_chinese": "亚希玛"
+        },
+        {
+            "id": "70111",
+            "name_english": "Byarlant",
+            "name_japanese": "バイアラン",
+            "name_chinese": "拜亚兰"
+        },
+        {
+            "id": "70121",
+            "name_english": "Palace Athene",
+            "name_japanese": "パラス・アテネ",
+            "name_chinese": "帕拉斯·雅典娜"
+        },
+        {
+            "id": "70131",
+            "name_english": "Bolinoak Sammahn",
+            "name_japanese": "ボリノーク・サマーン",
+            "name_chinese": "波里诺克·萨曼"
+        },
+        {
+            "id": "70141",
+            "name_english": "Qubeley Mass Production Type",
+            "name_japanese": "量産型キュベレイ",
+            "name_chinese": "量产卡碧尼 （黑）  "
+        },
+        {
+            "id": "70151",
+            "name_english": "Gaza-C (Z/ZZ)",
+            "name_japanese": "ガザC",
+            "name_chinese": "加撒C"
+        },
+        {
+            "id": "70161",
+            "name_english": "Jegan",
+            "name_japanese": "ジェガン",
+            "name_chinese": "杰刚 "
+        },
+        {
+            "id": "70171",
+            "name_english": "Geara Doga (CCA)",
+            "name_japanese": "ギラ・ドーガ",
+            "name_chinese": "基拉·多加"
+        },
+        {
+            "id": "70181",
+            "name_english": "Heavygun (F91)",
+            "name_japanese": "ヘビーガン",
+            "name_chinese": "赫维刚"
+        },
+        {
+            "id": "70191",
+            "name_english": "Den'an Zon (F91)",
+            "name_japanese": "デナン・ゾン",
+            "name_chinese": "德南·佐恩"
+        },
+        {
+            "id": "70201",
+            "name_english": "Bug (F91)",
+            "name_japanese": "バグ",
+            "name_chinese": "Bug (F91)"
+        },
+        {
+            "id": "70211",
+            "name_english": "Vigna Ghina",
+            "name_japanese": "ビギナ・ギナ",
+            "name_chinese": "维基纳·基纳"
+        },
+        {
+            "id": "70221",
+            "name_english": "Gunblaster (V)",
+            "name_japanese": "ガンブラスター",
+            "name_chinese": "钢布拉斯塔"
+        },
+        {
+            "id": "70231",
+            "name_english": "Javelin (V)",
+            "name_japanese": "ジャベリン",
+            "name_chinese": "杰维林 "
+        },
+        {
+            "id": "70241",
+            "name_english": "Rig Contio",
+            "name_japanese": "リグ・コンティオ",
+            "name_chinese": "利克·康提奥"
+        },
+        {
+            "id": "70251",
+            "name_english": "Gedlav (Tyre)",
+            "name_japanese": "ゲドラフ",
+            "name_chinese": "葛德拉夫 "
+        },
+        {
+            "id": "70261",
+            "name_english": "Death Army (G)",
+            "name_japanese": "デスアーミー",
+            "name_chinese": "死亡军团"
+        },
+        {
+            "id": "70271",
+            "name_english": "Serpent (EW)",
+            "name_japanese": "サーペント",
+            "name_chinese": "大毒蛇"
+        },
+        {
+            "id": "70281",
+            "name_english": "Daughtress Neo (X)",
+            "name_japanese": "ドートレス・ネオ",
+            "name_chinese": "新多托列斯"
+        },
+        {
+            "id": "70291",
+            "name_english": "G-Bit D.O.M.E.",
+            "name_japanese": "Gビット",
+            "name_chinese": "G-机动攻击机D.O.M.E."
+        },
+        {
+            "id": "70301",
+            "name_english": "Gundam Ashtaron HC (Olba)",
+            "name_japanese": "アシュタロン・HC",
+            "name_chinese": "阿斯塔隆隐藏者"
+        },
+        {
+            "id": "70311",
+            "name_english": "Mahiroo (∀)",
+            "name_japanese": "マヒロー",
+            "name_chinese": "马希罗"
+        },
+        {
+            "id": "70321",
+            "name_english": "Silver Sumo",
+            "name_japanese": "シルバースモー",
+            "name_chinese": "苏摩"
+        },
+        {
+            "id": "70331",
+            "name_english": "GINN (Gattling Guns)",
+            "name_japanese": "ジン",
+            "name_chinese": "吉恩（机关枪）"
+        },
+        {
+            "id": "70332",
+            "name_english": "GINN (Missle)",
+            "name_japanese": "ジン",
+            "name_chinese": "吉恩（火箭炮）"
+        },
+        {
+            "id": "70341",
+            "name_english": "BuCUE (Seed)",
+            "name_japanese": "バクゥ",
+            "name_chinese": "巴库"
+        },
+        {
+            "id": "70351",
+            "name_english": "Raider Gundam",
+            "name_japanese": "レイダー",
+            "name_chinese": "强夺高达"
+        },
+        {
+            "id": "70361",
+            "name_english": "Calamity Gundam",
+            "name_japanese": "カラミティ",
+            "name_chinese": "灾厄高达 "
+        },
+        {
+            "id": "70371",
+            "name_english": "Nuclear Missles",
+            "name_japanese": "核ミサイル",
+            "name_chinese": "Nuclear Missles"
+        },
+        {
+            "id": "70381",
+            "name_english": "Legend Gundam",
+            "name_japanese": "レジェンド",
+            "name_chinese": "传说高达"
+        },
+        {
+            "id": "70391",
+            "name_english": "Akatsuki Gundam",
+            "name_japanese": "アカツキ",
+            "name_chinese": "拂晓高达"
+        },
+        {
+            "id": "70401",
+            "name_english": "GN-X",
+            "name_japanese": "ジンクス",
+            "name_chinese": "厄运式 / 白虎星式"
+        },
+        {
+            "id": "70411",
+            "name_english": "Gaga",
+            "name_japanese": "ガガ",
+            "name_chinese": "Gaga"
+        },
+        {
+            "id": "70421",
+            "name_english": "Over Flag",
+            "name_japanese": "オーバーフラッグ",
+            "name_chinese": "旗帜式"
+        },
+        {
+            "id": "70431",
+            "name_english": "GN-XIII",
+            "name_japanese": "ジンクス III",
+            "name_chinese": "厄运式 III / 白虎星式 III"
+        },
+        {
+            "id": "70441",
+            "name_english": "Ahead",
+            "name_japanese": "アヘッド",
+            "name_chinese": "先驱式"
+        },
+        {
+            "id": "70451",
+            "name_english": "Stark Jegan",
+            "name_japanese": "スタークジェガン",
+            "name_chinese": "杰钢队长"
+        },
+        {
+            "id": "70461",
+            "name_english": "Geara Zulu (Unicorn)",
+            "name_japanese": "ギラ・ズール",
+            "name_chinese": "基拉祖鲁"
+        },
+        {
+            "id": "70471",
+            "name_english": "ReZel",
+            "name_japanese": "リゼル",
+            "name_chinese": "里歇尔"
+        },
+        {
+            "id": "70481",
+            "name_english": "ReZEL Commander Type",
+            "name_japanese": "リゼル（隊長機）",
+            "name_chinese": "里歇尔C型（指挥官型）"
+        },
+        {
+            "id": "70491",
+            "name_english": "Barun",
+            "name_japanese": "バルーン",
+            "name_chinese": "Barun"
+        },
+        {
+            "id": "70501",
+            "name_english": "Xamel (0083)",
+            "name_japanese": "ザメル",
+            "name_chinese": "扎梅尔"
+        },
+        {
+            "id": "70511",
+            "name_english": "GM Cannon",
+            "name_japanese": "ジム・キャノン",
+            "name_chinese": "吉姆加农"
+        },
+        {
+            "id": "70521",
+            "name_english": "Gundam Ground Type",
+            "name_japanese": "陸戦型ガンダム",
+            "name_chinese": "陆战高达"
+        },
+        {
+            "id": "70531",
+            "name_english": "Ball",
+            "name_japanese": "ボール",
+            "name_chinese": "铁球  "
+        },
+        {
+            "id": "70541",
+            "name_english": "Oggo (IGLOO)",
+            "name_japanese": "オッゴ",
+            "name_chinese": "食人魔/欧格"
+        },
+        {
+            "id": "70551",
+            "name_english": "Batara (Crossbone)",
+            "name_japanese": "バタラ",
+            "name_chinese": "巴达拉"
+        },
+        {
+            "id": "70561",
+            "name_english": "F91 Gundam (Blue)",
+            "name_japanese": "F91 ガンダム",
+            "name_chinese": "F91 高达（蓝）"
+        },
+        {
+            "id": "70571",
+            "name_english": "M1 Astray",
+            "name_japanese": "M1アストレイ",
+            "name_chinese": "M1异端"
+        },
+        {
+            "id": "70581",
+            "name_english": "Gundam Throne Zwei",
+            "name_japanese": "ガンダムスローネツヴァイ",
+            "name_chinese": " 座天使高达第二型 "
+        },
+        {
+            "id": "71161",
+            "name_english": "Clanche",
+            "name_japanese": "クランシェ",
+            "name_chinese": "克朗西亚"
+        },
+        {
+            "id": "71171",
+            "name_english": "Clanche Custom",
+            "name_japanese": "クランシェカスタム",
+            "name_chinese": "克朗西亚改"
+        },
+        {
+            "id": "71181",
+            "name_english": "Catsith",
+            "name_japanese": "カットシー",
+            "name_chinese": "卡多西"
+        },
+        {
+            "id": "71191",
+            "name_english": "Jahannam",
+            "name_japanese": "宇宙用ジャハナム",
+            "name_chinese": "哲罕南宇宙型"
+        },
+        {
+            "id": "71221",
+            "name_english": "Mack Knife (Mass Production Type)",
+            "name_japanese": "マックナイフ(量産機)",
+            "name_chinese": "马克刀量产型"
+        },
+        {
+            "id": "71341",
+            "name_english": "Jilsbain",
+            "name_japanese": "ジルスベイン",
+            "name_chinese": "吉尔斯贝因"
+        },
+        {
+            "id": "80011",
+            "name_english": "Regnant",
+            "name_japanese": "レグナント",
+            "name_chinese": "御统式 (00 路易斯马甲) "
+        },
+        {
+            "id": "80021",
+            "name_english": "Extreme Gundam Carnage Phase",
+            "name_japanese": "ディビニだド",
+            "name_chinese": "极限高达屠杀形态"
+        },
+        {
+            "id": "80031",
+            "name_english": "Extreme Gundam Ignith Phase",
+            "name_japanese": "エクストリームCp",
+            "name_chinese": "极限高达红莲形态  "
+        },
+        {
+            "id": "80032",
+            "name_english": "Extreme Gundam Tachyon Phase",
+            "name_japanese": "エクストリームIp",
+            "name_chinese": "极限高达讯子形态"
+        },
+        {
+            "id": "80033",
+            "name_english": "Divinidad",
+            "name_japanese": "エクストリームTp",
+            "name_chinese": "迪比尼达德 (海盗 BOSS 马甲) "
+        },
+        {
+            "id": "80041",
+            "name_english": "Zakrello",
+            "name_japanese": "ザクレロ",
+            "name_chinese": "扎古莱罗 "
+        },
+        {
+            "id": "80051",
+            "name_english": "Psycho Gundam Mk-II",
+            "name_japanese": "サイコガンダムMk-II",
+            "name_chinese": "精神感应高达Mk-II "
+        },
+        {
+            "id": "80052",
+            "name_english": "Psycho Gundam Mk-II (Transformable)",
+            "name_japanese": "サイコガンダムMk-II (Ple 2)",
+            "name_chinese": "精神感应高达Mk-II  (可变形) "
+        },
+        {
+            "id": "80061",
+            "name_english": "Queen Mansa",
+            "name_japanese": "クィン・マンサ",
+            "name_chinese": "葵.曼莎"
+        },
+        {
+            "id": "80081",
+            "name_english": "Destroy Gundam",
+            "name_japanese": "デストロイガンダム",
+            "name_chinese": "毁灭高达"
+        },
+        {
+            "id": "80091",
+            "name_english": "GN Armor Type-D",
+            "name_japanese": "GNアーマーTYPE-D",
+            "name_chinese": "GN Armor Type D (洛克昂) "
+        },
+        {
+            "id": "80101",
+            "name_english": "Rafflesia",
+            "name_japanese": "ラフレシア",
+            "name_chinese": "宇宙妖花 (拉菲蕾茜亚)"
+        },
+        {
+            "id": "80111",
+            "name_english": "Apsalus II",
+            "name_japanese": "アプサラスII",
+            "name_chinese": "阿普撒拉斯 II "
+        },
+        {
+            "id": "80131",
+            "name_english": "Perfect Zeong",
+            "name_japanese": "ジオング（完成機）",
+            "name_chinese": "完美囧(完美吉翁号)  "
+        },
+        {
+            "id": "80141",
+            "name_english": "Big Zam",
+            "name_japanese": "ビグ.ザム",
+            "name_chinese": "毕格.扎姆  "
+        },
+        {
+            "id": "80151",
+            "name_english": "Shamblo",
+            "name_japanese": "シャンブロ",
+            "name_chinese": "尚布罗   "
+        },
+        {
+            "id": "80161",
+            "name_english": "GP03 Gundam \"Dendrobium\"",
+            "name_japanese": "デンドロビウム",
+            "name_chinese": "高达试作3号机（石斛兰）"
+        },
+        {
+            "id": "80171",
+            "name_english": "Strike Freedom Gundam (Meteor)",
+            "name_japanese": "ストライクフリーダムガンダム(ミーティア装備)",
+            "name_chinese": "强袭自由高达 (流星装备)"
+        },
+        {
+            "id": "80201",
+            "name_english": "Extreme Gundam Mystic Phase",
+            "name_japanese": "エクストリームMp",
+            "name_chinese": "极限高达神话形态"
+        },
+        {
+            "id": "80221",
+            "name_english": "Infinite Justice Gundam (Meteor)",
+            "name_japanese": "インフィニットジャスティス(ミーティア装備)",
+            "name_chinese": "无限正义高达 (流星装备)"
+        },
+        {
+            "id": "80231",
+            "name_english": "Vagan Gear Sid",
+            "name_japanese": "ヴェイガンギア・シド",
+            "name_chinese": "维甘机兵·希德"
+        },
+        {
+            "id": "80241",
+            "name_english": "Strike Freedom Gundam (Boss)",
+            "name_japanese": "ストライクフリーダムガンダム (ボス)",
+            "name_chinese": "强袭自由高达 (Boss)"
+        },
+        {
+            "id": "80251",
+            "name_english": "Infinite Justice Gundam (Boss)",
+            "name_japanese": "インフィニットジャスティス (ボス)",
+            "name_chinese": "无限正义高达 (Boss)"
+        },
+        {
+            "id": "80261",
+            "name_english": "Rephaser Carnage",
+            "name_japanese": "リフェイザーカルネージ",
+            "name_chinese": "极限高达R屠杀形态"
+        },
+        {
+            "id": "80271",
+            "name_english": "Rephaser Ignith",
+            "name_japanese": "リフェイザーイグニス",
+            "name_chinese": "极限高达R红莲形态"
+        },
+        {
+            "id": "80281",
+            "name_english": "Rephaser Tachyon",
+            "name_japanese": "リフェイザータキオン",
+            "name_chinese": "极限高达R迅子形态"
+        },
+        {
+            "id": "80291",
+            "name_english": "Rephaser Mystic",
+            "name_japanese": "リフェイザーミスティック",
+            "name_chinese": "极限高达R神话形态"
+        },
+        {
+            "id": "80301",
+            "name_english": "Extreme Gundam Mk-Ⅱ AXE",
+            "name_japanese": "エクストリームMk-Ⅱ AXE",
+            "name_chinese": "极限高达MK-Ⅱ AXE"
+        },
+        {
+            "id": "80311",
+            "name_english": "Extreme Gundam Dystopia Phase",
+            "name_japanese": "エクストリームガンダム ディストピア・フェイズ",
+            "name_chinese": "极限高达异位形态"
+        },
+        {
+            "id": "80321",
+            "name_english": "Gundam (Boss)",
+            "name_japanese": "ガンダム (ボス)",
+            "name_chinese": "高达 (Boss)"
+        },
+        {
+            "id": "80331",
+            "name_english": "Zeta Gundam (Boss)",
+            "name_japanese": "Zガンダム (ボス)",
+            "name_chinese": "Z 高达 (Boss)"
+        },
+        {
+            "id": "80341",
+            "name_english": "V2 Gundam (Boss)",
+            "name_japanese": "V2ガンダム (ボス)",
+            "name_chinese": "V2 高达 (Boss)"
+        },
+        {
+            "id": "80351",
+            "name_english": "Gundam Double X (Boss)",
+            "name_japanese": "ガンダムDX (ボス)",
+            "name_chinese": "高达DX (Boss)"
+        },
+        {
+            "id": "80361",
+            "name_english": "∀ Gundam (Boss)",
+            "name_japanese": "∀ガンダム (ボス)",
+            "name_chinese": "∀高达 (Boss)"
+        },
+        {
+            "id": "80371",
+            "name_english": "Destiny Gundam (Boss)",
+            "name_japanese": "デスティニーガンダム (ボス)",
+            "name_chinese": "命运高达 (Boss)"
+        },
+        {
+            "id": "80381",
+            "name_english": "Extreme Gundam type-Leos II Vs. (Boss)",
+            "name_japanese": "エクストリームガンダム type-レオスII Vs. (ボス)",
+            "name_chinese": "极限高达 type-雷奥斯II Vs. (Boss)"
+        }
+    ]
+}

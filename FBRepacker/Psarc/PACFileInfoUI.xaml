@@ -1,0 +1,146 @@
+﻿<Window x:Class="FBRepacker.Psarc.PACFileInfoUI"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:FBRepacker.Psarc"
+        mc:Ignorable="d"
+        Title="Edit PAC Info"
+        SizeToContent="WidthAndHeight"
+        >
+    <Window.Resources>
+        <local:UIntToHexStrConverter x:Key="UIntToHexStrConverter" />
+        <local:getPatchSubDirectoryConverter x:Key="getPatchSubDirectoryConverter" />
+        <local:getPatchExtensionConverter x:Key="getPatchExtensionConverter" />
+    </Window.Resources>
+    <Grid HorizontalAlignment="Stretch" Margin="20">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="8*"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*"></ColumnDefinition>
+        </Grid.ColumnDefinitions>
+
+        <StackPanel Grid.Row="0" Grid.Column="0" Orientation="Vertical">
+            <StackPanel.Resources>
+                <Style TargetType="{x:Type DockPanel}">
+                    <Setter Property="Margin" Value="0,10,0,0"/>
+                </Style>
+            </StackPanel.Resources>
+
+            <DockPanel HorizontalAlignment="Center">
+                <TextBlock Text="Psarc Infos: " Width="100" TextAlignment="Center" />
+            </DockPanel>
+
+            <DockPanel>
+                <TextBlock Text="File Path: " Width="100" TextAlignment="Right" />
+                <TextBlock x:Name="filePathUI" Text="{Binding pacFileInfo.filePath, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Stretch" Margin="10,0,10,0" TextAlignment="Center"/>
+                <Button Content="Change File: " HorizontalAlignment="Right" Width="100" Click="Change_File_Click"></Button>
+            </DockPanel>
+            
+            <DockPanel>
+                <Separator/>
+            </DockPanel>
+
+            <DockPanel HorizontalAlignment="Center">
+                <TextBlock Text="Name Hash (Hex): " Width="100" TextAlignment="Right" />
+                <TextBox x:Name="NameHashInput" Text="{Binding pacFileInfo.nameHash, Mode=OneWay, Converter={StaticResource UIntToHexStrConverter}, UpdateSourceTrigger=PropertyChanged}" PreviewTextInput="NameHashInput_PreviewTextInput" HorizontalAlignment="Stretch" Margin="10,0,10,0" TextAlignment="Center"/>
+                <Button Content="Save" HorizontalAlignment="Left" Width="100" Click="Save_Name_Hash_Click"></Button>
+            </DockPanel>
+
+            <DockPanel HorizontalAlignment="Center">
+                <Button Content="Find Name Hash Index in DATA.TBL" Width="200" Click="Find_Name_Hash_Index_Click" Margin="10,0,10,0"></Button>
+                <Button Content="Get last Index" Width="100" Click="getLastIndex" Margin="10,0,10,0"></Button>
+            </DockPanel>
+
+            <DockPanel HorizontalAlignment="Center">
+                <TextBlock Text="File Info Index: " Width="100" TextAlignment="Right" />
+                <TextBox x:Name="IndexInput" Text="{Binding pacFileInfo.fileInfoIndex, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Stretch" Margin="10,0,10,0" TextAlignment="Center"/>
+                <Button Content="Save" Width="100" Click="Save_File_Index_Click"></Button>
+            </DockPanel>
+
+            <DockPanel>
+                <Separator/>
+            </DockPanel>
+
+            <DockPanel HorizontalAlignment="Center">
+                <TextBlock Text="Relative Patch Path: " Width="105" TextAlignment="Right" />
+                <TextBlock x:Name="relativePathShow" Text="{Binding pacFileInfo.relativePatchPath, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Stretch" Margin="10,0,10,0" TextAlignment="Center"/>
+            </DockPanel>
+
+            <DockPanel>
+                <TextBlock Text="patchNo: " Width="100" TextAlignment="Right" />
+                <ComboBox x:Name="patchNoCB" SelectedItem="{Binding pacFileInfo.patchNo, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" SelectionChanged="patchCB_SelectionChanged" HorizontalAlignment="Stretch" Margin="10,0,10,0"></ComboBox>
+            </DockPanel>
+            
+            <DockPanel>
+                <TextBlock Text="Name Hash prefix: " Width="100" TextAlignment="Right" />
+                <ComboBox x:Name="prefixCB" SelectedItem="{Binding pacFileInfo.namePrefix, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" SelectionChanged="prefixCB_SelectionChanged" HorizontalAlignment="Stretch" Margin="10,0,10,0"></ComboBox>
+            </DockPanel>
+
+            <DockPanel HorizontalAlignment="Center">
+                <CheckBox IsChecked="{Binding pacFileInfo.hasRelativePatchSubPath, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Unchecked="hasSubDir_CheckBox_Checked">Sub Directory</CheckBox>
+            </DockPanel>
+
+            <DockPanel HorizontalAlignment="Center">
+                <TextBlock Text="Sub Directory: " Width="105" TextAlignment="Right" />
+                <TextBox IsEnabled="{Binding pacFileInfo.hasRelativePatchSubPath}" x:Name="relativeSubPathInput" Text="{Binding pacFileInfo.relativePatchPath, Converter={StaticResource getPatchSubDirectoryConverter} ,Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Stretch" Margin="10,0,10,0" TextAlignment="Center" MinWidth="100"/>
+                <Button IsEnabled="{Binding pacFileInfo.hasRelativePatchSubPath}" Content="Save" HorizontalAlignment="Left" Width="100" Click="Save_Sub_Directory_Click"></Button>
+            </DockPanel>
+
+            <DockPanel HorizontalAlignment="Center">
+                <TextBlock Text="Extension: " Width="105" TextAlignment="Right" />
+                <TextBox x:Name="extensionInput" Text="{Binding pacFileInfo.relativePatchPath, Converter={StaticResource getPatchExtensionConverter} ,Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Stretch" Margin="10,0,10,0" TextAlignment="Center" MinWidth="100"/>
+                <Button Content="Save" HorizontalAlignment="Left" Width="100" Click="Save_Extension_Click"></Button>
+            </DockPanel>
+
+            <DockPanel>
+                <Separator/>
+            </DockPanel>
+            
+            <DockPanel>
+                <Button Content="Get the last Relative Path Index" Width="200" Click="Get_Last_Relative_Path_Index_Click" Margin="10,0,10,0"></Button>
+            </DockPanel>
+
+            <DockPanel HorizontalAlignment="Center">
+                <TextBlock Text="Relative Path Index: " Width="105" TextAlignment="Right" />
+                <TextBox x:Name="relativePathIndexInput" Text="{Binding pacFileInfo.relativePathIndex, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Stretch" Margin="10,0,10,0" TextAlignment="Center"/>
+                <Button Content="Save" HorizontalAlignment="Left" Width="100" Click="Save_Relative_Path_Index_Click"></Button>
+            </DockPanel>
+
+            <DockPanel>
+                <Separator/>
+            </DockPanel>
+            
+            <DockPanel>
+                <TextBlock Text="Size1: " Width="100" TextAlignment="Right" />
+                <TextBox x:Name="Size1Input" Text="{Binding pacFileInfo.Size1, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Stretch" Margin="10,0,10,0" TextAlignment="Center"/>
+            </DockPanel>
+
+            <DockPanel>
+                <TextBlock Text="Size2: " Width="100" TextAlignment="Right" />
+                <TextBox x:Name="Size2Input" Text="{Binding pacFileInfo.Size2, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Stretch" Margin="10,0,10,0" TextAlignment="Center"/>
+            </DockPanel>
+
+            <DockPanel>
+                <TextBlock Text="Size3: " Width="100" TextAlignment="Right" />
+                <TextBox x:Name="Size3Input" Text="{Binding pacFileInfo.Size3, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Stretch" Margin="10,0,10,0" TextAlignment="Center"/>
+            </DockPanel>
+
+            <DockPanel>
+                <Button Content="Get file Size" HorizontalAlignment="Center" Width="100" Click="Get_File_Size_Click"></Button>
+            </DockPanel>
+
+            <DockPanel>
+                <Separator/>
+            </DockPanel>
+
+            <DockPanel HorizontalAlignment="Stretch">
+                <Button Content="Save PAC Info" HorizontalAlignment="Left" Width="100" Click="Save_PAC_Click"></Button>
+                <Button Content="Discard" HorizontalAlignment="Right" Width="100" Click="Discard_Click"></Button>
+            </DockPanel>
+
+        </StackPanel>
+    </Grid>
+</Window>
