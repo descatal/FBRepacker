@@ -7,14 +7,17 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
+using Newtonsoft.Json;
+
 namespace FBRepacker.Data.MBON_Parse
 {
     class ParseProjectileProperties : Internals
     {
-        Dictionary<uint, uint> convertAssistProjectileType = new Dictionary<uint, uint>() 
+        Dictionary<uint, uint> convertAssistProjectileType = new Dictionary<uint, uint>()
         {
             { 0x3, 0x2 }, // Missiles
             { 0x2A, 0x6 }, // Gerobi
+            { 0x3C, 0x46 }, // Bafuku
             { 0xC3ECE, 0x52DA }, // Infinite Justice Boomerang
             { 0xC3ED8, 0x52E4 }, // Infinite Justice Anchor
             { 0xC3EC4, 0x52D0 }, // Infinite Justice Backpack Sub
@@ -23,27 +26,51 @@ namespace FBRepacker.Data.MBON_Parse
 
         public ParseProjectileProperties()
         {
-            FileStream fs = File.OpenRead(@"G:\Games\PS3\EXVSFB JPN\Pkg research\FB Repacker\Repack\PAC\Input\MBON Reimport Project\Infinite Justice Boss METEOR\Extract MBON\Data - EBCEFEC7\001-MBON\002-FHM\010.bin");
+
+        }
+
+        public void convertProjectileBintoJSON()
+        {
+            FileStream fs = File.OpenRead(Properties.Settings.Default.ProjecitleBinaryFilePath);
             changeStreamFile(fs);
 
-            string outputPath = @"G:\Games\PS3\EXVSFB JPN\Pkg research\FB Repacker\Repack\PAC\Input\MBON Reimport Project\Infinite Justice Boss METEOR\Converted from MBON\Projectile_Properties.bin";
+            string fileName = Path.GetFileNameWithoutExtension(Properties.Settings.Default.ProjecitleBinaryFilePath);
+            string outputPath = Properties.Settings.Default.outputProjectileJSONFolderPath + @"\" + fileName + @"_Projectile.JSON";
 
             uint magic = readUIntBigEndian();
             uint hash = readUIntBigEndian();
             uint unitID = readUIntBigEndian();
 
-            Dictionary<uint, Projectile_Properties> projectiles = new Dictionary<uint, Projectile_Properties>();
+            Projectile_Properties projectile_Properties = new Projectile_Properties();
+            projectile_Properties.magic = magic;
+            projectile_Properties.unit_ID = unitID;
+            projectile_Properties.hash = hash;
+
+            List<Individual_Projectile_Properties> individual_projectiles = new List<Individual_Projectile_Properties>();
             uint properties_pointer = readUIntBigEndian();
             uint set_count = readUIntBigEndian();
+
+            // Determine MBON or FB
+            uint fileSize = (uint)fs.Length;
+            uint properties_size = fileSize - (0x14 + set_count * 4);
+            bool ifMBON = properties_size % (0x128 * set_count) == 0 ? true : false;
+            int prop_length = ifMBON ? 0x128 : 0x118;
+
 
             for (int i = 0; i < set_count; i++)
             {
                 uint projectile_hash = readUIntBigEndian();
                 uint returnAddress = (uint)Stream.Position;
 
-                Stream.Seek(properties_pointer + (i * 0x128), SeekOrigin.Begin);
-                Projectile_Properties proj = new Projectile_Properties();
+                Stream.Seek(properties_pointer + (i * prop_length), SeekOrigin.Begin);
+                Individual_Projectile_Properties proj = new Individual_Projectile_Properties();
+
+                proj.hash = projectile_hash;
                 proj.projectile_Type = readUIntBigEndian();
+
+                if (convertAssistProjectileType.ContainsKey(proj.projectile_Type) && Properties.Settings.Default.convertMBONProjecitle)
+                    proj.projectile_Type = convertAssistProjectileType[proj.projectile_Type];
+
                 proj.hit_properties_hash = readUIntBigEndian();
                 proj.model_nud_hash = readUIntBigEndian();
                 proj.model_vbn_index = readUIntBigEndian();
@@ -60,7 +87,7 @@ namespace FBRepacker.Data.MBON_Parse
                 proj.unk_0x38 = readUIntBigEndian();
                 proj.ammo_reduce_amount = readUIntBigEndian();
                 proj.duration_frame = readUIntBigEndian();
-                proj.max_travel_distance = readUIntBigEndian();
+                proj.max_travel_distance = readFloat(true);
                 proj.initial_speed = readFloat(true);
                 proj.acceleration = readFloat(true);
                 proj.unk_0x50 = readUIntBigEndian();
@@ -98,35 +125,74 @@ namespace FBRepacker.Data.MBON_Parse
                 proj.unk_0xD0 = readUIntBigEndian();
                 proj.unk_0xD4 = readUIntBigEndian();
                 proj.unk_0xD8 = readUIntBigEndian();
-                proj.gerobi_wiggle = readUIntBigEndian();
-                proj.effect_conductivity = readUIntBigEndian();
-                proj.unk_0xE4 = readUIntBigEndian();
-                proj.unk_0xE8 = readUIntBigEndian();
-                proj.unk_0xEC = readUIntBigEndian();
-                proj.unk_0xF0 = readUIntBigEndian();
-                proj.unk_0xF4 = readUIntBigEndian();
-                proj.unk_0xF8 = readUIntBigEndian();
-                proj.unk_0xFC = readUIntBigEndian();
-                proj.unk_0x100 = readUIntBigEndian();
-                proj.unk_0x104 = readUIntBigEndian();
-                proj.unk_0x108 = readUIntBigEndian();
-                proj.unk_0x10C = readUIntBigEndian();
-                proj.unk_0x110 = readUIntBigEndian();
-                proj.unk_0x114 = readUIntBigEndian();
-                proj.unk_0x118 = readUIntBigEndian();
-                proj.unk_0x11C = readUIntBigEndian();
-                proj.unk_0x120 = readUIntBigEndian();
-                proj.unk_0x124 = readUIntBigEndian();
+                proj.gerobi_wiggle = readFloat(true);
+                proj.effect_conductivity = readFloat(true);
+                proj.unk_0xE4 = readFloat(true);
+                proj.unk_0xE8 = readFloat(true);
+                proj.unk_0xEC = readFloat(true);
+                proj.unk_0xF0 = readFloat(true);
+                proj.unk_0xF4 = readFloat(true);
+                proj.unk_0xF8 = readFloat(true);
+                proj.unk_0xFC = readFloat(true);
+                proj.unk_0x100 = readFloat(true);
+                proj.unk_0x104 = readFloat(true);
+                proj.unk_0x108 = readFloat(true);
+                proj.unk_0x10C = readFloat(true);
+                proj.unk_0x110 = readFloat(true);
+                proj.unk_0x114 = readFloat(true);
 
-                projectiles[projectile_hash] = proj;
+                if (ifMBON)
+                {
+                    proj.unk_0x118 = readFloat(true);
+                    proj.unk_0x11C = readFloat(true);
+                    proj.unk_0x120 = readFloat(true);
+                    proj.unk_0x124 = readFloat(true);
+                }
+                else
+                {
+                    proj.unk_0x118 = 0;
+                    proj.unk_0x11C = 0;
+                    proj.unk_0x120 = 0;
+                    proj.unk_0x124 = 0;
+                }
+
+                individual_projectiles.Add(proj);
 
                 Stream.Seek(returnAddress, SeekOrigin.Begin);
             }
 
             fs.Close();
 
+            projectile_Properties.individual_Projectile_Properties = individual_projectiles;
+
+            string JSON = JsonConvert.SerializeObject(projectile_Properties, Formatting.Indented);
+            //JsonSerializerOptions json_options = new JsonSerializerOptions();
+            //json_options.WriteIndented = true;
+            //string JSON = JsonSerializer.Serialize<Projectile_Properties>(projectile_Properties, json_options);
+
+            StreamWriter fsJSON = File.CreateText(outputPath);
+            fsJSON.Write(JSON);
+            fsJSON.Close();
+        }
+
+        public Projectile_Properties parseProjectileJSON()
+        {
+            StreamReader fs = File.OpenText(Properties.Settings.Default.ProjecitleJSONFilePath);
+            string JSON = fs.ReadToEnd();
+            Projectile_Properties projectile_Properties = JsonConvert.DeserializeObject<Projectile_Properties>(JSON);
+
+            return projectile_Properties;
+        }
+
+        public void writeProjectileBinary(Projectile_Properties projectile_Properties)
+        {
+            List<Individual_Projectile_Properties> projectiles = projectile_Properties.individual_Projectile_Properties;
             MemoryStream output_projectile = new MemoryStream();
-            List<uint> projectile_hashes = projectiles.Keys.ToList();
+            List<uint> projectile_hashes = projectiles.Select(x => x.hash).ToList();
+
+            uint magic = projectile_Properties.magic;
+            uint hash = projectile_Properties.hash;
+            uint unitID = projectile_Properties.unit_ID;
 
             appendUIntMemoryStream(output_projectile, magic, true);
             appendUIntMemoryStream(output_projectile, hash, true);
@@ -139,17 +205,9 @@ namespace FBRepacker.Data.MBON_Parse
                 appendUIntMemoryStream(output_projectile, projectile_hashes[i], true);
             }
 
-            for(int i = 0; i < projectiles.Count; i++)
+            for (int i = 0; i < projectiles.Count; i++)
             {
-                Projectile_Properties proj = projectiles[projectile_hashes[i]];
-
-                if (convertAssistProjectileType.ContainsKey(proj.projectile_Type))
-                    proj.projectile_Type = convertAssistProjectileType[proj.projectile_Type];
-
-                if(proj.projectile_Type > 0x6)
-                {
-
-                }
+                Individual_Projectile_Properties proj = projectiles[i];
 
                 appendUIntMemoryStream(output_projectile, proj.projectile_Type, true);
                 appendUIntMemoryStream(output_projectile, proj.hit_properties_hash, true);
@@ -168,7 +226,7 @@ namespace FBRepacker.Data.MBON_Parse
                 appendUIntMemoryStream(output_projectile, proj.unk_0x38, true);
                 appendUIntMemoryStream(output_projectile, proj.ammo_reduce_amount, true);
                 appendUIntMemoryStream(output_projectile, proj.duration_frame, true);
-                appendUIntMemoryStream(output_projectile, proj.max_travel_distance, true);
+                appendFloatMemoryStream(output_projectile, proj.max_travel_distance, true);
                 appendFloatMemoryStream(output_projectile, proj.initial_speed, true);
                 appendFloatMemoryStream(output_projectile, proj.acceleration, true);
                 appendUIntMemoryStream(output_projectile, proj.unk_0x50, true);
@@ -206,34 +264,36 @@ namespace FBRepacker.Data.MBON_Parse
                 appendUIntMemoryStream(output_projectile, proj.unk_0xD0, true);
                 appendUIntMemoryStream(output_projectile, proj.unk_0xD4, true);
                 appendUIntMemoryStream(output_projectile, proj.unk_0xD8, true);
-                appendUIntMemoryStream(output_projectile, proj.gerobi_wiggle, true);
-                appendUIntMemoryStream(output_projectile, proj.effect_conductivity, true);
-                appendUIntMemoryStream(output_projectile, proj.unk_0xE4, true);
-                appendUIntMemoryStream(output_projectile, proj.unk_0xE8, true);
-                appendUIntMemoryStream(output_projectile, proj.unk_0xEC, true);
-                appendUIntMemoryStream(output_projectile, proj.unk_0xF0, true);
-                appendUIntMemoryStream(output_projectile, proj.unk_0xF4, true);
-                appendUIntMemoryStream(output_projectile, proj.unk_0xF8, true);
-                appendUIntMemoryStream(output_projectile, proj.unk_0xFC, true);
-                appendUIntMemoryStream(output_projectile, proj.unk_0x100, true);
-                appendUIntMemoryStream(output_projectile, proj.unk_0x104, true);
-                appendUIntMemoryStream(output_projectile, proj.unk_0x108, true);
-                appendUIntMemoryStream(output_projectile, proj.unk_0x10C, true);
-                appendUIntMemoryStream(output_projectile, proj.unk_0x110, true);
-                appendUIntMemoryStream(output_projectile, proj.unk_0x114, true);
+                appendFloatMemoryStream(output_projectile, proj.gerobi_wiggle, true);
+                appendFloatMemoryStream(output_projectile, proj.effect_conductivity, true);
+                appendFloatMemoryStream(output_projectile, proj.unk_0xE4, true);
+                appendFloatMemoryStream(output_projectile, proj.unk_0xE8, true);
+                appendFloatMemoryStream(output_projectile, proj.unk_0xEC, true);
+                appendFloatMemoryStream(output_projectile, proj.unk_0xF0, true);
+                appendFloatMemoryStream(output_projectile, proj.unk_0xF4, true);
+                appendFloatMemoryStream(output_projectile, proj.unk_0xF8, true);
+                appendFloatMemoryStream(output_projectile, proj.unk_0xFC, true);
+                appendFloatMemoryStream(output_projectile, proj.unk_0x100, true);
+                appendFloatMemoryStream(output_projectile, proj.unk_0x104, true);
+                appendFloatMemoryStream(output_projectile, proj.unk_0x108, true);
+                appendFloatMemoryStream(output_projectile, proj.unk_0x10C, true);
+                appendFloatMemoryStream(output_projectile, proj.unk_0x110, true);
+                appendFloatMemoryStream(output_projectile, proj.unk_0x114, true);
 
-                /*
-                appendUIntMemoryStream(output_projectile, proj.unk_0x118, true);
-                appendUIntMemoryStream(output_projectile, proj.unk_0x11C, true);
-                appendUIntMemoryStream(output_projectile, proj.unk_0x120, true);
-                appendUIntMemoryStream(output_projectile, proj.unk_0x124, true);
-                */
+                if (Properties.Settings.Default.ProjectileBinaryInputGameVer == 1)
+                {
+                    appendFloatMemoryStream(output_projectile, proj.unk_0x118, true);
+                    appendFloatMemoryStream(output_projectile, proj.unk_0x11C, true);
+                    appendFloatMemoryStream(output_projectile, proj.unk_0x120, true);
+                    appendFloatMemoryStream(output_projectile, proj.unk_0x124, true);
+                }
+
+                string fileName = System.IO.Path.GetFileNameWithoutExtension(Properties.Settings.Default.ProjecitleJSONFilePath);
+                FileStream ofs = File.Create(Properties.Settings.Default.outputProjectileBinFolderPath + @"\" + fileName + ".bin");
+                output_projectile.Seek(0, SeekOrigin.Begin);
+                output_projectile.CopyTo(ofs);
+                ofs.Close();
             }
-
-            FileStream ofs = File.Create(outputPath);
-            output_projectile.Seek(0, SeekOrigin.Begin);
-            output_projectile.CopyTo(ofs);
-            ofs.Close();
         }
     }
 }

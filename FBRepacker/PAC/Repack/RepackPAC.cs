@@ -272,8 +272,8 @@ namespace FBRepacker.PAC.Repack
             {
                 // parse and get infos from PAC.info
                 // we should link up duplicate infos, but this will suffice for now
-                int FHMOffset = convertStringtoInt(getSpecificFileInfoProperties("FHMOffset: ", newFileInfos));
-                int fileSize = convertStringtoInt(getSpecificFileInfoProperties("Size: ", newFileInfos));
+                int FHMOffset = convertStringtoInt(getSpecificFileInfoProperties("FHMOffset: ", newFileInfos, false));
+                int fileSize = convertStringtoInt(getSpecificFileInfoProperties("Size: ", newFileInfos, false));
                 int FHMassetEnum = convertStringtoInt(getSpecificFileInfoProperties("FHMAssetLoadEnum: ", newFileInfos));
                 int FHMunkEnum = convertStringtoInt(getSpecificFileInfoProperties("FHMunkEnum: ", newFileInfos));
                 int FHMFileNo = convertStringtoInt(getSpecificFileInfoProperties("FHMFileNo: ", newFileInfos));

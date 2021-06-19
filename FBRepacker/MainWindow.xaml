@@ -5,11 +5,14 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:pro="clr-namespace:FBRepacker.Properties"
         xmlns:local="clr-namespace:FBRepacker"
+        xmlns:internal="clr-namespace:FBRepacker.PAC"
         mc:Ignorable="d"
         Title="FBRepacker" 
         SizeToContent="WidthAndHeight">
     <Window.Resources>
+        <local:RadioBoolToIntConverter x:Key="radioBoolToIntConverter" />
         <local:InverseBooleanConverter x:Key="InverseBooleanConverter" />
+        <internal:GameSelectionEnumConverter x:Key="GameSelectionEnumConverter" />
     </Window.Resources>
     <StackPanel>
         <Menu Height="23" Width="Auto" HorizontalAlignment="Stretch" VerticalAlignment="Top">
@@ -227,6 +230,189 @@
 
                         <DockPanel>
                             <Button Content="Convert MBON to FB Data" Click="MBON_to_FB_Data_Click" Width="150"/>
+                        </DockPanel>
+
+                    </StackPanel>
+                </TabItem>
+
+                <TabItem Header="Projectile">
+                    <StackPanel Orientation="Vertical" Margin="0,10,0,10">
+                        <StackPanel.Resources>
+                            <Style TargetType="{x:Type DockPanel}">
+                                <Setter Property="Margin" Value="0,10,0,0"/>
+                            </Style>
+                        </StackPanel.Resources>
+
+                        <TextBlock Text="Parse Projectile Binary (.bin to JSON)" FontWeight="Bold" Margin="10,0,10,0" TextAlignment="Center"/>
+                        
+                        <DockPanel HorizontalAlignment="Right">
+                            <CheckBox Content="Convert MBON Projectile Type" IsChecked="{Binding convertMBONProjecitle, Mode=TwoWay, Source={x:Static pro:Settings.Default}, UpdateSourceTrigger=PropertyChanged}" x:Name="convertMBONProjectileType" Margin="0,10,0,0"/>
+                        </DockPanel>
+                        
+                        <DockPanel>
+                            <TextBlock Text="Projectile Binary: " Width="100" Margin="10,0,10,0" TextAlignment="Right"/>
+                            <TextBlock x:Name="inputProjectileFolder" Text="{Binding ProjecitleBinaryFilePath, Mode=TwoWay, Source={x:Static pro:Settings.Default}, UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Stretch" Margin="10,0,10,0" TextAlignment="Right"/>
+                            <Button Content="Open" Click="OpenProjectileBinary_Click" HorizontalAlignment="Right" Width="100"/>
+                        </DockPanel>
+
+                        <DockPanel>
+                            <TextBlock Text="Output Folder:" Width="100" Margin="10,0,10,0" TextAlignment="Right"/>
+                            <TextBlock x:Name="outputProjectileJSONFolder" Text="{Binding outputProjectileJSONFolderPath, Mode=TwoWay, Source={x:Static pro:Settings.Default}, UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Stretch" Margin="10,0,10,0" TextAlignment="Right"/>
+                            <Button Content="Change" Click="change_Projecitle_JSON_Output_Path_Click" HorizontalAlignment="Right" Width="100"/>
+                        </DockPanel>
+
+                        <DockPanel>
+                            <Button Content="Export JSON" Click="Projectile_Export_JSON_Click" Width="150"/>
+                        </DockPanel>
+                        
+                        <DockPanel>
+                            <Separator/>
+                        </DockPanel>
+                        
+                        <TextBlock Text="Serailize Projectile JSON (JSON to .bin)" FontWeight="Bold" Margin="10,20,10,0" TextAlignment="Center"/>
+
+                        <DockPanel HorizontalAlignment="Right" VerticalAlignment="Center">
+                            <TextBlock Text="Output format: " FontWeight="Bold" Margin="10,0,10,0" TextAlignment="Center" VerticalAlignment="Bottom"/>
+                            <RadioButton GroupName="ProjectileGameVer" Content="MBON" IsChecked="{Binding ProjectileBinaryInputGameVer, Mode=TwoWay, Source={x:Static pro:Settings.Default}, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource radioBoolToIntConverter}, ConverterParameter=1}" x:Name="projectile_MBON" Margin="0,10,10,0"/>
+                            <RadioButton GroupName="ProjectileGameVer" Content="FB" IsChecked="{Binding ProjectileBinaryInputGameVer, Mode=TwoWay, Source={x:Static pro:Settings.Default}, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource radioBoolToIntConverter}, ConverterParameter=2}" x:Name="projectile_FB" Margin="0,10,10,0"/>
+                        </DockPanel>
+
+                        <DockPanel>
+                            <TextBlock Text="Projecitle JSON: " Width="100" Margin="10,0,10,0" TextAlignment="Right"/>
+                            <TextBlock x:Name="inputProjectileJSONFolder" Text="{Binding ProjecitleJSONFilePath, Mode=TwoWay, Source={x:Static pro:Settings.Default}, UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Stretch" Margin="10,0,10,0" TextAlignment="Right"/>
+                            <Button Content="Open" Click="OpenProjectileJSON_Click" HorizontalAlignment="Right" Width="100"/>
+                        </DockPanel>
+
+                        <DockPanel>
+                            <TextBlock Text="Output Folder:" Width="100" Margin="10,0,10,0" TextAlignment="Right"/>
+                            <TextBlock x:Name="outputProjectileFolder" Text="{Binding outputProjectileBinFolderPath, Mode=TwoWay, Source={x:Static pro:Settings.Default}, UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Stretch" Margin="10,0,10,0" TextAlignment="Right"/>
+                            <Button Content="Change" Click="change_Projecitle_Binary_Output_Path_Click" HorizontalAlignment="Right" Width="100"/>
+                        </DockPanel>
+
+                        <DockPanel>
+                            <Button Content="Export binary" Click="Projectile_Export_Binary_Click" Width="150"/>
+                        </DockPanel>
+
+                    </StackPanel>
+                </TabItem>
+
+                <TabItem Header="Hit">
+                    <StackPanel Orientation="Vertical" Margin="0,10,0,10">
+                        <StackPanel.Resources>
+                            <Style TargetType="{x:Type DockPanel}">
+                                <Setter Property="Margin" Value="0,10,0,0"/>
+                            </Style>
+                        </StackPanel.Resources>
+
+                        <TextBlock Text="Parse Hit Binary (.bin to JSON)" FontWeight="Bold" Margin="10,0,10,0" TextAlignment="Center"/>
+
+                        <DockPanel HorizontalAlignment="Right">
+                            <CheckBox Content="Convert MBON Projectile Type" IsChecked="{Binding convertMBONProjecitle, Mode=TwoWay, Source={x:Static pro:Settings.Default}, UpdateSourceTrigger=PropertyChanged}" x:Name="convertMBONHitType" Margin="0,10,0,0"/>
+                        </DockPanel>
+
+                        <DockPanel>
+                            <TextBlock Text="Hit Binary: " Width="100" Margin="10,0,10,0" TextAlignment="Right"/>
+                            <TextBlock x:Name="inputHitBinary" Text="{Binding ProjecitleBinaryFilePath, Mode=TwoWay, Source={x:Static pro:Settings.Default}, UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Stretch" Margin="10,0,10,0" TextAlignment="Right"/>
+                            <Button Content="Open" Click="OpenProjectileBinary_Click" HorizontalAlignment="Right" Width="100"/>
+                        </DockPanel>
+
+                        <DockPanel>
+                            <TextBlock Text="Output Folder:" Width="100" Margin="10,0,10,0" TextAlignment="Right"/>
+                            <TextBlock x:Name="outputHitJSONFolder" Text="{Binding outputProjectileJSONFolderPath, Mode=TwoWay, Source={x:Static pro:Settings.Default}, UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Stretch" Margin="10,0,10,0" TextAlignment="Right"/>
+                            <Button Content="Change" Click="change_Projecitle_JSON_Output_Path_Click" HorizontalAlignment="Right" Width="100"/>
+                        </DockPanel>
+
+                        <DockPanel>
+                            <Button Content="Export JSON" Click="Projectile_Export_JSON_Click" Width="150"/>
+                        </DockPanel>
+
+                        <DockPanel>
+                            <Separator/>
+                        </DockPanel>
+
+                        <TextBlock Text="Serailize Hit JSON (JSON to .bin)" FontWeight="Bold" Margin="10,20,10,0" TextAlignment="Center"/>
+
+                        <DockPanel HorizontalAlignment="Right" VerticalAlignment="Center">
+                            <TextBlock Text="Output format: " FontWeight="Bold" Margin="10,0,10,0" TextAlignment="Center" VerticalAlignment="Bottom"/>
+                            <RadioButton GroupName="ProjectileGameVer" Content="MBON" IsChecked="{Binding ProjectileBinaryInputGameVer, Mode=TwoWay, Source={x:Static pro:Settings.Default}, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource radioBoolToIntConverter}, ConverterParameter=1}" x:Name="hit_MBON" Margin="0,10,10,0"/>
+                            <RadioButton GroupName="ProjectileGameVer" Content="FB" IsChecked="{Binding ProjectileBinaryInputGameVer, Mode=TwoWay, Source={x:Static pro:Settings.Default}, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource radioBoolToIntConverter}, ConverterParameter=2}" x:Name="hit_FB" Margin="0,10,10,0"/>
+                        </DockPanel>
+
+                        <DockPanel>
+                            <TextBlock Text="Projecitle JSON: " Width="100" Margin="10,0,10,0" TextAlignment="Right"/>
+                            <TextBlock x:Name="inputHitJSON" Text="{Binding ProjecitleJSONFilePath, Mode=TwoWay, Source={x:Static pro:Settings.Default}, UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Stretch" Margin="10,0,10,0" TextAlignment="Right"/>
+                            <Button Content="Open" Click="OpenProjectileJSON_Click" HorizontalAlignment="Right" Width="100"/>
+                        </DockPanel>
+
+                        <DockPanel>
+                            <TextBlock Text="Output Folder:" Width="100" Margin="10,0,10,0" TextAlignment="Right"/>
+                            <TextBlock x:Name="outputHitBinaryFolder" Text="{Binding outputProjectileBinFolderPath, Mode=TwoWay, Source={x:Static pro:Settings.Default}, UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Stretch" Margin="10,0,10,0" TextAlignment="Right"/>
+                            <Button Content="Change" Click="change_Projecitle_Binary_Output_Path_Click" HorizontalAlignment="Right" Width="100"/>
+                        </DockPanel>
+
+                        <DockPanel>
+                            <Button Content="Export binary" Click="Projectile_Export_Binary_Click" Width="150"/>
+                        </DockPanel>
+
+                    </StackPanel>
+                </TabItem>
+
+                <TabItem Header="Reload">
+                    <StackPanel Orientation="Vertical" Margin="0,10,0,10">
+                        <StackPanel.Resources>
+                            <Style TargetType="{x:Type DockPanel}">
+                                <Setter Property="Margin" Value="0,10,0,0"/>
+                            </Style>
+                        </StackPanel.Resources>
+
+                        <TextBlock Text="Parse Reload Binary (.bin to JSON)" FontWeight="Bold" Margin="10,0,10,0" TextAlignment="Center"/>
+
+                        <DockPanel HorizontalAlignment="Right" VerticalAlignment="Center">
+                            <TextBlock Text="Input format: " FontWeight="Bold" Margin="10,0,10,0" TextAlignment="Center" VerticalAlignment="Bottom"/>
+                            <RadioButton GroupName="ReloadGameVer" Content="MBON" IsChecked="{Binding ReloadBinaryInputGameVer, Mode=TwoWay, Source={x:Static pro:Settings.Default}, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource radioBoolToIntConverter}, ConverterParameter=1}" x:Name="reload_MBON" Margin="0,10,10,0"/>
+                            <RadioButton GroupName="ReloadGameVer" Content="FB" IsChecked="{Binding ReloadBinaryInputGameVer, Mode=TwoWay, Source={x:Static pro:Settings.Default}, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource radioBoolToIntConverter}, ConverterParameter=2}" x:Name="reload_FB" Margin="0,10,10,0"/>
+                        </DockPanel>
+
+                        <DockPanel HorizontalAlignment="Right">
+                            <CheckBox Content="Convert and output to FB JSON format" IsChecked="{Binding convertMBONReload, Mode=TwoWay, Source={x:Static pro:Settings.Default}, UpdateSourceTrigger=PropertyChanged}" x:Name="convertMBONReloadType" Margin="0,10,0,0" IsEnabled="{Binding ReloadBinaryInputGameVer, Mode=TwoWay, Source={x:Static pro:Settings.Default}, Converter={StaticResource GameSelectionEnumConverter}}"/>
+                        </DockPanel>
+
+                        <DockPanel>
+                            <TextBlock Text="Reload Binary: " Width="100" Margin="10,0,10,0" TextAlignment="Right"/>
+                            <TextBlock x:Name="inputReloadBinary" Text="{Binding ReloadBinaryFilePath, Mode=TwoWay, Source={x:Static pro:Settings.Default}, UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Stretch" Margin="10,0,10,0" TextAlignment="Right"/>
+                            <Button Content="Open" Click="OpenReloadBinary_Click" HorizontalAlignment="Right" Width="100"/>
+                        </DockPanel>
+
+                        <DockPanel>
+                            <TextBlock Text="Output Folder:" Width="100" Margin="10,0,10,0" TextAlignment="Right"/>
+                            <TextBlock x:Name="outputReloadJSONFolder" Text="{Binding outputReloadJSONFolderPath, Mode=TwoWay, Source={x:Static pro:Settings.Default}, UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Stretch" Margin="10,0,10,0" TextAlignment="Right"/>
+                            <Button Content="Change" Click="change_Reload_JSON_Output_Path_Click" HorizontalAlignment="Right" Width="100"/>
+                        </DockPanel>
+
+                        <DockPanel>
+                            <Button Content="Export JSON" Click="Reload_Export_JSON_Click" Width="150"/>
+                        </DockPanel>
+
+                        <DockPanel>
+                            <Separator/>
+                        </DockPanel>
+
+                        <TextBlock Text="Serailize Reload JSON (JSON to .bin)" FontWeight="Bold" Margin="10,20,10,0" TextAlignment="Center"/>
+
+                        <DockPanel>
+                            <TextBlock Text="Reload JSON: " Width="100" Margin="10,0,10,0" TextAlignment="Right"/>
+                            <TextBlock x:Name="inputReloadJSON" Text="{Binding ReloadJSONFilePath, Mode=TwoWay, Source={x:Static pro:Settings.Default}, UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Stretch" Margin="10,0,10,0" TextAlignment="Right"/>
+                            <Button Content="Open" Click="OpenReloadJSON_Click" HorizontalAlignment="Right" Width="100"/>
+                        </DockPanel>
+
+                        <DockPanel>
+                            <TextBlock Text="Output Folder:" Width="100" Margin="10,0,10,0" TextAlignment="Right"/>
+                            <TextBlock x:Name="outputReloadBinaryFolder" Text="{Binding outputReloadBinFolderPath, Mode=TwoWay, Source={x:Static pro:Settings.Default}, UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Stretch" Margin="10,0,10,0" TextAlignment="Right"/>
+                            <Button Content="Change" Click="change_Reload_Binary_Output_Path_Click" HorizontalAlignment="Right" Width="100"/>
+                        </DockPanel>
+
+                        <DockPanel>
+                            <Button Content="Export binary" Click="Reload_Export_Binary_Click" Width="150"/>
                         </DockPanel>
 
                     </StackPanel>

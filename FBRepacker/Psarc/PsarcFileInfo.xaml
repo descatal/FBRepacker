@@ -18,7 +18,6 @@
                 <TextBlock HorizontalAlignment="Left" Margin="10,10,10,10" FontSize="10">Total File Indexes:</TextBlock>
                 <TextBlock HorizontalAlignment="Right" Margin="10,10,10,10" FontSize="10" Text="{Binding totalFileCount, UpdateSourceTrigger=PropertyChanged}"></TextBlock>
             </StackPanel>
-
         </DockPanel>
 
         <DockPanel DockPanel.Dock="Bottom">

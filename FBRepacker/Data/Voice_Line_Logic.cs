@@ -17,9 +17,9 @@ namespace FBRepacker.Data
         {
             UnitIDList unitIDList = load_UnitID();
             SoundLogicUnitIDGroupList soundLogicUnitIDGroupList = load_GroupList();
-            List<Voice_Line_Logic_Set_Data> data = parse_Voice_Line_Logic(@"G:\Games\PS3\EXVSFB JPN\Pkg research\FB Repacker\Repack\PAC\Input\MBON Reimport Project\Infinite Justice Boss METEOR\Extract MBON\Data - EBCEFEC7\001-MBON\002-FHM\007.bin", unitIDList, soundLogicUnitIDGroupList);
-            write_Voice_Line_Data_Json(data, @"G:\Games\PS3\EXVSFB JPN\Pkg research\FB Repacker\Repack\PAC\Input\MBON Reimport Project\Infinite Justice Boss METEOR\Json\InfiniteJusticeVoiceLogic.json");
-            write_FB_Voice_Line_Logic(data, @"G:\Games\PS3\EXVSFB JPN\Pkg research\FB Repacker\Repack\PAC\Input\MBON Reimport Project\Infinite Justice Boss METEOR\Converted from MBON\Voice Logic.bin");
+            List<Voice_Line_Logic_Set_Data> data = parse_Voice_Line_Logic(@"G:\Games\PS3\EXVSFB JPN\Pkg research\FB Repacker\Repack\PAC\Input\MBON Reimport Project\MBON Units\Wing Zero EW\Extract MBON\Data - 4A5DEE5F\001-MBON\002-FHM\007.bin", unitIDList, soundLogicUnitIDGroupList);
+            write_Voice_Line_Data_Json(data, @"G:\Games\PS3\EXVSFB JPN\Pkg research\FB Repacker\Repack\PAC\Input\MBON Reimport Project\MBON Units\Wing Zero EW\Converted from MBON\WingZeroEWVoiceLogic.json");
+            write_FB_Voice_Line_Logic(data, @"G:\Games\PS3\EXVSFB JPN\Pkg research\FB Repacker\Repack\PAC\Input\MBON Reimport Project\MBON Units\Wing Zero EW\Converted from MBON\Voice Logic.bin");
         }
 
         public UnitIDList load_UnitID()
@@ -141,9 +141,9 @@ namespace FBRepacker.Data
                 uint returnAddress = (uint)Stream.Position;
                 List<uint> voiceHashes = new List<uint>();
 
+                Stream.Seek(setPointer, SeekOrigin.Begin);
                 for (int j = 0; j < voiceCount; j++)
                 {
-                    Stream.Seek(setPointer, SeekOrigin.Begin);
                     uint voiceHash = readUIntBigEndian();
                     voiceHashes.Add(voiceHash);
                 }

@@ -12,7 +12,7 @@ namespace FBRepacker.Data
     {
         public Reverse32ByteEndian()
         {
-            FileStream fs = File.OpenRead(@"G:\Games\PS3\EXVSFB JPN\Pkg research\FB Repacker\Extract\Output\MBON\v2\Infinite Justice EIDX - 761C9AB0\001-MBON\002-FHM\003-FHM\005.bin");
+            FileStream fs = File.OpenRead(@"G:\Games\PS3\EXVSFB JPN\Pkg research\FB Repacker\Repack\PAC\Input\MBON Reimport Project\MBON Units\Bael\Sprites Factory\Awakening Repack Combined - DFA5898F\Awakening Cut In Costume 1 Sprite - DFA5898F\001-MBON\002.LMB");
             changeStreamFile(fs);
 
             Stream.Seek(0, SeekOrigin.Begin);
@@ -23,7 +23,7 @@ namespace FBRepacker.Data
 
             fs.Close();
 
-            FileStream ofs = File.Create(@"G:\Games\PS3\EXVSFB JPN\Pkg research\FB Repacker\Extract\Output\MBON\v2\Infinite Justice EIDX - 761C9AB0\001-MBON\002-FHM\003-FHM\asd.bin");
+            FileStream ofs = File.Create(@"G:\Games\PS3\EXVSFB JPN\Pkg research\FB Repacker\Repack\PAC\Input\MBON Reimport Project\MBON Units\Bael\Converted from MBON\Awakening.LMB");
             ofs.Write(fso, 0, fso.Length);
             ofs.Close();
         }

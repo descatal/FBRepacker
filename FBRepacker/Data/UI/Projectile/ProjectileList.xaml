@@ -1,0 +1,68 @@
+﻿<Window x:Class="FBRepacker.Data.UI.ProjectileList"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:FBRepacker.Data.UI"
+        xmlns:internal="clr-namespace:FBRepacker.PAC"
+        mc:Ignorable="d"
+        Title="ProjectileList"         
+        SizeToContent="WidthAndHeight">
+    <Window.Resources>
+        <internal:UIntToHexStrConverter x:Key="UIntToHexStrConverter" />
+        <internal:StrNilConverter x:Key="StrNilConverter" />
+    </Window.Resources>
+    <Grid HorizontalAlignment="Stretch" Margin="20">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="8*"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*"></ColumnDefinition>
+        </Grid.ColumnDefinitions>
+
+        <StackPanel Grid.Row="0" Grid.Column="0" Orientation="Vertical">
+            <StackPanel.Resources>
+                <Style TargetType="{x:Type DockPanel}">
+                    <Setter Property="Margin" Value="0,10,0,0"/>
+                </Style>
+            </StackPanel.Resources>
+
+            <DockPanel DockPanel.Dock="Top" HorizontalAlignment="Stretch">
+                <TextBlock HorizontalAlignment="Left" Margin="10,10,10,10" FontSize="15">Projectiles:</TextBlock>
+
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                    <TextBlock HorizontalAlignment="Left" Margin="10,10,10,10" FontSize="10">Projectile Count:</TextBlock>
+                    <TextBlock HorizontalAlignment="Right" Margin="10,10,10,10" FontSize="10" Text="{Binding Projectile_Count, UpdateSourceTrigger=PropertyChanged}"></TextBlock>
+                </StackPanel>
+            </DockPanel>
+
+            <DockPanel DockPanel.Dock="Bottom">
+                <ListView Margin="10" MaxHeight="500" HorizontalAlignment="Stretch" x:Name="projectileListlv" DockPanel.Dock="Top">
+                    <ListView.ItemTemplate>
+                        <DataTemplate>
+                            <WrapPanel>
+                                <DockPanel HorizontalAlignment="Stretch" Margin="0,10,0,10">
+                                    <TextBlock Text="Name: " Margin="10,0,10,0" />
+                                    <TextBlock Text="{Binding name, Converter={StaticResource StrNilConverter}, UpdateSourceTrigger=PropertyChanged}" Margin="10,0,10,0" FontWeight="Bold" HorizontalAlignment="Stretch"/>
+                                    <Rectangle VerticalAlignment="Stretch" Width="1" Margin="2" Stroke="Black" />
+                                    <TextBlock Text="Hash: " Margin="10,0,10,0" />
+                                    <TextBlock Text="{Binding hash, Converter={StaticResource UIntToHexStrConverter}, UpdateSourceTrigger=PropertyChanged}" Margin="10,0,10,0" FontWeight="Bold" HorizontalAlignment="Stretch"/>
+                                    <Rectangle VerticalAlignment="Stretch" Width="1" Margin="2" Stroke="Black" />
+                                    <Button Tag ="{Binding RelativeSource={RelativeSource AncestorType={x:Type ListViewItem}}, UpdateSourceTrigger=PropertyChanged}" Content="Edit" Width="100" Margin="10,0,10,0" Click="Edit_File_Button_Click"/>
+                                    <Button Tag ="{Binding RelativeSource={RelativeSource AncestorType={x:Type ListViewItem}}, UpdateSourceTrigger=PropertyChanged}" Content="Delete" Width="100" Margin="10,0,10,0" Click="Delete_File_Button_Click"/>
+                                </DockPanel>
+                            </WrapPanel>
+                        </DataTemplate>
+                    </ListView.ItemTemplate>
+                </ListView>
+
+                <DockPanel DockPanel.Dock="Bottom">
+                    <Button Content="Add Projectile" HorizontalAlignment="Left" Margin="10" Width="100" Click="Add_Projectile_Button_Click" Height="33"/>
+                    <Button Content="Save JSON and Export Binary" HorizontalAlignment="Right" Margin="10" Width="200" Click="Save_JSON_and_Export_bin_Click" Height="33"/>
+                </DockPanel>
+            </DockPanel>
+
+        </StackPanel>
+    </Grid>
+</Window>

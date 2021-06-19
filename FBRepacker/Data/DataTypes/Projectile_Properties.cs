@@ -6,8 +6,27 @@ using System.Threading.Tasks;
 
 namespace FBRepacker.Data.DataTypes
 {
-    class Projectile_Properties
+    public class Projectile_Properties
     {
+        public uint magic { get; set; }
+        public uint unit_ID { get; set; }
+        public uint hash { get; set; }
+        public List<Individual_Projectile_Properties> individual_Projectile_Properties { get; set; }
+
+        public Projectile_Properties()
+        {
+            individual_Projectile_Properties = new List<Individual_Projectile_Properties>();
+        }
+    }
+
+    public class Individual_Projectile_Properties
+    {
+        // Meta stuff
+        public uint hash { get; set; }
+        public string name { get; set; }
+        public bool encodedName { get; set; } // If the name is already encoded
+
+        // Actual properties
         public uint projectile_Type { get; set; }
         public uint hit_properties_hash { get; set; }
         public uint model_nud_hash { get; set; }
@@ -25,7 +44,7 @@ namespace FBRepacker.Data.DataTypes
         public uint unk_0x38 { get; set; }
         public uint ammo_reduce_amount { get; set; }
         public uint duration_frame { get; set; }
-        public uint max_travel_distance { get; set; }
+        public float max_travel_distance { get; set; }
         public float initial_speed { get; set; }
         public float acceleration { get; set; }
         public uint unk_0x50 { get; set; }
@@ -63,29 +82,38 @@ namespace FBRepacker.Data.DataTypes
         public uint unk_0xD0 { get; set; }
         public uint unk_0xD4 { get; set; }
         public uint unk_0xD8 { get; set; }
-        public uint gerobi_wiggle { get; set; }
-        public uint effect_conductivity { get; set; }
-        public uint unk_0xE4 { get; set; }
-        public uint unk_0xE8 { get; set; }
-        public uint unk_0xEC { get; set; }
-        public uint unk_0xF0 { get; set; }
-        public uint unk_0xF4 { get; set; }
-        public uint unk_0xF8 { get; set; }
-        public uint unk_0xFC { get; set; }
-        public uint unk_0x100 { get; set; }
-        public uint unk_0x104 { get; set; }
-        public uint unk_0x108 { get; set; }
-        public uint unk_0x10C { get; set; }
-        public uint unk_0x110 { get; set; }
-        public uint unk_0x114 { get; set; }
-        public uint unk_0x118 { get; set; }
-        public uint unk_0x11C { get; set; }
-        public uint unk_0x120 { get; set; }
-        public uint unk_0x124 { get; set; }
 
-        public Projectile_Properties()
+        // reserved_area
+        public float gerobi_wiggle { get; set; }
+        public float effect_conductivity { get; set; }
+        public float unk_0xE4 { get; set; }
+        public float unk_0xE8 { get; set; }
+        public float unk_0xEC { get; set; }
+        public float unk_0xF0 { get; set; }
+        public float unk_0xF4 { get; set; }
+        public float unk_0xF8 { get; set; }
+        public float unk_0xFC { get; set; }
+        public float unk_0x100 { get; set; }
+        public float unk_0x104 { get; set; }
+        public float unk_0x108 { get; set; }
+        public float unk_0x10C { get; set; }
+        public float unk_0x110 { get; set; }
+        public float unk_0x114 { get; set; }
+
+        // Only MBON has these
+        public float unk_0x118 { get; set; }
+        public float unk_0x11C { get; set; }
+        public float unk_0x120 { get; set; }
+        public float unk_0x124 { get; set; }
+
+        public object Clone()
         {
+            return this.MemberwiseClone();
+        }
 
+        public Individual_Projectile_Properties()
+        {
+            
         }
     }
 }

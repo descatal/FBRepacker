@@ -103,7 +103,7 @@ namespace FBRepacker.Data
             B4ACScript.AppendLine("{");
 
             string sys_2D_Start = "sys_2D(0x3, ";
-            uint starting_DataSet_Index = 0x10;
+            uint starting_DataSet_Index = 0x11;
 
             for(int j = 1; j < dataSets.Count; j++)
             {
@@ -117,7 +117,7 @@ namespace FBRepacker.Data
 
                     B4ACScript.AppendLine(new_sys_2D);
                 }
-                B4ACScript.AppendLine("assign_B4AC_Weapon_Inputs(" + "0x" + (starting_DataSet_Index - 0xf).ToString("X") + ");");
+                B4ACScript.AppendLine("assign_B4AC_Weapon_Inputs(" + "0x" + (starting_DataSet_Index - 0x10).ToString("X") + ");");
                 starting_DataSet_Index++;
             }
 

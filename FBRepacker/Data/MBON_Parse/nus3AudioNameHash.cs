@@ -19,6 +19,9 @@ namespace FBRepacker.Data.MBON_Parse
             VAG
         }
 
+        string soundhash_output = @"G:\Games\PS3\EXVSFB JPN\Pkg research\FB Repacker\Repack\PAC\Input\MBON Reimport Project\MBON Units\Wing Zero EW\Converted from MBON\Sound Effect.soundhash"; //@"G:\Games\PS3\EXVSFB JPN\Pkg research\FB Repacker\Repack\PAC\Input\MBON Reimport Project\Infinite Justice Boss METEOR\Converted from MBON\SoundEffects.soundhash";
+        string log_output = @"G:\Games\PS3\EXVSFB JPN\Pkg research\FB Repacker\Repack\PAC\Input\MBON Reimport Project\MBON Units\Wing Zero EW\Converted from MBON\Wing EW Sound Effect Sorted.txt"; //@"G:\Games\PS3\EXVSFB JPN\Pkg research\FB Repacker\Repack\PAC\Input\MBON Reimport Project\Infinite Justice METEOR\Converted from MBON\Infinite Justice (Boss) Local Sorted.txt";
+        // not required for sound effects (nus3bank)
         string main_title = "ST_VO_80_P22";//"VO_80_P22"; //"ST_VO_80_P22";
 
         formatEnum format = formatEnum.VAG;
@@ -27,7 +30,9 @@ namespace FBRepacker.Data.MBON_Parse
 
         public nus3AudioNameHash()
         {
-            FileStream fs = File.OpenRead(@"G:\Games\PS3\EXVSFB JPN\Pkg research\FB Repacker\Repack\PAC\Input\MBON Reimport Project\Infinite Justice Boss METEOR\Original MBON\SoundEffects.nus3bank");//@"G:\Games\PS3\EXVSFB JPN\Pkg research\FB Repacker\Repack\PAC\Input\MBON Reimport Project\Infinite Justice METEOR\Original MBON\Infinite Justice Local.nus3audio");
+            FileStream fs = File.OpenRead(@"G:\Games\PS3\EXVSFB JPN\Pkg research\FB Repacker\Repack\PAC\Input\MBON Reimport Project\MBON Units\Wing Zero EW\Original MBON\Sound Effect.nus3bank");
+            //@"G:\Games\PS3\EXVSFB JPN\Pkg research\FB Repacker\Repack\PAC\Input\MBON Reimport Project\MBON Units\Bael\Extract MBON\Global Pilot Voices - 99B9A62E\001-MBON\003.nus3audio");
+            //@"G:\Games\PS3\EXVSFB JPN\Pkg research\FB Repacker\Repack\PAC\Input\MBON Reimport Project\Infinite Justice METEOR\Original MBON\Infinite Justice Local.nus3audio");
             changeStreamFile(fs);
 
             uint nus3 = readUIntBigEndian();
@@ -109,7 +114,7 @@ namespace FBRepacker.Data.MBON_Parse
 
             writeSoundHash(audio_Entries, hashList);
 
-            StreamWriter txt = File.CreateText(@"G:\Games\PS3\EXVSFB JPN\Pkg research\FB Repacker\Repack\PAC\Input\MBON Reimport Project\Infinite Justice METEOR\Converted from MBON\Infinite Justice (Boss) Local Sorted.txt");
+            StreamWriter txt = File.CreateText(log_output);
             txt.Write(str);
 
             txt.Close();
@@ -161,6 +166,7 @@ namespace FBRepacker.Data.MBON_Parse
             fs.Seek(0xc, SeekOrigin.Current);
 
             int main_str_size = fs.ReadByte();
+            
             main_title = readString(fs.Position, main_str_size);
 
             fs.Seek(TONEOffset, SeekOrigin.Begin);
@@ -197,7 +203,6 @@ namespace FBRepacker.Data.MBON_Parse
 
         public void writeSoundHash(uint audio_Entries, List<string> hashList)
         {
-
             MemoryStream soundHash = new MemoryStream();
 
             appendUIntMemoryStream(soundHash, 0, true);
@@ -219,7 +224,8 @@ namespace FBRepacker.Data.MBON_Parse
 
             string ext = extension[format];
 
-            bool sort = true;
+            // If the file to repack is in alphabetical order (which is probably not the case)
+            bool sort = false;
             if (sort)
                 hashList.Sort();
 
@@ -229,7 +235,7 @@ namespace FBRepacker.Data.MBON_Parse
                 appendStringMemoryStream(soundHash, (hashList[i] + ext).ToLower(), Encoding.Default, 0x40);
             }
 
-            FileStream ofs = File.Create(@"G:\Games\PS3\EXVSFB JPN\Pkg research\FB Repacker\Repack\PAC\Input\MBON Reimport Project\Infinite Justice Boss METEOR\Converted from MBON\SoundEffects.soundhash");//@"G:\Games\PS3\EXVSFB JPN\Pkg research\FB Repacker\Repack\PAC\Input\MBON Reimport Project\Infinite Justice METEOR\Converted from MBON\Infinite Justice (Boss) Local Sorted.bin");
+            FileStream ofs = File.Create(soundhash_output);//@"G:\Games\PS3\EXVSFB JPN\Pkg research\FB Repacker\Repack\PAC\Input\MBON Reimport Project\Infinite Justice METEOR\Converted from MBON\Infinite Justice (Boss) Local Sorted.bin");
 
             soundHash.Seek(0, SeekOrigin.Begin);
             soundHash.CopyTo(ofs);

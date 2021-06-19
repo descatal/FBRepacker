@@ -53,6 +53,7 @@ namespace FBRepacker.Data.MBON_Parse
         */
 
         // vag (non-loop)
+        
         string codec = "2";
         string Subheader_Size = "4";
         string Loop_Start = "0";
@@ -69,6 +70,7 @@ namespace FBRepacker.Data.MBON_Parse
         string var_0xAC = "1";
         string Format = "VAG";
         string Subheader_Count = "1";
+        
 
         // vag (loop)
         /*
@@ -93,7 +95,9 @@ namespace FBRepacker.Data.MBON_Parse
         public GenerateAudioPACInfo()
         {
             StringBuilder info = new StringBuilder();
-            List<string> AudioFiles = Directory.GetFiles(@"G:\Games\PS3\EXVSFB JPN\Pkg research\FB Repacker\Repack\PAC\Input\MBON Reimport Project\Infinite Justice Boss METEOR\Extract MBON\Sound Effect - D9337C55").ToList();
+            List<string> AudioFiles = Directory.GetFiles(@"G:\Games\PS3\EXVSFB JPN\Pkg research\FB Repacker\Repack\PAC\Input\MBON Reimport Project\MBON Units\Wing Zero EW\Converted from MBON\Sound Effect").ToList();
+
+            StreamWriter txt = File.CreateText(@"G:\Games\PS3\EXVSFB JPN\Pkg research\FB Repacker\Repack\PAC\Input\MBON Reimport Project\MBON Units\Wing Zero EW\Converted from MBON\Sound_Effect_Info.txt");
 
             info.AppendLine("Number of audio files: " + AudioFiles.Count());
             info.AppendLine("fileName: " + streamName);
@@ -123,9 +127,7 @@ namespace FBRepacker.Data.MBON_Parse
 
             info.AppendLine("//");
 
-            StreamWriter txt = File.CreateText(@"G:\Games\PS3\EXVSFB JPN\Pkg research\FB Repacker\Repack\PAC\Input\MBON Reimport Project\Infinite Justice Boss METEOR\Extract MBON\Sound Effect - D9337C55\Info.txt");
             txt.Write(info);
-
             txt.Close();
         }
     }

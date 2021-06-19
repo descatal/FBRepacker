@@ -14,6 +14,7 @@
     <WarningLevel>4</WarningLevel>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
     <Deterministic>true</Deterministic>
+    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -48,8 +49,14 @@
     <Reference Include="Microsoft.WindowsAPICodePack.ShellExtensions, Version=1.1.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\Microsoft.WindowsAPICodePack-Shell.1.1.0.0\lib\Microsoft.WindowsAPICodePack.ShellExtensions.dll</HintPath>
     </Reference>
+    <Reference Include="Microsoft.Xaml.Behaviors, Version=1.1.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.Xaml.Behaviors.Wpf.1.1.31\lib\net45\Microsoft.Xaml.Behaviors.dll</HintPath>
+    </Reference>
     <Reference Include="Newtonsoft.Json, Version=13.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <HintPath>..\packages\Newtonsoft.Json.13.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
+    </Reference>
+    <Reference Include="ObjectListView, Version=2.9.1.1072, Culture=neutral, PublicKeyToken=b1c5bf581481bcd4, processorArchitecture=MSIL">
+      <HintPath>..\packages\ObjectListView.Official.2.9.1\lib\net20\ObjectListView.dll</HintPath>
     </Reference>
     <Reference Include="OpenTK, Version=3.2.0.0, Culture=neutral, PublicKeyToken=bad199fe84eb3df4, processorArchitecture=MSIL">
       <HintPath>..\packages\OpenTK.3.2\lib\net20\OpenTK.dll</HintPath>
@@ -68,6 +75,7 @@
       <HintPath>..\packages\System.Buffers.4.5.1\lib\net461\System.Buffers.dll</HintPath>
     </Reference>
     <Reference Include="System.Data" />
+    <Reference Include="System.Drawing" />
     <Reference Include="System.Memory, Version=4.0.1.1, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
       <HintPath>..\packages\System.Memory.4.5.4\lib\net461\System.Memory.dll</HintPath>
     </Reference>
@@ -116,6 +124,7 @@
     <Compile Include="Data\DataTypes\ALEO.cs" />
     <Compile Include="Data\DataTypes\CosmeticProperties.cs" />
     <Compile Include="Data\DataTypes\Projectile_Properties.cs" />
+    <Compile Include="Data\DataTypes\Reload.cs" />
     <Compile Include="Data\DataTypes\Sound_Hash.cs" />
     <Compile Include="Data\DataTypes\Unit_ID.cs" />
     <Compile Include="Data\DataTypes\Unit_Varaibles.cs" />
@@ -130,10 +139,32 @@
     <Compile Include="Data\MBON_Parse\ParseCosmeticProperties.cs" />
     <Compile Include="Data\MBON_Parse\ParseProjectileProperties.cs" />
     <Compile Include="Data\MBON_Parse\ParseUnitIDGroup.cs" />
+    <Compile Include="Data\MBON_Parse\Parse_LMB.cs" />
     <Compile Include="Data\MBON_Parse\Parse_Melee_Variables.cs" />
+    <Compile Include="Data\MBON_Parse\Parse_Reload.cs" />
     <Compile Include="Data\Reverse32ByteEndian.cs" />
+    <Compile Include="Data\UI\Hit\HitEdit.xaml.cs">
+      <DependentUpon>HitEdit.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Data\UI\Hit\HitList.xaml.cs">
+      <DependentUpon>HitList.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Data\UI\Projectile\ProjectileEdit.xaml.cs">
+      <DependentUpon>ProjectileEdit.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Data\UI\Projectile\ProjectileList.xaml.cs">
+      <DependentUpon>ProjectileList.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Data\UI\Reload\ReloadEdit.xaml.cs">
+      <DependentUpon>ReloadEdit.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Data\UI\Reload\ReloadList.xaml.cs">
+      <DependentUpon>ReloadList.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Data\Unit Data.cs" />
     <Compile Include="Data\Voice_Line_Logic.cs" />
+    <Compile Include="PAC\Internals\FloatingPointTextBox.cs" />
+    <Compile Include="PAC\Internals\OnlyDigitalBehavior.cs" />
     <Compile Include="PACInfoUI\FileSpecific\NTP3FileInfoWindow.xaml.cs">
       <DependentUpon>NTP3FileInfoWindow.xaml</DependentUpon>
     </Compile>
@@ -178,6 +209,30 @@
     </Compile>
     <Compile Include="PAC\Extract\FileTypes\STREAM.cs" />
     <Compile Include="SimpleHelpers\FileEncoding.cs" />
+    <Page Include="Data\UI\Hit\HitEdit.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Data\UI\Hit\HitList.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Data\UI\Projectile\ProjectileEdit.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Data\UI\Projectile\ProjectileList.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Data\UI\Reload\ReloadEdit.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Data\UI\Reload\ReloadList.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -216,6 +271,10 @@
     <Page Include="SettingsWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Themes\Generic.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
     </Page>
   </ItemGroup>
   <ItemGroup>

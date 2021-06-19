@@ -224,7 +224,7 @@ namespace FBRepacker.PACInfoUI
         private void TreeView_SelectedItemChanged(object sender, RoutedPropertyChangedEventArgs<object> e)
         {
             TreeViewItem selectedItem = (TreeViewItem)TreeView.SelectedItem;
-
+            var ddd = selectedItem.Header;
             try
             {
                 GeneralFileInfo tag = (GeneralFileInfo)selectedItem.Tag;
@@ -277,11 +277,6 @@ namespace FBRepacker.PACInfoUI
                     }
                 }
             }
-
-            
-
-            
-
         }
 
         public ItemsControl GetSelectedTreeViewItemParent(TreeViewItem item)

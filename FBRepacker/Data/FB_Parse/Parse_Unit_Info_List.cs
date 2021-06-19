@@ -15,7 +15,7 @@ namespace FBRepacker.Data.FB_Parse
         public Parse_Unit_Info_List()
         {
             /*
-            string path = @"G:\Games\PS3\EXVSFB JPN\Pkg research\FB Repacker\Repack\PAC\Input\MBON Reimport Project\Common FB Extract\1.09 Unit List -  PATCHEB3A9691\001-FHM\002.bin";
+            string path = @"G:\Games\PS3\EXVSFB JPN\Pkg research\FB Repacker\Repack\PAC\Input\MBON Reimport Project\Common FB JSON\002.bin";
             FileStream fs = File.OpenRead(path);
 
             List<Unit_Info_List> unit_Info_Lists = readInfoList(fs);
@@ -23,7 +23,7 @@ namespace FBRepacker.Data.FB_Parse
             JsonSerializerOptions json_options = new JsonSerializerOptions();
             json_options.WriteIndented = true;
             string JSON = JsonSerializer.Serialize<List<Unit_Info_List>>(unit_Info_Lists, json_options);
-            string opath = @"G:\Games\PS3\EXVSFB JPN\Pkg research\FB Repacker\Repack\PAC\Input\MBON Reimport Project\Common FB Extract\1.09 Unit List -  PATCHEB3A9691\001-FHM\test.json";
+            string opath = @"G:\Games\PS3\EXVSFB JPN\Pkg research\FB Repacker\Repack\PAC\Input\MBON Reimport Project\Common FB JSON\Original.json";
 
             StreamWriter sw = File.CreateText(opath);
             sw.Write(JSON);
@@ -33,7 +33,7 @@ namespace FBRepacker.Data.FB_Parse
             */
 
             
-            string JSONIPath = @"G:\Games\PS3\EXVSFB JPN\Pkg research\FB Repacker\Repack\PAC\Input\MBON Reimport Project\Common FB Extract\1.09 Unit List -  PATCHEB3A9691\001-FHM\test.json";
+            string JSONIPath = @"G:\Games\PS3\EXVSFB JPN\Pkg research\FB Repacker\Repack\PAC\Input\MBON Reimport Project\Common FB JSON\Unit List.json";
             string JSON = File.OpenText(JSONIPath).ReadToEnd();
             List<Unit_Info_List> unit_Info_Lists = JsonSerializer.Deserialize<List<Unit_Info_List>>(JSON);
 
@@ -421,8 +421,8 @@ namespace FBRepacker.Data.FB_Parse
                 appendUIntMemoryStream(InfoMS, unit_Info_List.unk_0x9C, true);
             }
 
-            string OutputPath = @"G:\Games\PS3\EXVSFB JPN\Pkg research\FB Repacker\Repack\PAC\Input\MBON Reimport Project\Common FB Extract\1.09 Unit List -  PATCHEB3A9691\001-FHM\";
-            FileStream ofs = File.Create(OutputPath + "test.bin");
+            string OutputPath = @"G:\Games\PS3\EXVSFB JPN\Pkg research\FB Repacker\Repack\PAC\Input\MBON Reimport Project\Common FB JSON\";
+            FileStream ofs = File.Create(OutputPath + "Unit List.bin");
 
             InfoMS.Seek(0, SeekOrigin.Begin);
             StrMS.Seek(0, SeekOrigin.Begin);

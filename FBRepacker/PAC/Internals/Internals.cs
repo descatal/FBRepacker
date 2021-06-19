@@ -3,13 +3,16 @@ using System;
 using System.Buffers.Binary;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Runtime.Remoting.Metadata.W3cXsd2001;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows.Automation.Peers;
+using System.Windows.Data;
 using System.Windows.Documents;
 using System.Windows.Media.Converters;
 
@@ -296,6 +299,33 @@ namespace FBRepacker.PAC
             else
             {
                 throw new Exception("No properties found with tag: " + propertiesTag);
+            }
+        }
+
+        protected string getSpecificFileInfoProperties(string propertiesTag, string[] allProperties, bool essential)
+        {
+            if (allProperties.Any(s => s.Contains(propertiesTag)))
+            {
+                string properties = allProperties.FirstOrDefault(line => line.Contains(propertiesTag));
+
+                if (properties == null)
+                {
+                    if (essential)
+                        throw new Exception("No properties found with tag: " + propertiesTag);
+                    else
+                        return "0";
+                }
+                else
+                {
+                    return properties.Split(new string[] { ": " }, StringSplitOptions.None)[1];
+                }
+            }
+            else
+            {
+                if (essential)
+                    throw new Exception("No properties found with tag: " + propertiesTag);
+                else
+                    return "0";
             }
         }
 
@@ -815,6 +845,23 @@ namespace FBRepacker.PAC
             }
 
             return tempBuffer.SelectMany(i => i).ToArray();
+        }
+
+        protected static MemoryStream reverseEndianess(MemoryStream buffer, int reverseThreshold)
+        {
+            // I don't know why using toArray() in a loop causes significant slowdown.
+            List<byte[]> tempBuffer = new List<byte[]>();
+            for (int i = 0; i < (buffer.Length) / reverseThreshold; i++)
+            {
+                byte[] revBytes = new byte[reverseThreshold];
+                buffer.Read(revBytes, 0, reverseThreshold);
+                Array.Reverse(revBytes);
+                tempBuffer.Add(revBytes);
+            }
+
+            MemoryStream mem = new MemoryStream(tempBuffer.SelectMany(i => i).ToArray());
+
+            return mem;
         }
 
         protected string createExtractFilePath(int fileNumber)
@@ -1554,6 +1601,83 @@ namespace FBRepacker.PAC
 
             stream.Seek(initPos, SeekOrigin.Begin);
             return -1;
+        }
+    }
+
+    public class UIntToHexStrConverter : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
+        {
+            string str = value.ToString().ToLower();
+            uint.TryParse(str, out uint res);
+            return res.ToString("X8");
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
+        {
+            string str = value.ToString().ToLower();
+            try
+            {
+                uint res = uint.Parse(str, System.Globalization.NumberStyles.HexNumber);
+                return res;
+            }
+            catch
+            {
+                System.Windows.Forms.MessageBox.Show("Not a valid Int32 hexadecimal! Resetting to 0", "Error", System.Windows.Forms.MessageBoxButtons.OK, System.Windows.Forms.MessageBoxIcon.Error);
+                return 0;
+            }
+        }
+    }
+
+    public class StrNilConverter : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
+        {
+            if (value == null)
+                return "-";
+            return value;
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
+        {
+            return value;
+        }
+    }
+
+    public class GameSelectionEnumConverter : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
+        {
+            if ((int)value == 1)
+                return true;
+            return false;
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
+        {
+            return value;
+        }
+    }
+
+    //https://blog.csdn.net/u014550902/article/details/106532030
+    public class StringToNumberFloatConverter : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            NumberStyles numberStyles = System.Globalization.NumberStyles.Float;
+            //使界面不显示科学计数法
+            return Decimal.Parse(value.ToString(), numberStyles);
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            //可以输入“.”或者“,”，原理是使其报错则不对binding的变量赋值
+            string result = (value.ToString().EndsWith(".") ? "." : value).ToString();
+            result = (result.ToString().EndsWith(",") ? "," : result).ToString();
+            //可以输入末尾是0的小数，原理同上
+            Regex re = new Regex("^([0-9]{1,}[.,][0-9]*0)$");
+            result = re.IsMatch(result) ? "." : result;
+            return result;
         }
     }
 }

@@ -23,6 +23,8 @@ using System.Windows.Forms;
 using FBRepacker.Data;
 using FBRepacker.Data.MBON_Parse;
 using FBRepacker.Data.FB_Parse;
+using System.Globalization;
+using FBRepacker.Data.UI;
 
 namespace FBRepacker
 {
@@ -305,6 +307,98 @@ namespace FBRepacker
             }
         }
 
+        private void OpenProjectileBinary_Click(object sender, RoutedEventArgs e)
+        {
+            OpenFileDialog openFileDialog = new OpenFileDialog();
+            string ProjecitleBinaryFilePath = System.IO.Path.GetDirectoryName(Properties.Settings.Default.ProjecitleBinaryFilePath);
+            openFileDialog.InitialDirectory = ProjecitleBinaryFilePath;
+            openFileDialog.RestoreDirectory = true;
+            openFileDialog.ShowDialog();
+
+            ProjecitleBinaryFilePath = openFileDialog.FileName;
+            Properties.Settings.Default.ProjecitleBinaryFilePath = File.Exists(ProjecitleBinaryFilePath) ? ProjecitleBinaryFilePath : Properties.Settings.Default.ProjecitleBinaryFilePath;
+            Properties.Settings.Default.Save();
+        }
+
+        private void OpenReloadBinary_Click(object sender, RoutedEventArgs e)
+        {
+            OpenFileDialog openFileDialog = new OpenFileDialog();
+            string ReloadBinaryFilePath = System.IO.Path.GetDirectoryName(Properties.Settings.Default.ReloadBinaryFilePath);
+            openFileDialog.InitialDirectory = ReloadBinaryFilePath;
+            openFileDialog.RestoreDirectory = true;
+            openFileDialog.ShowDialog();
+
+            ReloadBinaryFilePath = openFileDialog.FileName;
+            Properties.Settings.Default.ReloadBinaryFilePath = File.Exists(ReloadBinaryFilePath) ? ReloadBinaryFilePath : Properties.Settings.Default.ReloadBinaryFilePath;
+            Properties.Settings.Default.Save();
+        }
+
+        private void change_Projecitle_JSON_Output_Path_Click(object sender, RoutedEventArgs e)
+        {
+            string outputProjectileJSONFolderPath = openFolderDialog(Properties.Settings.Default.outputProjectileJSONFolderPath);
+            if (outputProjectileJSONFolderPath != string.Empty)
+            {
+                Properties.Settings.Default.outputProjectileJSONFolderPath = outputProjectileJSONFolderPath;
+                Properties.Settings.Default.Save();
+            }
+        }
+
+        private void change_Reload_JSON_Output_Path_Click(object sender, RoutedEventArgs e)
+        {
+            string outputReloadJSONFolderPath = openFolderDialog(Properties.Settings.Default.outputReloadJSONFolderPath);
+            if (outputReloadJSONFolderPath != string.Empty)
+            {
+                Properties.Settings.Default.outputReloadJSONFolderPath = outputReloadJSONFolderPath;
+                Properties.Settings.Default.Save();
+            }
+        }
+
+        private void OpenProjectileJSON_Click(object sender, RoutedEventArgs e)
+        {
+            OpenFileDialog openFileDialog = new OpenFileDialog();
+            string ProjecitleJSONFilePath = System.IO.Path.GetDirectoryName(Properties.Settings.Default.ProjecitleJSONFilePath);
+            openFileDialog.InitialDirectory = ProjecitleJSONFilePath;
+            openFileDialog.RestoreDirectory = true;
+            openFileDialog.ShowDialog();
+
+            ProjecitleJSONFilePath = openFileDialog.FileName;
+            Properties.Settings.Default.ProjecitleJSONFilePath = File.Exists(ProjecitleJSONFilePath) ? ProjecitleJSONFilePath : Properties.Settings.Default.ProjecitleJSONFilePath;
+            Properties.Settings.Default.Save();
+        }
+
+        private void OpenReloadJSON_Click(object sender, RoutedEventArgs e)
+        {
+            OpenFileDialog openFileDialog = new OpenFileDialog();
+            string ReloadJSONFilePath = System.IO.Path.GetDirectoryName(Properties.Settings.Default.ReloadJSONFilePath);
+            openFileDialog.InitialDirectory = ReloadJSONFilePath;
+            openFileDialog.RestoreDirectory = true;
+            openFileDialog.ShowDialog();
+
+            ReloadJSONFilePath = openFileDialog.FileName;
+            Properties.Settings.Default.ReloadJSONFilePath = File.Exists(ReloadJSONFilePath) ? ReloadJSONFilePath : Properties.Settings.Default.ReloadJSONFilePath;
+            Properties.Settings.Default.Save();
+        }
+
+        private void change_Projecitle_Binary_Output_Path_Click(object sender, RoutedEventArgs e)
+        {
+            string outputProjectileBinFolderPath = openFolderDialog(Properties.Settings.Default.outputProjectileBinFolderPath);
+            if (outputProjectileBinFolderPath != string.Empty)
+            {
+                Properties.Settings.Default.outputProjectileBinFolderPath = outputProjectileBinFolderPath;
+                Properties.Settings.Default.Save();
+            }
+        }
+
+        private void change_Reload_Binary_Output_Path_Click(object sender, RoutedEventArgs e)
+        {
+            string outputReloadBinFolderPath = openFolderDialog(Properties.Settings.Default.outputReloadBinFolderPath);
+            if (outputReloadBinFolderPath != string.Empty)
+            {
+                Properties.Settings.Default.outputReloadBinFolderPath = outputReloadBinFolderPath;
+                Properties.Settings.Default.Save();
+            }
+        }
+
         private void change_Script_Output_Path_Click(object sender, RoutedEventArgs e)
         {
             string outputScriptFolderPath = openFolderDialog(Properties.Settings.Default.outputScriptFolderPath);
@@ -365,6 +459,95 @@ namespace FBRepacker
             }
             debugMessageBox.AppendText(Environment.NewLine);
             debugMessageBox.AppendText("MBON to FB Data conversion complete");
+        }
+
+        private void Projectile_Export_JSON_Click(object sender, RoutedEventArgs e)
+        {
+            debugMessageBox.AppendText(Environment.NewLine);
+            debugMessageBox.AppendText("Starting Projectile JSON Export");
+            try
+            {
+                new ParseProjectileProperties().convertProjectileBintoJSON();
+            }
+            catch (Exception exp)
+            {
+                debugMessageBox.AppendText(Environment.NewLine);
+                debugMessageBox.AppendText("Error: " + exp + "." + @"\n Please restart the application.");
+            }
+            debugMessageBox.AppendText(Environment.NewLine);
+            debugMessageBox.AppendText("Projectile JSON Export Complete!");
+        }
+
+        private void Projectile_Export_Binary_Click(object sender, RoutedEventArgs e)
+        {
+            debugMessageBox.AppendText(Environment.NewLine);
+            debugMessageBox.AppendText("Starting Projectile Binary Export");
+            try
+            {
+                bool? done = new ProjectileList().ShowDialog();
+                if (done == true)
+                {
+                    debugMessageBox.AppendText(Environment.NewLine);
+                    debugMessageBox.AppendText("Projectile Binary Export Complete!");
+                }
+                else
+                {
+                    debugMessageBox.AppendText(Environment.NewLine);
+                    debugMessageBox.AppendText("Projectile Binary Export Aborted!");
+                }
+            }
+            catch (Exception exp)
+            {
+                debugMessageBox.AppendText(Environment.NewLine);
+                debugMessageBox.AppendText("Error: " + exp + "." + @"\n Please restart the application.");
+            }
+            debugMessageBox.AppendText(Environment.NewLine);
+        }
+
+        private void Reload_Export_JSON_Click(object sender, RoutedEventArgs e)
+        {
+            debugMessageBox.AppendText(Environment.NewLine);
+            debugMessageBox.AppendText("Starting Reload JSON Export");
+            try
+            {
+                new Parse_Reload().parse_Reload();
+            }
+            catch (Exception exp)
+            {
+                debugMessageBox.AppendText(Environment.NewLine);
+                debugMessageBox.AppendText("Error: " + exp + "." + @"\n Please restart the application.");
+            }
+            debugMessageBox.AppendText(Environment.NewLine);
+            debugMessageBox.AppendText("Reload JSON Export Complete!");
+        }
+
+        private void Reload_Export_Binary_Click(object sender, RoutedEventArgs e)
+        {
+            debugMessageBox.AppendText(Environment.NewLine);
+            debugMessageBox.AppendText("Starting Reload Binary Export");
+            try
+            {
+                new ReloadList().ShowDialog();
+                /*
+                bool done = true;
+                if (done == true)
+                {
+                    debugMessageBox.AppendText(Environment.NewLine);
+                    debugMessageBox.AppendText("Reload Binary Export Complete!");
+                }
+                else
+                {
+                    debugMessageBox.AppendText(Environment.NewLine);
+                    debugMessageBox.AppendText("Reload Binary Export Aborted!");
+                }
+                */
+            }
+            catch (Exception exp)
+            {
+                debugMessageBox.AppendText(Environment.NewLine);
+                debugMessageBox.AppendText("Error: " + exp + "." + @"\n Please restart the application.");
+            }
+            debugMessageBox.AppendText(Environment.NewLine);
         }
 
         private void extractPAC_Click(object sender, RoutedEventArgs e)
@@ -518,7 +701,7 @@ namespace FBRepacker
 
         private void Debug_Click(object sender, RoutedEventArgs e)
         {
-            new Voice_Line_Logic();
+            new GenerateAudioPACInfo();
             //new ParseALEO();
             //new MBON_Image_List();
             /*
@@ -616,7 +799,26 @@ namespace FBRepacker
             
         }
         */
+    }
 
+    public class RadioBoolToIntConverter : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            int integer = (int)value;
+            if (integer == int.Parse(parameter.ToString()))
+                return true;
+            else
+                return false;
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            int.TryParse((string)parameter, out int res);
+            Properties.Settings.Default.ProjectileBinaryInputGameVer = res;
+            Properties.Settings.Default.Save();
+            return parameter;
+        }
     }
 
     [ValueConversion(typeof(bool), typeof(bool))]
@@ -641,4 +843,6 @@ namespace FBRepacker
 
         #endregion
     }
+
+
 }

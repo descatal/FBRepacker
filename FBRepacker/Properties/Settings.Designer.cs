@@ -334,5 +334,149 @@ namespace FBRepacker.Properties {
                 this["B4ACFilePath"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("C:\\")]
+        public string ProjecitleBinaryFilePath {
+            get {
+                return ((string)(this["ProjecitleBinaryFilePath"]));
+            }
+            set {
+                this["ProjecitleBinaryFilePath"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("C:\\")]
+        public string outputProjectileJSONFolderPath {
+            get {
+                return ((string)(this["outputProjectileJSONFolderPath"]));
+            }
+            set {
+                this["outputProjectileJSONFolderPath"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("C:\\")]
+        public string ProjecitleJSONFilePath {
+            get {
+                return ((string)(this["ProjecitleJSONFilePath"]));
+            }
+            set {
+                this["ProjecitleJSONFilePath"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("C:\\")]
+        public string outputProjectileBinFolderPath {
+            get {
+                return ((string)(this["outputProjectileBinFolderPath"]));
+            }
+            set {
+                this["outputProjectileBinFolderPath"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("1")]
+        public int ProjectileBinaryInputGameVer {
+            get {
+                return ((int)(this["ProjectileBinaryInputGameVer"]));
+            }
+            set {
+                this["ProjectileBinaryInputGameVer"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool convertMBONProjecitle {
+            get {
+                return ((bool)(this["convertMBONProjecitle"]));
+            }
+            set {
+                this["convertMBONProjecitle"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("C:\\")]
+        public string ReloadBinaryFilePath {
+            get {
+                return ((string)(this["ReloadBinaryFilePath"]));
+            }
+            set {
+                this["ReloadBinaryFilePath"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("C:\\")]
+        public string outputReloadJSONFolderPath {
+            get {
+                return ((string)(this["outputReloadJSONFolderPath"]));
+            }
+            set {
+                this["outputReloadJSONFolderPath"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("C:\\")]
+        public string ReloadJSONFilePath {
+            get {
+                return ((string)(this["ReloadJSONFilePath"]));
+            }
+            set {
+                this["ReloadJSONFilePath"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("C:\\")]
+        public string outputReloadBinFolderPath {
+            get {
+                return ((string)(this["outputReloadBinFolderPath"]));
+            }
+            set {
+                this["outputReloadBinFolderPath"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("1")]
+        public int ReloadBinaryInputGameVer {
+            get {
+                return ((int)(this["ReloadBinaryInputGameVer"]));
+            }
+            set {
+                this["ReloadBinaryInputGameVer"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool convertMBONReload {
+            get {
+                return ((bool)(this["convertMBONReload"]));
+            }
+            set {
+                this["convertMBONReload"] = value;
+            }
+        }
     }
 }
