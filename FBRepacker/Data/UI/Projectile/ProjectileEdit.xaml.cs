@@ -93,7 +93,8 @@ namespace FBRepacker.Data.UI
 
         private void Copy_Info_Click(object sender, RoutedEventArgs e)
         {
-            individual_Projectile_Properties = (Individual_Projectile_Properties)copy_info_combobox.SelectedItem;
+            Individual_Projectile_Properties individual_Projectile = (Individual_Projectile_Properties)copy_info_combobox.SelectedItem;
+            individual_Projectile_Properties = (Individual_Projectile_Properties)individual_Projectile.Clone();
         }
     }
 }

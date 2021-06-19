@@ -83,8 +83,7 @@ namespace FBRepacker.Data.UI
             bool? save = projectileEdit.ShowDialog();
             if (save == true)
             {
-                Individual_Projectile_Properties.Add(newInfo);
-
+                Individual_Projectile_Properties.Add(projectileEdit.individual_Projectile_Properties);
             }
             projectileListlv.Items.Refresh();
         }
