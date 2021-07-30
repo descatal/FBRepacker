@@ -54,7 +54,8 @@ namespace FBRepacker.Psarc
 
         public void repackPsarc(string outputFileName)
         {
-            string repackPath = Properties.Settings.Default.PsarcRepackFolder, psarcexeSource = Path.Combine(Directory.GetCurrentDirectory(), @"3rd Party\Psarc\psarc.exe"), repackFilesUriArgs = string.Empty;
+            string repackPath = Properties.Settings.Default.PsarcRepackFolder; 
+            string psarcexeSource = Path.Combine(Directory.GetCurrentDirectory(), @"3rd Party\Psarc\psarc.exe"), repackFilesUriArgs = string.Empty;
             string[] files = Directory.GetFiles(repackPath, "*", SearchOption.AllDirectories);
 
             foreach (var s in files)
@@ -66,7 +67,14 @@ namespace FBRepacker.Psarc
                 Console.WriteLine(repackFilesUriArgs);
             }
 
-            File.Copy(psarcexeSource, Path.Combine(repackPath, "psarc.exe"), true);
+            FileStream fs = File.OpenRead(psarcexeSource);
+            FileStream exeFs = File.Create(Path.Combine(repackPath, "psarc.exe"));
+
+            fs.CopyTo(exeFs);
+            exeFs.Close();
+            fs.Close();
+
+            //File.Copy(psarcexeSource, Path.Combine(repackPath, "psarc.exe"), true);
 
             using (Process psarc = new Process())
             {

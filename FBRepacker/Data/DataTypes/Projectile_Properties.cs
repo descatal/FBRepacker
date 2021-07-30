@@ -41,22 +41,22 @@ namespace FBRepacker.Data.DataTypes
         public uint unk_0x2C { get; set; }
         public uint unk_0x30 { get; set; }
         public uint unk_0x34 { get; set; }
-        public uint unk_0x38 { get; set; }
+        public uint muzzle_random_angle_correction_multiplier { get; set; }
         public uint ammo_reduce_amount { get; set; }
         public uint duration_frame { get; set; }
         public float max_travel_distance { get; set; }
         public float initial_speed { get; set; }
         public float acceleration { get; set; }
-        public uint unk_0x50 { get; set; }
+        public uint acceleration_start_frame { get; set; }
         public uint unk_0x54 { get; set; }
         public float max_speed { get; set; }
-        public uint unk_0x5C { get; set; }
-        public uint unk_0x60 { get; set; }
-        public uint unk_0x64 { get; set; }
-        public uint unk_0x68 { get; set; }
-        public uint unk_0x6C { get; set; }
-        public uint unk_0x70 { get; set; }
-        public uint unk_0x74 { get; set; } // Always 2
+        public uint throwable_arc_unk_0x5C { get; set; }
+        public uint throwable_arc_unk_0x60 { get; set; }
+        public uint throwable_arc_unk_0x64 { get; set; }
+        public uint throwable_arc_unk_0x68 { get; set; }
+        public uint throwable_arc_unk_0x6C { get; set; }
+        public uint throwable_arc_unk_0x70 { get; set; }
+        public uint throwable_arc_unk_0x74 { get; set; } // Always 2
         public float horizontal_guidance_amount { get; set; }
         public float horizontal_guidance_angle { get; set; } // radian
         public float vertical_guidance_amount { get; set; }

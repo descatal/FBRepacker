@@ -44,7 +44,7 @@ namespace FBRepacker.Data.UI
             var itemId = (item as Individual_Projectile_Properties)?.hash;
             int index = Individual_Projectile_Properties.FindIndex(s => s.hash == itemId);
             Individual_Projectile_Properties selectedInfo = Individual_Projectile_Properties[index];
-            Individual_Projectile_Properties backupInfo = (Individual_Projectile_Properties)selectedInfo.Clone();
+            Individual_Projectile_Properties backupInfo = (Individual_Projectile_Properties)selectedInfo.DeepClone();
             ProjectileEdit PACFileInfoEdit = new ProjectileEdit(selectedInfo, Individual_Projectile_Properties);
             bool? save = PACFileInfoEdit.ShowDialog();
 
@@ -99,12 +99,16 @@ namespace FBRepacker.Data.UI
             // Create a backup copy of old JSON.
             string oriJSONFileName = Path.GetFileNameWithoutExtension(Properties.Settings.Default.ProjecitleJSONFilePath);
             string oriJSONFilePath = Path.GetDirectoryName(Properties.Settings.Default.ProjecitleJSONFilePath);
-            File.Copy(Properties.Settings.Default.ProjecitleJSONFilePath, oriJSONFilePath + @"\" + oriJSONFileName + "_backup.JSON", true);
 
-            string fileName = Path.GetFileNameWithoutExtension(Properties.Settings.Default.ProjecitleBinaryFilePath);
-            string outputPath = Properties.Settings.Default.outputProjectileJSONFolderPath + @"\" + fileName + @"_Projectile.JSON";
+            FileStream fs = File.OpenRead(Properties.Settings.Default.ProjecitleJSONFilePath);
+            FileStream ofs = File.Create(oriJSONFilePath + @"\" + oriJSONFileName + "_backup.JSON");
 
-            StreamWriter fsJSON = File.CreateText(outputPath);
+            fs.CopyTo(ofs);
+            fs.Close();
+            ofs.Close();
+            //File.Copy(Properties.Settings.Default.ProjecitleJSONFilePath, oriJSONFilePath + @"\" + oriJSONFileName + "_backup.JSON", true);
+
+            StreamWriter fsJSON = File.CreateText(Properties.Settings.Default.ProjecitleJSONFilePath);
             fsJSON.Write(JSON);
             fsJSON.Close();
 

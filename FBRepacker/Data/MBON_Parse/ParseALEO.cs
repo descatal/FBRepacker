@@ -23,9 +23,9 @@ namespace FBRepacker.Data.MBON_Parse
 
         public ParseALEO()
         {
-            string path = @"G:\Games\PS3\EXVSFB JPN\Pkg research\FB Repacker\Repack\PAC\Input\MBON Reimport Project\MBON Units\Wing Zero EW\Files to Repack\EIDX - E2506149\001-FHM\002-FHM\";
+            string path = Properties.Settings.Default.ALEOFolderPath; //@"G:\Games\PS3\EXVSFB JPN\Pkg research\FB Repacker\Repack\PAC\Input\MBON Reimport Project\MBON Units\Wing Zero EW\Files to Repack\EIDX - E2506149\001-FHM\002-FHM\";
             //@"G:\Games\PS3\EXVSFB JPN\Pkg research\FB Repacker\Repack\PAC\Input\MBON Reimport Project\Infinite Justice METEOR\Extract MBON\Common EIDX - FABAA98C\001-FHM\002-FHM\";
-            string outputpath = @"G:\Games\PS3\EXVSFB JPN\Pkg research\FB Repacker\Repack\PAC\Input\MBON Reimport Project\MBON Units\Wing Zero EW\Converted from MBON\";
+            string outputpath = Properties.Settings.Default.outputALEOFolderPath; // @"G:\Games\PS3\EXVSFB JPN\Pkg research\FB Repacker\Repack\PAC\Input\MBON Reimport Project\MBON Units\Wing Zero EW\Converted from MBON\";
             //@"G:\Games\PS3\EXVSFB JPN\Pkg research\FB Repacker\Repack\PAC\Input\MBON Reimport Project\Infinite Justice METEOR\Extract MBON\EIDX_Common_Test";
             List<string> allFiles = Directory.GetFiles(path, "*", SearchOption.AllDirectories).ToList();
             List<string> ALEOFiles = allFiles.Where(s =>

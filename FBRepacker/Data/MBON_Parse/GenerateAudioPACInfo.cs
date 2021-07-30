@@ -33,7 +33,7 @@ namespace FBRepacker.Data.MBON_Parse
         */
 
         // AT3
-        /*
+        
         string codec = "3";
         string Subheader_Size = "64";
         string Loop_Start = "0";
@@ -50,10 +50,10 @@ namespace FBRepacker.Data.MBON_Parse
         string var_0xAC = "0";
         string Format = "AT3";
         string Subheader_Count = "16";
-        */
+        
 
         // vag (non-loop)
-        
+        /*
         string codec = "2";
         string Subheader_Size = "4";
         string Loop_Start = "0";
@@ -95,9 +95,9 @@ namespace FBRepacker.Data.MBON_Parse
         public GenerateAudioPACInfo()
         {
             StringBuilder info = new StringBuilder();
-            List<string> AudioFiles = Directory.GetFiles(@"G:\Games\PS3\EXVSFB JPN\Pkg research\FB Repacker\Repack\PAC\Input\MBON Reimport Project\MBON Units\Wing Zero EW\Converted from MBON\Sound Effect").ToList();
+            List<string> AudioFiles = Directory.GetFiles(@"G:\Games\PS3\EXVSFB JPN\Pkg research\FB Repacker\Repack\PAC\Input\MBON Reimport Project\MBON Units\Bound Doc\Converted from MBON\Local Voice Lines").ToList();
 
-            StreamWriter txt = File.CreateText(@"G:\Games\PS3\EXVSFB JPN\Pkg research\FB Repacker\Repack\PAC\Input\MBON Reimport Project\MBON Units\Wing Zero EW\Converted from MBON\Sound_Effect_Info.txt");
+            StreamWriter txt = File.CreateText(@"G:\Games\PS3\EXVSFB JPN\Pkg research\FB Repacker\Repack\PAC\Input\MBON Reimport Project\MBON Units\Bound Doc\Converted from MBON\Local Voice Lines Info.txt");
 
             info.AppendLine("Number of audio files: " + AudioFiles.Count());
             info.AppendLine("fileName: " + streamName);

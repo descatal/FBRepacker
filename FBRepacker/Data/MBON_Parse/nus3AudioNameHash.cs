@@ -12,27 +12,33 @@ namespace FBRepacker.Data.MBON_Parse
     {
         uint STREAM_ID = 0x1E;
 
-        public enum formatEnum
+        public enum audioFormatEnum
         {
-            AT3,
-            IS14,
-            VAG
+            AT3 = 0,
+            IS14 = 1,
+            VAG = 2
         }
 
-        string soundhash_output = @"G:\Games\PS3\EXVSFB JPN\Pkg research\FB Repacker\Repack\PAC\Input\MBON Reimport Project\MBON Units\Wing Zero EW\Converted from MBON\Sound Effect.soundhash"; //@"G:\Games\PS3\EXVSFB JPN\Pkg research\FB Repacker\Repack\PAC\Input\MBON Reimport Project\Infinite Justice Boss METEOR\Converted from MBON\SoundEffects.soundhash";
-        string log_output = @"G:\Games\PS3\EXVSFB JPN\Pkg research\FB Repacker\Repack\PAC\Input\MBON Reimport Project\MBON Units\Wing Zero EW\Converted from MBON\Wing EW Sound Effect Sorted.txt"; //@"G:\Games\PS3\EXVSFB JPN\Pkg research\FB Repacker\Repack\PAC\Input\MBON Reimport Project\Infinite Justice METEOR\Converted from MBON\Infinite Justice (Boss) Local Sorted.txt";
+        //string soundhash_output = @"G:\Games\PS3\EXVSFB JPN\Pkg research\FB Repacker\Extract\Input\MBON\v2\Sound Effect.soundhash"; //@"G:\Games\PS3\EXVSFB JPN\Pkg research\FB Repacker\Repack\PAC\Input\MBON Reimport Project\Infinite Justice Boss METEOR\Converted from MBON\SoundEffects.soundhash";
+        //string log_output = @"G:\Games\PS3\EXVSFB JPN\Pkg research\FB Repacker\Extract\Input\MBON\v2\T3 Local Sorted.txt"; //@"G:\Games\PS3\EXVSFB JPN\Pkg research\FB Repacker\Repack\PAC\Input\MBON Reimport Project\Infinite Justice METEOR\Converted from MBON\Infinite Justice (Boss) Local Sorted.txt";
         // not required for sound effects (nus3bank)
-        string main_title = "ST_VO_80_P22";//"VO_80_P22"; //"ST_VO_80_P22";
+        string main_title = "null"; //"ST_VO_80_P22";//"VO_80_P22"; //"ST_VO_80_P22";
 
-        formatEnum format = formatEnum.VAG;
+        audioFormatEnum format = audioFormatEnum.AT3;
 
-        Dictionary<formatEnum, string> extension = new Dictionary<formatEnum, string>() { { formatEnum.AT3, ".at3" }, { formatEnum.IS14, ".is14" }, { formatEnum.VAG, ".vag" } };
+        Dictionary<audioFormatEnum, string> extension = new Dictionary<audioFormatEnum, string>() { { audioFormatEnum.AT3, ".at3" }, { audioFormatEnum.IS14, ".is14" }, { audioFormatEnum.VAG, ".vag" } };
 
-        public nus3AudioNameHash()
+        public nus3AudioNameHash(audioFormatEnum audioFormatEnum, string input_main_title)
         {
-            FileStream fs = File.OpenRead(@"G:\Games\PS3\EXVSFB JPN\Pkg research\FB Repacker\Repack\PAC\Input\MBON Reimport Project\MBON Units\Wing Zero EW\Original MBON\Sound Effect.nus3bank");
+            format = audioFormatEnum;
+            main_title = input_main_title;
+
+            FileStream fs = File.OpenRead(Properties.Settings.Default.inputNus3File);
+            
+            //@"G:\Games\PS3\EXVSFB JPN\Pkg research\FB Repacker\Extract\Input\MBON\v2\T3 Local - e3e6fa2f4ef73124b1bd62ef1db0d0412d08165a.nus3audio");
             //@"G:\Games\PS3\EXVSFB JPN\Pkg research\FB Repacker\Repack\PAC\Input\MBON Reimport Project\MBON Units\Bael\Extract MBON\Global Pilot Voices - 99B9A62E\001-MBON\003.nus3audio");
             //@"G:\Games\PS3\EXVSFB JPN\Pkg research\FB Repacker\Repack\PAC\Input\MBON Reimport Project\Infinite Justice METEOR\Original MBON\Infinite Justice Local.nus3audio");
+            
             changeStreamFile(fs);
 
             uint nus3 = readUIntBigEndian();
@@ -114,7 +120,8 @@ namespace FBRepacker.Data.MBON_Parse
 
             writeSoundHash(audio_Entries, hashList);
 
-            StreamWriter txt = File.CreateText(log_output);
+            string fileName = Path.GetFileNameWithoutExtension(Properties.Settings.Default.inputNus3File);
+            StreamWriter txt = File.CreateText(Properties.Settings.Default.outputNameandHashFolder + @"\" + fileName + " - Name and Hashes sorted.txt");
             txt.Write(str);
 
             txt.Close();
@@ -235,7 +242,8 @@ namespace FBRepacker.Data.MBON_Parse
                 appendStringMemoryStream(soundHash, (hashList[i] + ext).ToLower(), Encoding.Default, 0x40);
             }
 
-            FileStream ofs = File.Create(soundhash_output);//@"G:\Games\PS3\EXVSFB JPN\Pkg research\FB Repacker\Repack\PAC\Input\MBON Reimport Project\Infinite Justice METEOR\Converted from MBON\Infinite Justice (Boss) Local Sorted.bin");
+            string fileName = Path.GetFileNameWithoutExtension(Properties.Settings.Default.inputNus3File);
+            FileStream ofs = File.Create(Properties.Settings.Default.outputNameandHashFolder + @"\" + fileName + ".soundhash");//@"G:\Games\PS3\EXVSFB JPN\Pkg research\FB Repacker\Repack\PAC\Input\MBON Reimport Project\Infinite Justice METEOR\Converted from MBON\Infinite Justice (Boss) Local Sorted.bin");
 
             soundHash.Seek(0, SeekOrigin.Begin);
             soundHash.CopyTo(ofs);

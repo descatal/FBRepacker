@@ -478,5 +478,473 @@ namespace FBRepacker.Properties {
                 this["convertMBONReload"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("C:\\")]
+        public string HitBinaryFilePath {
+            get {
+                return ((string)(this["HitBinaryFilePath"]));
+            }
+            set {
+                this["HitBinaryFilePath"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("C:\\")]
+        public string outputHitJSONFolderPath {
+            get {
+                return ((string)(this["outputHitJSONFolderPath"]));
+            }
+            set {
+                this["outputHitJSONFolderPath"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("C:\\")]
+        public string HitJSONFilePath {
+            get {
+                return ((string)(this["HitJSONFilePath"]));
+            }
+            set {
+                this["HitJSONFilePath"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("C:\\")]
+        public string outputHitBinFolderPath {
+            get {
+                return ((string)(this["outputHitBinFolderPath"]));
+            }
+            set {
+                this["outputHitBinFolderPath"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("1")]
+        public int HitBinaryInputGameVer {
+            get {
+                return ((int)(this["HitBinaryInputGameVer"]));
+            }
+            set {
+                this["HitBinaryInputGameVer"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool convertMBONHit {
+            get {
+                return ((bool)(this["convertMBONHit"]));
+            }
+            set {
+                this["convertMBONHit"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("C:\\")]
+        public string ALEOFolderPath {
+            get {
+                return ((string)(this["ALEOFolderPath"]));
+            }
+            set {
+                this["ALEOFolderPath"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("C:\\")]
+        public string outputALEOFolderPath {
+            get {
+                return ((string)(this["outputALEOFolderPath"]));
+            }
+            set {
+                this["outputALEOFolderPath"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("C:\\")]
+        public string inputVoiceLogicBinary {
+            get {
+                return ((string)(this["inputVoiceLogicBinary"]));
+            }
+            set {
+                this["inputVoiceLogicBinary"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("C:\\")]
+        public string outputVoiceLogicJSONFolder {
+            get {
+                return ((string)(this["outputVoiceLogicJSONFolder"]));
+            }
+            set {
+                this["outputVoiceLogicJSONFolder"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("C:\\")]
+        public string inputVoiceLogicJSON {
+            get {
+                return ((string)(this["inputVoiceLogicJSON"]));
+            }
+            set {
+                this["inputVoiceLogicJSON"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("C:\\")]
+        public string outputVoiceLogicBinaryFolder {
+            get {
+                return ((string)(this["outputVoiceLogicBinaryFolder"]));
+            }
+            set {
+                this["outputVoiceLogicBinaryFolder"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("C:\\")]
+        public string inputNus3File {
+            get {
+                return ((string)(this["inputNus3File"]));
+            }
+            set {
+                this["inputNus3File"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("C:\\")]
+        public string outputNameandHashFolder {
+            get {
+                return ((string)(this["outputNameandHashFolder"]));
+            }
+            set {
+                this["outputNameandHashFolder"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("0")]
+        public int Nus3SoundHashFormat {
+            get {
+                return ((int)(this["Nus3SoundHashFormat"]));
+            }
+            set {
+                this["Nus3SoundHashFormat"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("\"\"")]
+        public string soundHashMainTitle {
+            get {
+                return ((string)(this["soundHashMainTitle"]));
+            }
+            set {
+                this["soundHashMainTitle"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("C:\\")]
+        public string inputLMBFilePath {
+            get {
+                return ((string)(this["inputLMBFilePath"]));
+            }
+            set {
+                this["inputLMBFilePath"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("C:\\")]
+        public string outputLMBFolderPath {
+            get {
+                return ((string)(this["outputLMBFolderPath"]));
+            }
+            set {
+                this["outputLMBFolderPath"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("C:\\")]
+        public string inputFBUnitInfoListBinary {
+            get {
+                return ((string)(this["inputFBUnitInfoListBinary"]));
+            }
+            set {
+                this["inputFBUnitInfoListBinary"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("C:\\")]
+        public string outputFBUnitInfoListJSONFolder {
+            get {
+                return ((string)(this["outputFBUnitInfoListJSONFolder"]));
+            }
+            set {
+                this["outputFBUnitInfoListJSONFolder"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("C:\\")]
+        public string inputFBUnitInfoListJSON {
+            get {
+                return ((string)(this["inputFBUnitInfoListJSON"]));
+            }
+            set {
+                this["inputFBUnitInfoListJSON"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("C:\\")]
+        public string outputFBUnitInfoListBinaryFolder {
+            get {
+                return ((string)(this["outputFBUnitInfoListBinaryFolder"]));
+            }
+            set {
+                this["outputFBUnitInfoListBinaryFolder"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("C:\\")]
+        public string inputMeleeVarBinaryPath {
+            get {
+                return ((string)(this["inputMeleeVarBinaryPath"]));
+            }
+            set {
+                this["inputMeleeVarBinaryPath"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("C:\\")]
+        public string inputFBSeriesInfoListBinary {
+            get {
+                return ((string)(this["inputFBSeriesInfoListBinary"]));
+            }
+            set {
+                this["inputFBSeriesInfoListBinary"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("C:\\")]
+        public string outputFBSeriesInfoListJSONFolder {
+            get {
+                return ((string)(this["outputFBSeriesInfoListJSONFolder"]));
+            }
+            set {
+                this["outputFBSeriesInfoListJSONFolder"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("C:\\")]
+        public string inputFBSeriesInfoListJSON {
+            get {
+                return ((string)(this["inputFBSeriesInfoListJSON"]));
+            }
+            set {
+                this["inputFBSeriesInfoListJSON"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("C:\\")]
+        public string outputFBSeriesInfoListBinaryFolder {
+            get {
+                return ((string)(this["outputFBSeriesInfoListBinaryFolder"]));
+            }
+            set {
+                this["outputFBSeriesInfoListBinaryFolder"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("C:\\")]
+        public string inputNTXBBinaryPath {
+            get {
+                return ((string)(this["inputNTXBBinaryPath"]));
+            }
+            set {
+                this["inputNTXBBinaryPath"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("C:\\")]
+        public string outputNTXBJSONPath {
+            get {
+                return ((string)(this["outputNTXBJSONPath"]));
+            }
+            set {
+                this["outputNTXBJSONPath"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("C:\\")]
+        public string inputNTXBJSONPath {
+            get {
+                return ((string)(this["inputNTXBJSONPath"]));
+            }
+            set {
+                this["inputNTXBJSONPath"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("C:\\")]
+        public string outputNTXBBinaryPath {
+            get {
+                return ((string)(this["outputNTXBBinaryPath"]));
+            }
+            set {
+                this["outputNTXBBinaryPath"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("C:\\")]
+        public string inputUnitDataHashSchemaBinary {
+            get {
+                return ((string)(this["inputUnitDataHashSchemaBinary"]));
+            }
+            set {
+                this["inputUnitDataHashSchemaBinary"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("C:\\")]
+        public string outputUnitDataHashSchemaJSONPath {
+            get {
+                return ((string)(this["outputUnitDataHashSchemaJSONPath"]));
+            }
+            set {
+                this["outputUnitDataHashSchemaJSONPath"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("C:\\")]
+        public string inputUnitDataHashSchemaJSON {
+            get {
+                return ((string)(this["inputUnitDataHashSchemaJSON"]));
+            }
+            set {
+                this["inputUnitDataHashSchemaJSON"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("C:\\")]
+        public string inputUnitDataBinary {
+            get {
+                return ((string)(this["inputUnitDataBinary"]));
+            }
+            set {
+                this["inputUnitDataBinary"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("C:\\")]
+        public string outputUnitDataJSONPath {
+            get {
+                return ((string)(this["outputUnitDataJSONPath"]));
+            }
+            set {
+                this["outputUnitDataJSONPath"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("C:\\")]
+        public string inputUnitDataJSON {
+            get {
+                return ((string)(this["inputUnitDataJSON"]));
+            }
+            set {
+                this["inputUnitDataJSON"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("C:\\")]
+        public string outputUnitDataBinaryPath {
+            get {
+                return ((string)(this["outputUnitDataBinaryPath"]));
+            }
+            set {
+                this["outputUnitDataBinaryPath"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
+        public bool convertMBONUnitData {
+            get {
+                return ((bool)(this["convertMBONUnitData"]));
+            }
+            set {
+                this["convertMBONUnitData"] = value;
+            }
+        }
     }
 }

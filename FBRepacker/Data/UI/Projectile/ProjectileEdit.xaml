@@ -124,17 +124,17 @@
                     
                     <DockPanel HorizontalAlignment="Center">
                         <TextBlock Text="6. Translate Y (float): " Width="105" TextAlignment="Right" />
-                        <internal:FloatingPointTextBox x:Name="translate_Y" Text="{Binding individual_Projectile_Properties.translate_Y, Converter={StaticResource StringToNumberFloatConverter}, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Stretch" Margin="10,0,10,0" TextAlignment="Center" MinWidth="100" MaxLength="8"/>
+                        <TextBox x:Name="translate_Y" Text="{Binding individual_Projectile_Properties.translate_Y, Converter={StaticResource StringToNumberFloatConverter}, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Stretch" Margin="10,0,10,0" TextAlignment="Center" MinWidth="100" MaxLength="8"/>
                     </DockPanel>
 
                     <DockPanel HorizontalAlignment="Center">
                         <TextBlock Text="7. Translate Z (float): " Width="105" TextAlignment="Right" />
-                        <internal:FloatingPointTextBox x:Name="translate_Z" Text="{Binding individual_Projectile_Properties.translate_Z, Converter={StaticResource StringToNumberFloatConverter}, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Stretch" Margin="10,0,10,0" TextAlignment="Center" MinWidth="100" MaxLength="8"/>
+                        <TextBox x:Name="translate_Z" Text="{Binding individual_Projectile_Properties.translate_Z, Converter={StaticResource StringToNumberFloatConverter}, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Stretch" Margin="10,0,10,0" TextAlignment="Center" MinWidth="100" MaxLength="8"/>
                     </DockPanel>
 
                     <DockPanel HorizontalAlignment="Center">
                         <TextBlock Text="8. Translate X (float): " Width="105" TextAlignment="Right" />
-                        <internal:FloatingPointTextBox x:Name="translate_X" Text="{Binding individual_Projectile_Properties.translate_X, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Stretch" Margin="10,0,10,0" TextAlignment="Center" MinWidth="100"/>
+                        <TextBox x:Name="translate_X" Text="{Binding individual_Projectile_Properties.translate_X, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Stretch" Margin="10,0,10,0" TextAlignment="Center" MinWidth="100"/>
                     </DockPanel>
 
                     <DockPanel Margin="0,30,0,0">
@@ -145,12 +145,12 @@
 
                     <DockPanel HorizontalAlignment="Center">
                         <TextBlock Text="9. Rotate X angle in radian (float): " Width="200" TextAlignment="Right" />
-                        <internal:FloatingPointTextBox x:Name="rotate_X_angle" Text="{Binding individual_Projectile_Properties.rotate_X_angle, Converter={StaticResource StringToNumberFloatConverter}, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Stretch" Margin="10,0,10,0" TextAlignment="Center" MinWidth="100" MaxLength="8"/>
+                        <TextBox x:Name="rotate_X_angle" Text="{Binding individual_Projectile_Properties.rotate_X_angle, Converter={StaticResource StringToNumberFloatConverter}, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Stretch" Margin="10,0,10,0" TextAlignment="Center" MinWidth="100" MaxLength="8"/>
                     </DockPanel>
 
                     <DockPanel HorizontalAlignment="Center">
                         <TextBlock Text="10. Rotate Z angle in radian (float): " Width="200" TextAlignment="Right" />
-                        <internal:FloatingPointTextBox x:Name="rotate_Z_angle" Text="{Binding individual_Projectile_Properties.rotate_Z_angle, Converter={StaticResource StringToNumberFloatConverter}, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Stretch" Margin="10,0,10,0" TextAlignment="Center" MinWidth="100" MaxLength="8"/>
+                        <TextBox x:Name="rotate_Z_angle" Text="{Binding individual_Projectile_Properties.rotate_Z_angle, Converter={StaticResource StringToNumberFloatConverter}, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Stretch" Margin="10,0,10,0" TextAlignment="Center" MinWidth="100" MaxLength="8"/>
                     </DockPanel>
 
                     <DockPanel Margin="0,30,0,0">
@@ -184,8 +184,8 @@
                     </DockPanel>
 
                     <DockPanel HorizontalAlignment="Center">
-                        <TextBlock Text="15. unknown 0x38: " Width="105" TextAlignment="Right" />
-                        <TextBox x:Name="unk_0x38" Text="{Binding individual_Projectile_Properties.unk_0x38, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Stretch" Margin="10,0,10,0" TextAlignment="Center" MinWidth="100"/>
+                        <TextBlock Text="15. Muzzle Random Angle Correction Multiplier: " Width="105" TextAlignment="Right" />
+                        <TextBox x:Name="unk_0x38" Text="{Binding individual_Projectile_Properties.muzzle_random_angle_correction_multiplier, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Stretch" Margin="10,0,10,0" TextAlignment="Center" MinWidth="100"/>
                     </DockPanel>
 
                     <DockPanel Margin="0,30,0,0">
@@ -225,13 +225,13 @@
                         <TextBox x:Name="acceleration" Text="{Binding individual_Projectile_Properties.acceleration, Converter={StaticResource StringToNumberFloatConverter}, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Stretch" Margin="10,0,10,0" TextAlignment="Center" MinWidth="100" MaxLength="8"/>
                     </DockPanel>
 
-                    <DockPanel Margin="0,30,0,0">
-                        <Separator></Separator>
+                    <DockPanel HorizontalAlignment="Center">
+                        <TextBlock Text="21. Acceleration Start Frame: " Width="105" TextAlignment="Right" />
+                        <TextBox x:Name="unk_0x50" Text="{Binding individual_Projectile_Properties.acceleration_start_frame, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Stretch" Margin="10,0,10,0" TextAlignment="Center" MinWidth="100"/>
                     </DockPanel>
 
-                    <DockPanel HorizontalAlignment="Center">
-                        <TextBlock Text="21. unknown 0x50: " Width="105" TextAlignment="Right" />
-                        <TextBox x:Name="unk_0x50" Text="{Binding individual_Projectile_Properties.unk_0x50, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Stretch" Margin="10,0,10,0" TextAlignment="Center" MinWidth="100"/>
+                    <DockPanel Margin="0,30,0,0">
+                        <Separator></Separator>
                     </DockPanel>
 
                     <DockPanel HorizontalAlignment="Center">
@@ -255,38 +255,38 @@
                     </DockPanel>
 
                     <DockPanel HorizontalAlignment="Center">
-                        <TextBlock Text="24. unknown 0x5C: " Width="105" TextAlignment="Right" />
-                        <TextBox x:Name="unk_0x5C" Text="{Binding individual_Projectile_Properties.unk_0x5C, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Stretch" Margin="10,0,10,0" TextAlignment="Center" MinWidth="100"/>
+                        <TextBlock Text="24. Throwable Arc Info unknown 0x5C: " Width="105" TextAlignment="Right" />
+                        <TextBox x:Name="unk_0x5C" Text="{Binding individual_Projectile_Properties.throwable_arc_unk_0x5C, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Stretch" Margin="10,0,10,0" TextAlignment="Center" MinWidth="100"/>
                     </DockPanel>
 
                     <DockPanel HorizontalAlignment="Center">
-                        <TextBlock Text="25. unknown 0x60: " Width="105" TextAlignment="Right" />
-                        <TextBox x:Name="unk_0x60" Text="{Binding individual_Projectile_Properties.unk_0x60, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Stretch" Margin="10,0,10,0" TextAlignment="Center" MinWidth="100"/>
+                        <TextBlock Text="25. Throwable Arc Info unknown 0x60: " Width="105" TextAlignment="Right" />
+                        <TextBox x:Name="unk_0x60" Text="{Binding individual_Projectile_Properties.throwable_arc_unk_0x60, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Stretch" Margin="10,0,10,0" TextAlignment="Center" MinWidth="100"/>
                     </DockPanel>
 
                     <DockPanel HorizontalAlignment="Center">
-                        <TextBlock Text="26. unknown 0x64: " Width="105" TextAlignment="Right" />
-                        <TextBox x:Name="unk_0x64" Text="{Binding individual_Projectile_Properties.unk_0x64, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Stretch" Margin="10,0,10,0" TextAlignment="Center" MinWidth="100"/>
+                        <TextBlock Text="26. Throwable Arc Info unknown 0x64: " Width="105" TextAlignment="Right" />
+                        <TextBox x:Name="unk_0x64" Text="{Binding individual_Projectile_Properties.throwable_arc_unk_0x64, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Stretch" Margin="10,0,10,0" TextAlignment="Center" MinWidth="100"/>
                     </DockPanel>
 
                     <DockPanel HorizontalAlignment="Center">
-                        <TextBlock Text="27. unknown 0x68: " Width="105" TextAlignment="Right" />
+                        <TextBlock Text="27. Throwable Arc Info unknown 0x68: " Width="105" TextAlignment="Right" />
                         <TextBox x:Name="unk_0x68" Text="{Binding individual_Projectile_Properties.unk_0x68, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Stretch" Margin="10,0,10,0" TextAlignment="Center" MinWidth="100"/>
                     </DockPanel>
 
                     <DockPanel HorizontalAlignment="Center">
-                        <TextBlock Text="28. unknown 0x6C: " Width="105" TextAlignment="Right" />
-                        <TextBox x:Name="unk_0x6C" Text="{Binding individual_Projectile_Properties.unk_0x6C, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Stretch" Margin="10,0,10,0" TextAlignment="Center" MinWidth="100"/>
+                        <TextBlock Text="28. Throwable Arc Info unknown 0x6C: " Width="105" TextAlignment="Right" />
+                        <TextBox x:Name="unk_0x6C" Text="{Binding individual_Projectile_Properties.throwable_arc_unk_0x6C, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Stretch" Margin="10,0,10,0" TextAlignment="Center" MinWidth="100"/>
                     </DockPanel>
 
                     <DockPanel HorizontalAlignment="Center">
-                        <TextBlock Text="29. unknown 0x70: " Width="105" TextAlignment="Right" />
-                        <TextBox x:Name="unk_0x70" Text="{Binding individual_Projectile_Properties.unk_0x70, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Stretch" Margin="10,0,10,0" TextAlignment="Center" MinWidth="100"/>
+                        <TextBlock Text="29. Throwable Arc Info unknown 0x70: " Width="105" TextAlignment="Right" />
+                        <TextBox x:Name="unk_0x70" Text="{Binding individual_Projectile_Properties.throwable_arc_unk_0x70, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Stretch" Margin="10,0,10,0" TextAlignment="Center" MinWidth="100"/>
                     </DockPanel>
 
                     <DockPanel HorizontalAlignment="Center">
-                        <TextBlock Text="30. unknown 0x74: " Width="105" TextAlignment="Right" />
-                        <TextBox x:Name="unk_0x74" Text="{Binding individual_Projectile_Properties.unk_0x74, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Stretch" Margin="10,0,10,0" TextAlignment="Center" MinWidth="100"/>
+                        <TextBlock Text="30. Throwable Arc Info unknown 0x74: " Width="105" TextAlignment="Right" />
+                        <TextBox x:Name="unk_0x74" Text="{Binding individual_Projectile_Properties.throwable_arc_unk_0x74, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Stretch" Margin="10,0,10,0" TextAlignment="Center" MinWidth="100"/>
                     </DockPanel>
 
                     <DockPanel Margin="0,30,0,0">
@@ -297,7 +297,7 @@
 
                     <DockPanel HorizontalAlignment="Center">
                         <TextBlock Text="31. Horizontal Guidance Amount (float): " Width="230" TextAlignment="Right" />
-                        <TextBox x:Name="horizontal_guidance_amount" Text="{Binding individual_Projectile_Properties.horizontal_guidance_amount, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Stretch" Margin="10,0,10,0" TextAlignment="Center" MinWidth="100"/>
+                        <TextBox x:Name="horizontal_guidance_amount" Text="{Binding individual_Projectile_Properties.horizontal_guidance_amount, Converter={StaticResource StringToNumberFloatConverter}, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Stretch" Margin="10,0,10,0" TextAlignment="Center" MinWidth="100"/>
                     </DockPanel>
 
                     <DockPanel HorizontalAlignment="Center">

@@ -1,5 +1,6 @@
 ﻿using FBRepacker.Data.DataTypes;
 using FBRepacker.PAC;
+using Newtonsoft.Json;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -15,17 +16,42 @@ namespace FBRepacker.Data
 
         public Voice_Line_Logic()
         {
+
+        }
+
+        public void deserializeVoiceLogicBinary()
+        {
             UnitIDList unitIDList = load_UnitID();
             SoundLogicUnitIDGroupList soundLogicUnitIDGroupList = load_GroupList();
-            List<Voice_Line_Logic_Set_Data> data = parse_Voice_Line_Logic(@"G:\Games\PS3\EXVSFB JPN\Pkg research\FB Repacker\Repack\PAC\Input\MBON Reimport Project\MBON Units\Wing Zero EW\Extract MBON\Data - 4A5DEE5F\001-MBON\002-FHM\007.bin", unitIDList, soundLogicUnitIDGroupList);
-            write_Voice_Line_Data_Json(data, @"G:\Games\PS3\EXVSFB JPN\Pkg research\FB Repacker\Repack\PAC\Input\MBON Reimport Project\MBON Units\Wing Zero EW\Converted from MBON\WingZeroEWVoiceLogic.json");
-            write_FB_Voice_Line_Logic(data, @"G:\Games\PS3\EXVSFB JPN\Pkg research\FB Repacker\Repack\PAC\Input\MBON Reimport Project\MBON Units\Wing Zero EW\Converted from MBON\Voice Logic.bin");
+            List<Voice_Line_Logic_Set_Data> data = parse_Voice_Line_Logic(Properties.Settings.Default.inputVoiceLogicBinary, unitIDList, soundLogicUnitIDGroupList);
+            //@"G:\Games\PS3\EXVSFB JPN\Pkg research\FB Repacker\Repack\PAC\Input\MBON Reimport Project\MBON Units\Wing Zero EW\Extract MBON\Data - 4A5DEE5F\001-MBON\002-FHM\007.bin", unitIDList, soundLogicUnitIDGroupList);
+
+            string outputName = Path.GetFileNameWithoutExtension(Properties.Settings.Default.inputVoiceLogicBinary);
+
+            write_Voice_Line_Data_Json(data, Properties.Settings.Default.outputVoiceLogicJSONFolder + @"\" + outputName + ".JSON");
+                
+            //@"G:\Games\PS3\EXVSFB JPN\Pkg research\FB Repacker\Repack\PAC\Input\MBON Reimport Project\MBON Units\Wing Zero EW\Converted from MBON\WingZeroEWVoiceLogic.json");
         }
+
+        public void serializeVoiceLogicBinary()
+        {
+            StreamReader JSON = File.OpenText(Properties.Settings.Default.inputVoiceLogicJSON);
+            string JSONStr = JSON.ReadToEnd();
+
+            List<Voice_Line_Logic_Set_Data> data = JsonConvert.DeserializeObject<List<Voice_Line_Logic_Set_Data>>(JSONStr);
+
+            string outputName = Path.GetFileNameWithoutExtension(Properties.Settings.Default.inputVoiceLogicJSON);
+
+            write_FB_Voice_Line_Logic(data, Properties.Settings.Default.outputVoiceLogicJSONFolder + @"\" + outputName + ".bin");
+                
+            //@"G:\Games\PS3\EXVSFB JPN\Pkg research\FB Repacker\Repack\PAC\Input\MBON Reimport Project\MBON Units\Wing Zero EW\Converted from MBON\Voice Logic.bin");
+        }
+
 
         public UnitIDList load_UnitID()
         {
             string jsonString = Properties.Resources.Unit_IDs;
-            UnitIDList unit_ID = JsonSerializer.Deserialize<UnitIDList>(jsonString);
+            UnitIDList unit_ID = System.Text.Json.JsonSerializer.Deserialize<UnitIDList>(jsonString);
             return unit_ID;
         }
 
@@ -33,14 +59,14 @@ namespace FBRepacker.Data
         {
             // Group list in MBON
             string jsonString = Properties.Resources.Voice_Unit_ID_Group;
-            SoundLogicUnitIDGroupList unit_ID_Group = JsonSerializer.Deserialize<SoundLogicUnitIDGroupList>(jsonString);
+            SoundLogicUnitIDGroupList unit_ID_Group = System.Text.Json.JsonSerializer.Deserialize<SoundLogicUnitIDGroupList>(jsonString);
             return unit_ID_Group;
         }
 
         public void write_Voice_Line_Data_Json(List<Voice_Line_Logic_Set_Data> data, string outputPath)
         {
             JsonSerializerOptions options = new JsonSerializerOptions { WriteIndented = true };
-            string jsonString = JsonSerializer.Serialize<List<Voice_Line_Logic_Set_Data>>(data, options);
+            string jsonString = System.Text.Json.JsonSerializer.Serialize<List<Voice_Line_Logic_Set_Data>>(data, options);
             StreamWriter fs = File.CreateText(outputPath);
             fs.Write(jsonString);
             fs.Close();

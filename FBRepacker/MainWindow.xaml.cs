@@ -25,6 +25,7 @@ using FBRepacker.Data.MBON_Parse;
 using FBRepacker.Data.FB_Parse;
 using System.Globalization;
 using FBRepacker.Data.UI;
+using static FBRepacker.Data.MBON_Parse.nus3AudioNameHash;
 
 namespace FBRepacker
 {
@@ -47,6 +48,7 @@ namespace FBRepacker
         private void init()
         {
             tabCont.SelectedIndex = Properties.Settings.Default.SelectedTab;
+            audioFormatComboBox.ItemsSource = Enum.GetValues(typeof(audioFormatEnum)).Cast<audioFormatEnum>();
         }
 
         private void Open_Extract_PAC_File_Click(object sender, RoutedEventArgs e)
@@ -260,7 +262,20 @@ namespace FBRepacker
             Properties.Settings.Default.B4ACFilePath = File.Exists(B4ACFilePath) ? B4ACFilePath : Properties.Settings.Default.B4ACFilePath;
             Properties.Settings.Default.Save();
         }
-        
+
+        private void OpeninputMeleeVarBinaryFile_Click(object sender, RoutedEventArgs e)
+        {
+            OpenFileDialog openFileDialog = new OpenFileDialog();
+            string inputMeleeVarBinaryFilePath = System.IO.Path.GetDirectoryName(Properties.Settings.Default.inputMeleeVarBinaryPath);
+            openFileDialog.InitialDirectory = inputMeleeVarBinaryFilePath;
+            openFileDialog.RestoreDirectory = true;
+            openFileDialog.ShowDialog();
+
+            inputMeleeVarBinaryFilePath = openFileDialog.FileName;
+            Properties.Settings.Default.inputMeleeVarBinaryPath = File.Exists(inputMeleeVarBinaryFilePath) ? inputMeleeVarBinaryFilePath : Properties.Settings.Default.inputMeleeVarBinaryPath;
+            Properties.Settings.Default.Save();
+        }
+
         private void OpenDAEVBNFile_Click(object sender, RoutedEventArgs e)
         {
             OpenFileDialog openFileDialog = new OpenFileDialog();
@@ -320,6 +335,58 @@ namespace FBRepacker
             Properties.Settings.Default.Save();
         }
 
+        private void OpenUnitDataHashSchemaBinary_Click(object sender, RoutedEventArgs e)
+        {
+            OpenFileDialog openFileDialog = new OpenFileDialog();
+            string UnitDataHashSchemaBinaryFilePath = System.IO.Path.GetDirectoryName(Properties.Settings.Default.inputUnitDataHashSchemaBinary);
+            openFileDialog.InitialDirectory = UnitDataHashSchemaBinaryFilePath;
+            openFileDialog.RestoreDirectory = true;
+            openFileDialog.ShowDialog();
+
+            UnitDataHashSchemaBinaryFilePath = openFileDialog.FileName;
+            Properties.Settings.Default.inputUnitDataHashSchemaBinary = File.Exists(UnitDataHashSchemaBinaryFilePath) ? UnitDataHashSchemaBinaryFilePath : Properties.Settings.Default.inputUnitDataHashSchemaBinary;
+            Properties.Settings.Default.Save();
+        }
+
+        private void OpenUnitDataBinary_Click(object sender, RoutedEventArgs e)
+        {
+            OpenFileDialog openFileDialog = new OpenFileDialog();
+            string UnitDataBinaryFilePath = System.IO.Path.GetDirectoryName(Properties.Settings.Default.inputUnitDataBinary);
+            openFileDialog.InitialDirectory = UnitDataBinaryFilePath;
+            openFileDialog.RestoreDirectory = true;
+            openFileDialog.ShowDialog();
+
+            UnitDataBinaryFilePath = openFileDialog.FileName;
+            Properties.Settings.Default.inputUnitDataBinary = File.Exists(UnitDataBinaryFilePath) ? UnitDataBinaryFilePath : Properties.Settings.Default.inputUnitDataBinary;
+            Properties.Settings.Default.Save();
+        }
+
+        private void OpenUnitDataJSON_Click(object sender, RoutedEventArgs e)
+        {
+            OpenFileDialog openFileDialog = new OpenFileDialog();
+            string UnitDataJSONFilePath = System.IO.Path.GetDirectoryName(Properties.Settings.Default.inputUnitDataJSON);
+            openFileDialog.InitialDirectory = UnitDataJSONFilePath;
+            openFileDialog.RestoreDirectory = true;
+            openFileDialog.ShowDialog();
+
+            UnitDataJSONFilePath = openFileDialog.FileName;
+            Properties.Settings.Default.inputUnitDataJSON = File.Exists(UnitDataJSONFilePath) ? UnitDataJSONFilePath : Properties.Settings.Default.inputUnitDataJSON;
+            Properties.Settings.Default.Save();
+        }
+
+        private void OpenUnitDataHashSchemaJSON_Click(object sender, RoutedEventArgs e)
+        {
+            OpenFileDialog openFileDialog = new OpenFileDialog();
+            string UnitDataHashSchemaJSONFilePath = System.IO.Path.GetDirectoryName(Properties.Settings.Default.inputUnitDataHashSchemaJSON);
+            openFileDialog.InitialDirectory = UnitDataHashSchemaJSONFilePath;
+            openFileDialog.RestoreDirectory = true;
+            openFileDialog.ShowDialog();
+
+            UnitDataHashSchemaJSONFilePath = openFileDialog.FileName;
+            Properties.Settings.Default.inputUnitDataHashSchemaJSON = File.Exists(UnitDataHashSchemaJSONFilePath) ? UnitDataHashSchemaJSONFilePath : Properties.Settings.Default.inputUnitDataHashSchemaJSON;
+            Properties.Settings.Default.Save();
+        }
+
         private void OpenReloadBinary_Click(object sender, RoutedEventArgs e)
         {
             OpenFileDialog openFileDialog = new OpenFileDialog();
@@ -333,6 +400,58 @@ namespace FBRepacker
             Properties.Settings.Default.Save();
         }
 
+        private void OpenHitBinary_Click(object sender, RoutedEventArgs e)
+        {
+            OpenFileDialog openFileDialog = new OpenFileDialog();
+            string HitBinaryFilePath = System.IO.Path.GetDirectoryName(Properties.Settings.Default.HitBinaryFilePath);
+            openFileDialog.InitialDirectory = HitBinaryFilePath;
+            openFileDialog.RestoreDirectory = true;
+            openFileDialog.ShowDialog();
+
+            HitBinaryFilePath = openFileDialog.FileName;
+            Properties.Settings.Default.HitBinaryFilePath = File.Exists(HitBinaryFilePath) ? HitBinaryFilePath : Properties.Settings.Default.HitBinaryFilePath;
+            Properties.Settings.Default.Save();
+        }
+
+        private void OpenFBUnitInfoListBinary_Click(object sender, RoutedEventArgs e)
+        {
+            OpenFileDialog openFileDialog = new OpenFileDialog();
+            string inputFBUnitInfoListBinaryFilePath = System.IO.Path.GetDirectoryName(Properties.Settings.Default.inputFBUnitInfoListBinary);
+            openFileDialog.InitialDirectory = inputFBUnitInfoListBinaryFilePath;
+            openFileDialog.RestoreDirectory = true;
+            openFileDialog.ShowDialog();
+
+            inputFBUnitInfoListBinaryFilePath = openFileDialog.FileName;
+            Properties.Settings.Default.inputFBUnitInfoListBinary = File.Exists(inputFBUnitInfoListBinaryFilePath) ? inputFBUnitInfoListBinaryFilePath : Properties.Settings.Default.inputFBUnitInfoListBinary;
+            Properties.Settings.Default.Save();
+        }
+
+        private void OpenNTXBBinary_Click(object sender, RoutedEventArgs e)
+        {
+            OpenFileDialog openFileDialog = new OpenFileDialog();
+            string inputNTXBBinaryFilePath = System.IO.Path.GetDirectoryName(Properties.Settings.Default.inputNTXBBinaryPath);
+            openFileDialog.InitialDirectory = inputNTXBBinaryFilePath;
+            openFileDialog.RestoreDirectory = true;
+            openFileDialog.ShowDialog();
+
+            inputNTXBBinaryFilePath = openFileDialog.FileName;
+            Properties.Settings.Default.inputNTXBBinaryPath = File.Exists(inputNTXBBinaryFilePath) ? inputNTXBBinaryFilePath : Properties.Settings.Default.inputNTXBBinaryPath;
+            Properties.Settings.Default.Save();
+        }
+
+        private void OpenFBSeriesInfoListBinary_Click(object sender, RoutedEventArgs e)
+        {
+            OpenFileDialog openFileDialog = new OpenFileDialog();
+            string inputFBSeriesInfoListBinaryFilePath = System.IO.Path.GetDirectoryName(Properties.Settings.Default.inputFBSeriesInfoListBinary);
+            openFileDialog.InitialDirectory = inputFBSeriesInfoListBinaryFilePath;
+            openFileDialog.RestoreDirectory = true;
+            openFileDialog.ShowDialog();
+
+            inputFBSeriesInfoListBinaryFilePath = openFileDialog.FileName;
+            Properties.Settings.Default.inputFBSeriesInfoListBinary = File.Exists(inputFBSeriesInfoListBinaryFilePath) ? inputFBSeriesInfoListBinaryFilePath : Properties.Settings.Default.inputFBSeriesInfoListBinary;
+            Properties.Settings.Default.Save();
+        }
+
         private void change_Projecitle_JSON_Output_Path_Click(object sender, RoutedEventArgs e)
         {
             string outputProjectileJSONFolderPath = openFolderDialog(Properties.Settings.Default.outputProjectileJSONFolderPath);
@@ -343,12 +462,82 @@ namespace FBRepacker
             }
         }
 
+        private void change_Unit_Data_Hash_Schema_JSON_Output_Path_Click(object sender, RoutedEventArgs e)
+        {
+            string outputUnitDataHashSchemaFolder = openFolderDialog(Properties.Settings.Default.outputUnitDataHashSchemaJSONPath);
+            if (outputUnitDataHashSchemaFolder != string.Empty)
+            {
+                Properties.Settings.Default.outputUnitDataHashSchemaJSONPath = outputUnitDataHashSchemaFolder;
+                Properties.Settings.Default.Save();
+            }
+        }
+
+        private void change_Unit_Data_JSON_Output_Path_Click(object sender, RoutedEventArgs e)
+        {
+            string outputUnitDataFolder = openFolderDialog(Properties.Settings.Default.outputUnitDataJSONPath);
+            if (outputUnitDataFolder != string.Empty)
+            {
+                Properties.Settings.Default.outputUnitDataJSONPath = outputUnitDataFolder;
+                Properties.Settings.Default.Save();
+            }
+        }
+
+        private void change_Unit_Data_Binary_Output_Path_Click(object sender, RoutedEventArgs e)
+        {
+            string outputUnitDataBinaryFolder = openFolderDialog(Properties.Settings.Default.outputUnitDataBinaryPath);
+            if (outputUnitDataBinaryFolder != string.Empty)
+            {
+                Properties.Settings.Default.outputUnitDataBinaryPath = outputUnitDataBinaryFolder;
+                Properties.Settings.Default.Save();
+            }
+        }
+
         private void change_Reload_JSON_Output_Path_Click(object sender, RoutedEventArgs e)
         {
             string outputReloadJSONFolderPath = openFolderDialog(Properties.Settings.Default.outputReloadJSONFolderPath);
             if (outputReloadJSONFolderPath != string.Empty)
             {
                 Properties.Settings.Default.outputReloadJSONFolderPath = outputReloadJSONFolderPath;
+                Properties.Settings.Default.Save();
+            }
+        }
+
+        private void change_FB_Unit_Info_List_JSON_Output_Path_Click(object sender, RoutedEventArgs e)
+        {
+            string outputFBUnitInfoListJSONFolderPath = openFolderDialog(Properties.Settings.Default.outputFBUnitInfoListJSONFolder);
+            if (outputFBUnitInfoListJSONFolderPath != string.Empty)
+            {
+                Properties.Settings.Default.outputFBUnitInfoListJSONFolder = outputFBUnitInfoListJSONFolderPath;
+                Properties.Settings.Default.Save();
+            }
+        }
+
+        private void change_NTXB_JSON_Output_Path_Click(object sender, RoutedEventArgs e)
+        {
+            string outputNTXBJSONFolderPath = openFolderDialog(Properties.Settings.Default.outputNTXBJSONPath);
+            if (outputNTXBJSONFolderPath != string.Empty)
+            {
+                Properties.Settings.Default.outputNTXBJSONPath = outputNTXBJSONFolderPath;
+                Properties.Settings.Default.Save();
+            }
+        }
+
+        private void change_FB_Series_Info_List_JSON_Output_Path_Click(object sender, RoutedEventArgs e)
+        {
+            string outputFBSeriesInfoListJSONFolderPath = openFolderDialog(Properties.Settings.Default.outputFBSeriesInfoListJSONFolder);
+            if (outputFBSeriesInfoListJSONFolderPath != string.Empty)
+            {
+                Properties.Settings.Default.outputFBSeriesInfoListJSONFolder = outputFBSeriesInfoListJSONFolderPath;
+                Properties.Settings.Default.Save();
+            }
+        }
+
+        private void change_Hit_JSON_Output_Path_Click(object sender, RoutedEventArgs e)
+        {
+            string outputHitJSONFolderPath = openFolderDialog(Properties.Settings.Default.outputHitJSONFolderPath);
+            if (outputHitJSONFolderPath != string.Empty)
+            {
+                Properties.Settings.Default.outputHitJSONFolderPath = outputHitJSONFolderPath;
                 Properties.Settings.Default.Save();
             }
         }
@@ -379,6 +568,170 @@ namespace FBRepacker
             Properties.Settings.Default.Save();
         }
 
+        private void OpenFBUnitInfoListJSON_Click(object sender, RoutedEventArgs e)
+        {
+            OpenFileDialog openFileDialog = new OpenFileDialog();
+            string FBUnitInfoListJSONFilePath = System.IO.Path.GetDirectoryName(Properties.Settings.Default.inputFBUnitInfoListJSON);
+            openFileDialog.InitialDirectory = FBUnitInfoListJSONFilePath;
+            openFileDialog.RestoreDirectory = true;
+            openFileDialog.ShowDialog();
+
+            FBUnitInfoListJSONFilePath = openFileDialog.FileName;
+            Properties.Settings.Default.inputFBUnitInfoListJSON = File.Exists(FBUnitInfoListJSONFilePath) ? FBUnitInfoListJSONFilePath : Properties.Settings.Default.inputFBUnitInfoListJSON;
+            Properties.Settings.Default.Save();
+        }
+
+        private void OpenNTXBJSON_Click(object sender, RoutedEventArgs e)
+        {
+            OpenFileDialog openFileDialog = new OpenFileDialog();
+            string NTXBJSONFilePath = System.IO.Path.GetDirectoryName(Properties.Settings.Default.inputNTXBJSONPath);
+            openFileDialog.InitialDirectory = NTXBJSONFilePath;
+            openFileDialog.RestoreDirectory = true;
+            openFileDialog.ShowDialog();
+
+            NTXBJSONFilePath = openFileDialog.FileName;
+            Properties.Settings.Default.inputNTXBJSONPath = File.Exists(NTXBJSONFilePath) ? NTXBJSONFilePath : Properties.Settings.Default.inputNTXBJSONPath;
+            Properties.Settings.Default.Save();
+        }
+
+        private void OpenFBSeriesInfoListJSON_Click(object sender, RoutedEventArgs e)
+        {
+            OpenFileDialog openFileDialog = new OpenFileDialog();
+            string FBSeriesInfoListJSONFilePath = System.IO.Path.GetDirectoryName(Properties.Settings.Default.inputFBSeriesInfoListJSON);
+            openFileDialog.InitialDirectory = FBSeriesInfoListJSONFilePath;
+            openFileDialog.RestoreDirectory = true;
+            openFileDialog.ShowDialog();
+
+            FBSeriesInfoListJSONFilePath = openFileDialog.FileName;
+            Properties.Settings.Default.inputFBSeriesInfoListJSON = File.Exists(FBSeriesInfoListJSONFilePath) ? FBSeriesInfoListJSONFilePath : Properties.Settings.Default.inputFBSeriesInfoListJSON;
+            Properties.Settings.Default.Save();
+        }
+
+        private void OpenHitJSON_Click(object sender, RoutedEventArgs e)
+        {
+            OpenFileDialog openFileDialog = new OpenFileDialog();
+            string HitJSONFilePath = System.IO.Path.GetDirectoryName(Properties.Settings.Default.HitJSONFilePath);
+            openFileDialog.InitialDirectory = HitJSONFilePath;
+            openFileDialog.RestoreDirectory = true;
+            openFileDialog.ShowDialog();
+
+            HitJSONFilePath = openFileDialog.FileName;
+            Properties.Settings.Default.HitJSONFilePath = File.Exists(HitJSONFilePath) ? HitJSONFilePath : Properties.Settings.Default.HitJSONFilePath;
+            Properties.Settings.Default.Save();
+        }
+
+        private void OpenLMBFile_Click(object sender, RoutedEventArgs e)
+        {
+            OpenFileDialog openFileDialog = new OpenFileDialog();
+            string LMBFilePath = System.IO.Path.GetDirectoryName(Properties.Settings.Default.inputLMBFilePath);
+            openFileDialog.InitialDirectory = LMBFilePath;
+            openFileDialog.RestoreDirectory = true;
+            openFileDialog.ShowDialog();
+
+            LMBFilePath = openFileDialog.FileName;
+            Properties.Settings.Default.inputLMBFilePath = File.Exists(LMBFilePath) ? LMBFilePath : Properties.Settings.Default.inputLMBFilePath;
+            Properties.Settings.Default.Save();
+        }
+
+        private void change_ALEO_Input_Folder(object sender, RoutedEventArgs e)
+        {
+            string ALEOFolderPath = openFolderDialog(Properties.Settings.Default.ALEOFolderPath);
+            if (ALEOFolderPath != string.Empty)
+            {
+                Properties.Settings.Default.ALEOFolderPath = ALEOFolderPath;
+                Properties.Settings.Default.Save();
+            }
+        }
+
+        private void OpenVoiceLogicBinary_Click(object sender, RoutedEventArgs e)
+        {
+            OpenFileDialog openFileDialog = new OpenFileDialog();
+            string VoiceLogicBinaryFilePath = System.IO.Path.GetDirectoryName(Properties.Settings.Default.inputVoiceLogicBinary);
+            openFileDialog.InitialDirectory = VoiceLogicBinaryFilePath;
+            openFileDialog.RestoreDirectory = true;
+            openFileDialog.ShowDialog();
+
+            VoiceLogicBinaryFilePath = openFileDialog.FileName;
+            Properties.Settings.Default.inputVoiceLogicBinary = File.Exists(VoiceLogicBinaryFilePath) ? VoiceLogicBinaryFilePath : Properties.Settings.Default.inputVoiceLogicBinary;
+            Properties.Settings.Default.Save();
+        }
+
+        private void OpenVoiceLogicJSON_Click(object sender, RoutedEventArgs e)
+        {
+            OpenFileDialog openFileDialog = new OpenFileDialog();
+            string VoiceLogicJSONFilePath = System.IO.Path.GetDirectoryName(Properties.Settings.Default.inputVoiceLogicJSON);
+            openFileDialog.InitialDirectory = VoiceLogicJSONFilePath;
+            openFileDialog.RestoreDirectory = true;
+            openFileDialog.ShowDialog();
+
+            VoiceLogicJSONFilePath = openFileDialog.FileName;
+            Properties.Settings.Default.inputVoiceLogicJSON = File.Exists(VoiceLogicJSONFilePath) ? VoiceLogicJSONFilePath : Properties.Settings.Default.inputVoiceLogicJSON;
+            Properties.Settings.Default.Save();
+        }
+
+        private void OpenNus3File_Click(object sender, RoutedEventArgs e)
+        {
+            OpenFileDialog openFileDialog = new OpenFileDialog();
+            string Nus3FilePath = System.IO.Path.GetDirectoryName(Properties.Settings.Default.inputNus3File);
+            openFileDialog.InitialDirectory = Nus3FilePath;
+            openFileDialog.RestoreDirectory = true;
+            openFileDialog.ShowDialog();
+
+            Nus3FilePath = openFileDialog.FileName;
+            Properties.Settings.Default.inputNus3File = File.Exists(Nus3FilePath) ? Nus3FilePath : Properties.Settings.Default.inputNus3File;
+            Properties.Settings.Default.Save();
+        }
+
+        private void change_VoiceLogicJSON_Output_Path_Click(object sender, RoutedEventArgs e)
+        {
+            string outputVoiceLogicJSONFolderPath = openFolderDialog(Properties.Settings.Default.outputVoiceLogicJSONFolder);
+            if (outputVoiceLogicJSONFolderPath != string.Empty)
+            {
+                Properties.Settings.Default.outputVoiceLogicJSONFolder = outputVoiceLogicJSONFolderPath;
+                Properties.Settings.Default.Save();
+            }
+        }
+
+        private void change_VoiceLogicBinary_Output_Path_Click(object sender, RoutedEventArgs e)
+        {
+            string outputVoiceLogicBinaryFolderPath = openFolderDialog(Properties.Settings.Default.outputVoiceLogicBinaryFolder);
+            if (outputVoiceLogicBinaryFolderPath != string.Empty)
+            {
+                Properties.Settings.Default.outputVoiceLogicBinaryFolder = outputVoiceLogicBinaryFolderPath;
+                Properties.Settings.Default.Save();
+            }
+        }
+
+        private void change_SoundNameandHashFolder_Output_Path_Click(object sender, RoutedEventArgs e)
+        {
+            string outputSoundNameandHashFolderOutputPath = openFolderDialog(Properties.Settings.Default.outputNameandHashFolder);
+            if (outputSoundNameandHashFolderOutputPath != string.Empty)
+            {
+                Properties.Settings.Default.outputNameandHashFolder = outputSoundNameandHashFolderOutputPath;
+                Properties.Settings.Default.Save();
+            }
+        }
+
+        private void change_ALEO_Output_Path_Click(object sender, RoutedEventArgs e)
+        {
+            string outputALEOFolderPath = openFolderDialog(Properties.Settings.Default.outputALEOFolderPath);
+            if (outputALEOFolderPath != string.Empty)
+            {
+                Properties.Settings.Default.outputALEOFolderPath = outputALEOFolderPath;
+                Properties.Settings.Default.Save();
+            }
+        }
+
+        private void change_LMB_Output_Path_Click(object sender, RoutedEventArgs e)
+        {
+            string outputLMBFolderPath = openFolderDialog(Properties.Settings.Default.outputLMBFolderPath);
+            if (outputLMBFolderPath != string.Empty)
+            {
+                Properties.Settings.Default.outputLMBFolderPath = outputLMBFolderPath;
+                Properties.Settings.Default.Save();
+            }
+        }
+
         private void change_Projecitle_Binary_Output_Path_Click(object sender, RoutedEventArgs e)
         {
             string outputProjectileBinFolderPath = openFolderDialog(Properties.Settings.Default.outputProjectileBinFolderPath);
@@ -395,6 +748,46 @@ namespace FBRepacker
             if (outputReloadBinFolderPath != string.Empty)
             {
                 Properties.Settings.Default.outputReloadBinFolderPath = outputReloadBinFolderPath;
+                Properties.Settings.Default.Save();
+            }
+        }
+
+        private void change_FB_Unit_Info_List_Binary_Output_Path_Click(object sender, RoutedEventArgs e)
+        {
+            string outputFBUnitInfoListFolderPath = openFolderDialog(Properties.Settings.Default.outputFBUnitInfoListBinaryFolder);
+            if (outputFBUnitInfoListFolderPath != string.Empty)
+            {
+                Properties.Settings.Default.outputFBUnitInfoListBinaryFolder = outputFBUnitInfoListFolderPath;
+                Properties.Settings.Default.Save();
+            }
+        }
+
+        private void change_NTXB_Binary_Output_Path_Click(object sender, RoutedEventArgs e)
+        {
+            string outputNTXBFolderPath = openFolderDialog(Properties.Settings.Default.outputNTXBBinaryPath);
+            if (outputNTXBFolderPath != string.Empty)
+            {
+                Properties.Settings.Default.outputNTXBBinaryPath = outputNTXBFolderPath;
+                Properties.Settings.Default.Save();
+            }
+        }
+
+        private void change_FB_Series_Info_List_Binary_Output_Path_Click(object sender, RoutedEventArgs e)
+        {
+            string outputFBSeriesInfoListFolderPath = openFolderDialog(Properties.Settings.Default.outputFBSeriesInfoListBinaryFolder);
+            if (outputFBSeriesInfoListFolderPath != string.Empty)
+            {
+                Properties.Settings.Default.outputFBSeriesInfoListBinaryFolder = outputFBSeriesInfoListFolderPath;
+                Properties.Settings.Default.Save();
+            }
+        }
+
+        private void change_Hit_Binary_Output_Path_Click(object sender, RoutedEventArgs e)
+        {
+            string outputHitBinFolderPath = openFolderDialog(Properties.Settings.Default.outputHitBinFolderPath);
+            if (outputHitBinFolderPath != string.Empty)
+            {
+                Properties.Settings.Default.outputHitBinFolderPath = outputHitBinFolderPath;
                 Properties.Settings.Default.Save();
             }
         }
@@ -449,7 +842,7 @@ namespace FBRepacker
             debugMessageBox.AppendText("Starting MBON to FB Data conversion");
             try
             {
-                new Unit_Data();
+                new Parse_Unit_Data();
                 //new ModelConverter().fromDAEtoNUD();
             }
             catch (Exception exp)
@@ -476,6 +869,59 @@ namespace FBRepacker
             }
             debugMessageBox.AppendText(Environment.NewLine);
             debugMessageBox.AppendText("Projectile JSON Export Complete!");
+        }
+
+        private void Unit_Data_Hash_Schema_Export_JSON_Click(object sender, RoutedEventArgs e)
+        {
+            debugMessageBox.AppendText(Environment.NewLine);
+            debugMessageBox.AppendText("Starting Unit Data Hash Schema Export");
+            try
+            {
+                new Parse_Unit_Data().writeDataHashSchema();
+            }
+            catch (Exception exp)
+            {
+                debugMessageBox.AppendText(Environment.NewLine);
+                debugMessageBox.AppendText("Error: " + exp + "." + @"\n Please restart the application.");
+            }
+            debugMessageBox.AppendText(Environment.NewLine);
+            debugMessageBox.AppendText(" Unit Data Hash Schema JSON Export Complete!");
+        }
+
+        private void Unit_Data_Export_JSON_Click(object sender, RoutedEventArgs e)
+        {
+            debugMessageBox.AppendText(Environment.NewLine);
+            debugMessageBox.AppendText("Starting Unit Data Export");
+            new Parse_Unit_Data().readVariables();
+            try
+            {
+                
+            }
+            catch (Exception exp)
+            {
+                debugMessageBox.AppendText(Environment.NewLine);
+                debugMessageBox.AppendText("Error: " + exp + "." + @"\n Please restart the application.");
+            }
+            debugMessageBox.AppendText(Environment.NewLine);
+            debugMessageBox.AppendText(" Unit Data JSON Export Complete!");
+        }
+
+        private void Unit_Data_Export_Binary_Click(object sender, RoutedEventArgs e)
+        {
+            debugMessageBox.AppendText(Environment.NewLine);
+            debugMessageBox.AppendText("Starting Unit Data Export");
+            new Parse_Unit_Data().writeVariables();
+            try
+            {
+                
+            }
+            catch (Exception exp)
+            {
+                debugMessageBox.AppendText(Environment.NewLine);
+                debugMessageBox.AppendText("Error: " + exp + "." + @"\n Please restart the application.");
+            }
+            debugMessageBox.AppendText(Environment.NewLine);
+            debugMessageBox.AppendText(" Unit Data Binary Export Complete!");
         }
 
         private void Projectile_Export_Binary_Click(object sender, RoutedEventArgs e)
@@ -521,15 +967,82 @@ namespace FBRepacker
             debugMessageBox.AppendText("Reload JSON Export Complete!");
         }
 
+        private void FB_Unit_Info_List_Export_JSON_Click(object sender, RoutedEventArgs e)
+        {
+            debugMessageBox.AppendText(Environment.NewLine);
+            debugMessageBox.AppendText("Starting Unit Info JSON Export");
+            try
+            {
+                new Parse_Unit_Info_List().readFBUnitInfoList();
+            }
+            catch (Exception exp)
+            {
+                debugMessageBox.AppendText(Environment.NewLine);
+                debugMessageBox.AppendText("Error: " + exp + "." + @"\n Please restart the application.");
+            }
+            debugMessageBox.AppendText(Environment.NewLine);
+            debugMessageBox.AppendText("Reload Unit Info Export Complete!");
+        }
+
+        private void NTXB_Export_JSON_Click(object sender, RoutedEventArgs e)
+        {
+            debugMessageBox.AppendText(Environment.NewLine);
+            debugMessageBox.AppendText("Starting NTXB JSON Export");
+            
+            try
+            {
+                new Parse_NTXB().readNTXB();
+            }
+            catch (Exception exp)
+            {
+                debugMessageBox.AppendText(Environment.NewLine);
+                debugMessageBox.AppendText("Error: " + exp + "." + @"\n Please restart the application.");
+            }
+            debugMessageBox.AppendText(Environment.NewLine);
+            debugMessageBox.AppendText("NTXB JSON Export Complete!");
+        }
+
+        private void FB_Series_Info_List_Export_JSON_Click(object sender, RoutedEventArgs e)
+        {
+            debugMessageBox.AppendText(Environment.NewLine);
+            debugMessageBox.AppendText("Starting Series Info JSON Export");
+            try
+            {
+                new Parse_Series_Info().readFBSeriesInfoList();
+            }
+            catch (Exception exp)
+            {
+                debugMessageBox.AppendText(Environment.NewLine);
+                debugMessageBox.AppendText("Error: " + exp + "." + @"\n Please restart the application.");
+            }
+            debugMessageBox.AppendText(Environment.NewLine);
+            debugMessageBox.AppendText("Reload Series Info Export Complete!");
+        }
+
+        private void Hit_Export_JSON_Click(object sender, RoutedEventArgs e)
+        {
+            debugMessageBox.AppendText(Environment.NewLine);
+            debugMessageBox.AppendText("Starting Hit JSON Export");
+            try
+            {
+                new Parse_Hit().parse_Hit();
+            }
+            catch (Exception exp)
+            {
+                debugMessageBox.AppendText(Environment.NewLine);
+                debugMessageBox.AppendText("Error: " + exp + "." + @"\n Please restart the application.");
+            }
+            debugMessageBox.AppendText(Environment.NewLine);
+            debugMessageBox.AppendText("Hit JSON Export Complete!");
+        }
+
         private void Reload_Export_Binary_Click(object sender, RoutedEventArgs e)
         {
             debugMessageBox.AppendText(Environment.NewLine);
             debugMessageBox.AppendText("Starting Reload Binary Export");
             try
             {
-                new ReloadList().ShowDialog();
-                /*
-                bool done = true;
+                bool? done = new ReloadList().ShowDialog();
                 if (done == true)
                 {
                     debugMessageBox.AppendText(Environment.NewLine);
@@ -540,7 +1053,6 @@ namespace FBRepacker
                     debugMessageBox.AppendText(Environment.NewLine);
                     debugMessageBox.AppendText("Reload Binary Export Aborted!");
                 }
-                */
             }
             catch (Exception exp)
             {
@@ -548,6 +1060,114 @@ namespace FBRepacker
                 debugMessageBox.AppendText("Error: " + exp + "." + @"\n Please restart the application.");
             }
             debugMessageBox.AppendText(Environment.NewLine);
+        }
+
+        private void FB_Unit_Info_List_Export_Binary_Click(object sender, RoutedEventArgs e)
+        {
+            debugMessageBox.AppendText(Environment.NewLine);
+            debugMessageBox.AppendText("Starting FB Unit Info List Binary Export");
+            try
+            {
+                new Parse_Unit_Info_List().writeFBUnitInfoList();
+                debugMessageBox.AppendText(Environment.NewLine);
+                debugMessageBox.AppendText("FB Unit Info List Binary Export Complete!");
+            }
+            catch (Exception exp)
+            {
+                debugMessageBox.AppendText(Environment.NewLine);
+                debugMessageBox.AppendText("Error: " + exp + "." + @"\n Please restart the application.");
+            }
+            debugMessageBox.AppendText(Environment.NewLine);
+        }
+
+        private void NTXB_Export_Binary_Click(object sender, RoutedEventArgs e)
+        {
+            debugMessageBox.AppendText(Environment.NewLine);
+            debugMessageBox.AppendText("Starting NTXB Binary Export");
+            new Parse_NTXB().writeNTXB();
+            try
+            {
+                
+                debugMessageBox.AppendText(Environment.NewLine);
+                debugMessageBox.AppendText("NTXB Binary Export Complete!");
+            }
+            catch (Exception exp)
+            {
+                debugMessageBox.AppendText(Environment.NewLine);
+                debugMessageBox.AppendText("Error: " + exp + "." + @"\n Please restart the application.");
+            }
+            debugMessageBox.AppendText(Environment.NewLine);
+        }
+
+        private void FB_Unit_Series_List_Export_Binary_Click(object sender, RoutedEventArgs e)
+        {
+            debugMessageBox.AppendText(Environment.NewLine);
+            debugMessageBox.AppendText("Starting FB Series Info List Binary Export");
+            try
+            {
+                new Parse_Series_Info().writeFBSeriesInfoList();
+                debugMessageBox.AppendText(Environment.NewLine);
+                debugMessageBox.AppendText("FB Series Info List Binary Export Complete!");
+            }
+            catch (Exception exp)
+            {
+                debugMessageBox.AppendText(Environment.NewLine);
+                debugMessageBox.AppendText("Error: " + exp + "." + @"\n Please restart the application.");
+            }
+            debugMessageBox.AppendText(Environment.NewLine);
+        }
+
+        private void Hit_Export_Binary_Click(object sender, RoutedEventArgs e)
+        {
+            debugMessageBox.AppendText(Environment.NewLine);
+            debugMessageBox.AppendText("Starting Hit Binary Export");
+            try
+            {
+                new Parse_Hit().write_Hit_Binary();
+                debugMessageBox.AppendText(Environment.NewLine);
+                debugMessageBox.AppendText("Hit Binary Export Complete!");
+
+            }
+            catch (Exception exp)
+            {
+                debugMessageBox.AppendText(Environment.NewLine);
+                debugMessageBox.AppendText("Error: " + exp + "." + @"\n Please restart the application.");
+            }
+        }
+
+        private void ALEO_Convert_Click(object sender, RoutedEventArgs e)
+        {
+            debugMessageBox.AppendText(Environment.NewLine);
+            debugMessageBox.AppendText("Starting ALEO conversion");
+            try
+            {
+                new ParseALEO();
+            }
+            catch (Exception exp)
+            {
+                debugMessageBox.AppendText(Environment.NewLine);
+                debugMessageBox.AppendText("Error: " + exp + "." + @"\n Please restart the application.");
+            }
+            debugMessageBox.AppendText(Environment.NewLine);
+            debugMessageBox.AppendText("ALEO conversion complete");
+        }
+
+        private void LMB_Convert_Click(object sender, RoutedEventArgs e)
+        {
+            debugMessageBox.AppendText(Environment.NewLine);
+            debugMessageBox.AppendText("Starting LMB conversion");
+            new Parse_LMB();
+            try
+            {
+                
+            }
+            catch (Exception exp)
+            {
+                debugMessageBox.AppendText(Environment.NewLine);
+                debugMessageBox.AppendText("Error: " + exp + "." + @"\n Please restart the application.");
+            }
+            debugMessageBox.AppendText(Environment.NewLine);
+            debugMessageBox.AppendText("LMB conversion complete");
         }
 
         private void extractPAC_Click(object sender, RoutedEventArgs e)
@@ -699,9 +1319,80 @@ namespace FBRepacker
             debugMessageBox.AppendText("B4AC Generate Complete!");
         }
 
+        private void Generate_Melee_Var_Click(object sender, RoutedEventArgs e)
+        {
+            debugMessageBox.AppendText(Environment.NewLine);
+            debugMessageBox.AppendText("Generating Melee Var from: " + Properties.Settings.Default.inputMeleeVarBinaryPath);
+            try
+            {
+                new Parse_Melee_Variables();
+            }
+            catch (Exception exp)
+            {
+                debugMessageBox.AppendText(Environment.NewLine);
+                debugMessageBox.AppendText("Error: " + exp + "." + @"\n Please restart the application.");
+            }
+            debugMessageBox.AppendText(Environment.NewLine);
+            debugMessageBox.AppendText("Melee Var Generate Complete!");
+        }
+
+        private void Deserialize_Voice_Logic_Click(object sender, RoutedEventArgs e)
+        {
+            debugMessageBox.AppendText(Environment.NewLine);
+            debugMessageBox.AppendText("Deserializing Voice Logic");
+            try
+            {
+                new Voice_Line_Logic().deserializeVoiceLogicBinary();
+            }
+            catch (Exception exp)
+            {
+                debugMessageBox.AppendText(Environment.NewLine);
+                debugMessageBox.AppendText("Error: " + exp + "." + @"\n Please restart the application.");
+            }
+            debugMessageBox.AppendText(Environment.NewLine);
+            debugMessageBox.AppendText("Voice Logic deserialize operation complete");
+        }
+
+        private void Serialize_Voice_Logic_Click(object sender, RoutedEventArgs e)
+        {
+            debugMessageBox.AppendText(Environment.NewLine);
+            debugMessageBox.AppendText("Serializing Voice Logic");
+            try
+            {
+                new Voice_Line_Logic().serializeVoiceLogicBinary();
+            }
+            catch (Exception exp)
+            {
+                debugMessageBox.AppendText(Environment.NewLine);
+                debugMessageBox.AppendText("Error: " + exp + "." + @"\n Please restart the application.");
+            }
+            debugMessageBox.AppendText(Environment.NewLine);
+            debugMessageBox.AppendText("Voice Logic serialize operation complete");
+        }
+        private void Export_Nus3_Name_and_Hash_Click(object sender, RoutedEventArgs e)
+        {
+            debugMessageBox.AppendText(Environment.NewLine);
+            debugMessageBox.AppendText("Exporting Nus3 Name and Hash");
+            try
+            {
+                new nus3AudioNameHash((audioFormatEnum)Properties.Settings.Default.Nus3SoundHashFormat, Properties.Settings.Default.soundHashMainTitle);
+            }
+            catch (Exception exp)
+            {
+                debugMessageBox.AppendText(Environment.NewLine);
+                debugMessageBox.AppendText("Error: " + exp + "." + @"\n Please restart the application.");
+            }
+            debugMessageBox.AppendText(Environment.NewLine);
+            debugMessageBox.AppendText("Nus3 Name and Hash export complete");
+        }
+
         private void Debug_Click(object sender, RoutedEventArgs e)
         {
-            new GenerateAudioPACInfo();
+            //new GenerateAudioPACInfo();
+            //new ParseEFP();
+            new Parse_Unit_Data().combineDataHashSchema();
+
+            //new nus3AudioNameHash();
             //new ParseALEO();
             //new MBON_Image_List();
             /*

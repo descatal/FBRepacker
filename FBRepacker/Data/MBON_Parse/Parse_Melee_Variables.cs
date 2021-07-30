@@ -14,12 +14,17 @@ namespace FBRepacker.Data.MBON_Parse
         // In old script it is inside the first func
         // In new new script it is placed under func_274
 
-        string outputPath = @"G:\Games\PS3\EXVSFB JPN\Pkg research\FB Repacker\Repack\PAC\Input\MBON Reimport Project\MBON Units\Wing Zero EW\Converted from MBON\Melee_Var.txt";
-
         List<uint> variable_hashes = new List<uint> { 0x5A4C8756, 0xd07cfcb2, 0xdfe9fcf5, 0xdcb947f5, 0x731deff4, 0x4ccf4e89, 0x3ed2edf4, 0xe7fe70cc, 0xceb953e6, 0x98753e91, 0xc48ad129, 0xfe0a62, 0x1eb0a10d, 0x43282715, 0x829F4732, 0x96b75f4b };
         public Parse_Melee_Variables()
         {
-            FileStream fs = File.OpenRead(@"G:\Games\PS3\EXVSFB JPN\Pkg research\FB Repacker\Repack\PAC\Input\MBON Reimport Project\MBON Units\Wing Zero EW\Extract MBON\Data - 4A5DEE5F\001-MBON\002-FHM\008.bin");//@"G:\Games\PS3\EXVSFB JPN\Pkg research\FB Repacker\Repack\PAC\Input\MBON Reimport Project\Infinite Justice Boss METEOR\Extract MBON\Data - EBCEFEC7\001-MBON\002-FHM\008.bin");
+            FileStream fs = File.OpenRead(Properties.Settings.Default.inputMeleeVarBinaryPath);
+
+            //@"G:\Games\PS3\EXVSFB JPN\Pkg research\FB Repacker\Repack\PAC\Input\MBON Reimport Project\MBON Units\Wing Zero EW\Extract MBON\Data - 4A5DEE5F\001-MBON\002-FHM\008.bin");
+            //@"G:\Games\PS3\EXVSFB JPN\Pkg research\FB Repacker\Repack\PAC\Input\MBON Reimport Project\Infinite Justice Boss METEOR\Extract MBON\Data - EBCEFEC7\001-MBON\002-FHM\008.bin");
+
+            string fileName = Path.GetFileNameWithoutExtension(Properties.Settings.Default.inputMeleeVarBinaryPath);
+            string outputPath = Properties.Settings.Default.outputScriptFolderPath + @"\" + fileName + " - Melee_Var.txt";
+            //@"G:\Games\PS3\EXVSFB JPN\Pkg research\FB Repacker\Repack\PAC\Input\MBON Reimport Project\MBON Units\Wing Zero EW\Converted from MBON\Melee_Var.txt";
 
             uint magic = readUIntBigEndian(fs);
             uint set_hash_pointer = readUIntBigEndian(fs);

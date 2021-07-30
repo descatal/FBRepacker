@@ -123,7 +123,7 @@ namespace FBRepacker.Data
 
             B4ACScript.AppendLine("}");
 
-            StreamWriter txt = File.CreateText(path + @"\B4AC.txt");
+            StreamWriter txt = File.CreateText(Properties.Settings.Default.outputScriptFolderPath + @"\B4AC.txt");
             txt.Write(B4ACScript);
 
             txt.Close();
@@ -210,87 +210,103 @@ namespace FBRepacker.Data
 
             List<string> var_parse_func = new List<string>();
 
-            for(uint i = 0; i < dataSets.Count; i++)
+            if(dataSets.Count != 1)
             {
-                Dictionary<uint, List<uint>> data = dataSets[i];
-
-                ExtraScript.AppendLine(Environment.NewLine);
-                ExtraScript.AppendLine("int parse_Extra_B4AC_0x" + (i + 1).ToString("x") + " (int set)");
-                ExtraScript.AppendLine("{");
-
-                //ExtraScript.AppendLine("switch(set)");
-                //ExtraScript.AppendLine("{");
-
-                uint max_count_var = data.FirstOrDefault(s => s.Value.Count() == data.Values.Max(a => a.Count())).Key;
-                uint count = 0;
-                foreach(var dat in data)
+                for (uint i = 0; i < dataSets.Count; i++)
                 {
-                    List<uint> set_index = dat.Value;
-                    if(dat.Key != max_count_var)
+                    Dictionary<uint, List<uint>> data = dataSets[i];
+
+                    ExtraScript.AppendLine(Environment.NewLine);
+                    ExtraScript.AppendLine("int parse_Extra_B4AC_0x" + (i + 1).ToString("x") + " (int set)");
+                    ExtraScript.AppendLine("{");
+
+                    //ExtraScript.AppendLine("switch(set)");
+                    //ExtraScript.AppendLine("{");
+
+                    uint max_count_var = data.FirstOrDefault(s => s.Value.Count() == data.Values.Max(a => a.Count())).Key;
+                    uint count = 0;
+                    foreach (var dat in data)
                     {
-                        string ifcondition;
-                        if (count == 0)
+                        List<uint> set_index = dat.Value;
+                        if (dat.Key != max_count_var)
                         {
-                            ifcondition = "if(";
-                        }
-                        else
-                        {
-                            ifcondition = "else if(";
-                        }
-
-                        // https://stackoverflow.com/questions/20469416/linq-to-find-series-of-consecutive-numbers
-                        var list = set_index.ToArray();
-                        var filtered = list.Zip(Enumerable.Range(0, list.Length), Tuple.Create)
-                                    .Where((x, t) => t == 0 || list[t - 1] != x.Item1 - 1).ToArray();
-
-                        var result = filtered.Select((x, t) => t == filtered.Length - 1
-                                        ? Tuple.Create(x.Item1, list.Length - x.Item2)
-                                        : Tuple.Create(x.Item1, filtered[t + 1].Item2 - x.Item2)).ToList();
-
-                        uint result_count = 0;
-                        foreach (var t in result)
-                        {
-                            uint range_start = t.Item1;
-                            int range_count = t.Item2;
-
-                            if (result_count != 0)
-                                ifcondition += " || ";
-
-                            if(range_count <= 1)
+                            string ifcondition;
+                            if (count == 0)
                             {
-                                ifcondition += "set == " + range_start;
+                                ifcondition = "if(";
                             }
                             else
                             {
-                                ifcondition += "(" + "set >= " + range_start + " && set <= " + (range_start + range_count - 1) + ")";
+                                ifcondition = "else if(";
                             }
 
-                            result_count++;
+                            // https://stackoverflow.com/questions/20469416/linq-to-find-series-of-consecutive-numbers
+                            var list = set_index.ToArray();
+                            var filtered = list.Zip(Enumerable.Range(0, list.Length), Tuple.Create)
+                                        .Where((x, t) => t == 0 || list[t - 1] != x.Item1 - 1).ToArray();
+
+                            var result = filtered.Select((x, t) => t == filtered.Length - 1
+                                            ? Tuple.Create(x.Item1, list.Length - x.Item2)
+                                            : Tuple.Create(x.Item1, filtered[t + 1].Item2 - x.Item2)).ToList();
+
+                            uint result_count = 0;
+                            foreach (var t in result)
+                            {
+                                uint range_start = t.Item1;
+                                int range_count = t.Item2;
+
+                                if (result_count != 0)
+                                    ifcondition += " || ";
+
+                                if (range_count <= 1)
+                                {
+                                    ifcondition += "set == " + range_start;
+                                }
+                                else
+                                {
+                                    ifcondition += "(" + "set >= " + range_start + " && set <= " + (range_start + range_count - 1) + ")";
+                                }
+
+                                result_count++;
+                            }
+
+                            ifcondition += ")";
+                            ExtraScript.AppendLine(ifcondition);
+                            ExtraScript.AppendLine("{");
+                            ExtraScript.AppendLine("return " + "0x" + dat.Key.ToString("X") + ";");
+                            ExtraScript.AppendLine("}");
+                            count++;
                         }
-
-                        ifcondition += ")";
-                        ExtraScript.AppendLine(ifcondition);
-                        ExtraScript.AppendLine("{");
-                        ExtraScript.AppendLine("return " + "0x" + dat.Key.ToString("X") + ";");
-                        ExtraScript.AppendLine("}");
-                        count++;
                     }
-                }
 
-                if(count == 0)
-                {
-                    ExtraScript.AppendLine("return " + "0x" + max_count_var.ToString("X") + ";");
-                }
-                else
-                {
-                    ExtraScript.AppendLine("else");
-                    ExtraScript.AppendLine("{");
-                    ExtraScript.AppendLine("return " + "0x" + max_count_var.ToString("X") + ";");
+                    if (count == 0)
+                    {
+                        ExtraScript.AppendLine("return " + "0x" + max_count_var.ToString("X") + ";");
+                    }
+                    else
+                    {
+                        ExtraScript.AppendLine("else");
+                        ExtraScript.AppendLine("{");
+                        ExtraScript.AppendLine("return " + "0x" + max_count_var.ToString("X") + ";");
+                        ExtraScript.AppendLine("}");
+                    }
+
                     ExtraScript.AppendLine("}");
                 }
-
-                ExtraScript.AppendLine("}");
             }
+            else
+            {
+                // For cases where there's no extra_B4AC but the base code is still there, we just return everything as 0, 0x23 is the base number I plucked from Bael
+                for (uint i = 0; i < 0x23; i++)
+                {
+                    ExtraScript.AppendLine(Environment.NewLine);
+                    ExtraScript.AppendLine("int parse_Extra_B4AC_0x" + (i + 1).ToString("x") + " (int set)");
+                    ExtraScript.AppendLine("{");
+                    ExtraScript.AppendLine("return " + "0x0" + ";");
+                    ExtraScript.AppendLine("}");
+                }
+            }
+
 
             /*
             for (int j = 0; j < dataSets.Count; j++)
@@ -333,7 +349,7 @@ namespace FBRepacker.Data
             }
             */
 
-            StreamWriter txt = File.CreateText(path + @"\Extra_B4AC.txt");
+            StreamWriter txt = File.CreateText(Properties.Settings.Default.outputScriptFolderPath + @"\Extra_B4AC.txt");
             txt.Write(ExtraScript);
 
             txt.Close();

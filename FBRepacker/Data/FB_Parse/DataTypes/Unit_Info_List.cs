@@ -24,7 +24,7 @@ namespace FBRepacker.Data.FB_Parse.DataTypes
         public string P_string { get; set; } // P + UnitID in dec. e.g. P1011 for 0x3F3 unit ID.
         public byte internal_index { get; set; } // Placement of unit in its series, starts from 00.
         public byte arcade_small_sprite_index { get; set; } // To use the nth image in the arcade small sprite PAC. 
-        public byte arcade_small_sprite_index_2 { get; set; } // This must be the same as above, not sure why.
+        public byte arcade_unit_name_sprite { get; set; }
         public byte unk_0x1B { get; set; } // Always FF, reserved?
         public uint arcade_selection_sprite_costume_1_hash { get; set; } // Unit and Pilot's Image.
         public uint arcade_selection_sprite_costume_2_hash { get; set; } // Unit and Pilot's Image.
@@ -51,7 +51,7 @@ namespace FBRepacker.Data.FB_Parse.DataTypes
         public byte figurine_sprite_index { get; set; } // To use the nth image in the trophy sprite combined PAC, PATCHDC38B066.PAC. 
         public ushort unk_0x72 { get; set; } // Always 0xFFFF.
         public uint figurine_sprite_hash { get; set; } // Unused, these figurine images are seperated.
-        public uint unused_MBON_style_sprite_hash { get; set; } // Unused MBON Type Sprite
+        public uint target_small_sprite_hash { get; set; } // target small sprite hash
         public uint unk_0x7C { get; set; } // Not sure what this is
         public uint unk_0x80 { get; set; } // Not sure what this is
         public uint catalog_pilot_costume_2_sprite_hash { get; set; } // will be 0 if the unit does not have alt costume.
@@ -79,7 +79,7 @@ namespace FBRepacker.Data.FB_Parse.DataTypes
             in_game_sortie_and_awakening_sprite_costume_2_hash = 0;
             in_game_sortie_and_awakening_sprite_costume_3_hash = 0;
 
-            unused_MBON_style_sprite_hash = 0;
+            target_small_sprite_hash = 0;
             unk_0x70 = 0;
             unk_0x72 = 0xFFFF;
             unk_0x7C = 0;

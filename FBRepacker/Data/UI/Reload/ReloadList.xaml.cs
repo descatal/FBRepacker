@@ -48,7 +48,7 @@ namespace FBRepacker.Data.UI
             var itemId = (item as Reload_FB)?.hash;
             int index = reload_FBs.FindIndex(s => s.hash == itemId);
             Reload_FB selectedInfo = reload_FBs[index];
-            Reload_FB backupInfo = (Reload_FB)selectedInfo.Clone();
+            Reload_FB backupInfo = (Reload_FB)selectedInfo.DeepClone();
             ReloadEdit PACFileInfoEdit = new ReloadEdit(selectedInfo, reload_FBs);
             bool? save = PACFileInfoEdit.ShowDialog();
 
@@ -134,12 +134,17 @@ namespace FBRepacker.Data.UI
             // Create a backup copy of old JSON.
             string oriJSONFileName = Path.GetFileNameWithoutExtension(Properties.Settings.Default.ReloadJSONFilePath);
             string oriJSONFilePath = Path.GetDirectoryName(Properties.Settings.Default.ReloadJSONFilePath);
-            File.Copy(Properties.Settings.Default.ReloadJSONFilePath, oriJSONFilePath + @"\" + oriJSONFileName + "_backup.JSON", true);
+
+            StreamReader sr = File.OpenText(Properties.Settings.Default.ReloadJSONFilePath);
+            StreamWriter sw = File.CreateText(oriJSONFilePath + @"\" + oriJSONFileName + "_backup.JSON");
+            sw.Write(sr.ReadToEnd());
+            sr.Close();
+            sw.Close();
 
             string fileName = Path.GetFileNameWithoutExtension(Properties.Settings.Default.ReloadJSONFilePath);
             string outputPath = Properties.Settings.Default.ReloadJSONFilePath;
 
-            WaitForFile(outputPath);
+            //WaitForFile(outputPath);
             StreamWriter fsJSON = File.CreateText(outputPath);
             fsJSON.Write(JSON);
             fsJSON.Close();

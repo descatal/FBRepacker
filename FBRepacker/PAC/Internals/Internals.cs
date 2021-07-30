@@ -15,6 +15,7 @@ using System.Windows.Automation.Peers;
 using System.Windows.Data;
 using System.Windows.Documents;
 using System.Windows.Media.Converters;
+using static FBRepacker.Data.MBON_Parse.nus3AudioNameHash;
 
 namespace FBRepacker.PAC
 {
@@ -489,6 +490,18 @@ namespace FBRepacker.PAC
             return memStream;
         }
 
+        protected MemoryStream addPaddingStream(MemoryStream memStream, byte padByte)
+        {
+            memStream.Seek(0, SeekOrigin.End);
+            int moduloResult = ((int)memStream.Length % 0x10);
+            int paddingRequired = 0;
+            if (moduloResult != 0)
+                paddingRequired = 0x10 - moduloResult;
+            byte[] zeroBuffer = Enumerable.Repeat(padByte, paddingRequired).ToArray();
+            memStream.Write(zeroBuffer, 0, paddingRequired);
+            return memStream;
+        }
+
         protected int addPaddingSizeCalculation(int size)
         {
             // size % 0x10 = Modulus of size and 0x10, the remainder will be the number that is extra. 
@@ -547,21 +560,19 @@ namespace FBRepacker.PAC
         protected string readString(Stream mem, char linebreak)
         {
             StringBuilder sb = new StringBuilder();
-            using (StreamReader rdr = new StreamReader(mem))
+            StreamReader rdr = new StreamReader(mem);
+            int nc;
+            while (true)
             {
-                Int32 nc;
-                while (true)
+                nc = rdr.Read();
+                char c = (char)nc;
+                if (c == linebreak)
                 {
-                    nc = rdr.Read();
-                    Char c = (Char)nc;
-                    if (c == linebreak)
-                    {
-                        break;
-                    }
-                    else
-                    {
-                        sb.Append(c);
-                    }
+                    break;
+                }
+                else
+                {
+                    sb.Append(c);
                 }
             }
             return sb.ToString();
@@ -991,6 +1002,55 @@ namespace FBRepacker.PAC
             }
 
             memStream.Write(tempBuffer, 0, tempBuffer.Length);
+        }
+
+        /// <summary>
+        /// appending String to a memory stream
+        /// </summary>
+        /// <param name="memStream">the memory stream to append</param>
+        /// <param name="str">the string to append</param>
+        /// <param name="encoding">specify the encoding used to encode the string (If unsure use Encoding.Default)</param>
+        /// <param name="mode">byte array required size, will pad with 0 if short, and trunc if larger</param>
+        protected void appendPaddedStringMemoryStream(MemoryStream memStream, string str, Encoding encoding, int mode)
+        {
+            byte[] tempBuffer = encoding.GetBytes(str);
+
+            int charLength = str.Length;
+            int padLength = 0;
+            switch (mode)
+            {
+                case 0:
+                    if (tempBuffer.Length % 0x4 == 0x3)
+                    {
+                        padLength = 0x5;
+                    }
+                    else if(tempBuffer.Length % 0x4 == 0)
+                    {
+                        padLength = 0x4;
+                    }
+                    else
+                    {
+                        padLength = 0x4 - tempBuffer.Length % 0x4;
+                    }
+                    break;
+                case 1:
+                    if (tempBuffer.Length % 0x4 == 0)
+                    {
+                        padLength = 0x4;
+                    }
+                    else
+                    {
+                        padLength = 0x4 - tempBuffer.Length % 0x4;
+                    }
+                    break;
+            }
+
+            MemoryStream memStr = new MemoryStream();
+            memStr.Write(tempBuffer, 0, tempBuffer.Length);
+            appendZeroMemoryStream(memStr, padLength);
+            memStr.Seek(0, SeekOrigin.Begin);
+            memStr.CopyTo(memStream);
+            memStr.Close();
         }
 
         protected void createFile(string fileExt, byte[] buffer, string filePath, int appendPACInfoFileNumber)
@@ -1563,6 +1623,23 @@ namespace FBRepacker.PAC
             return -1;
         }
 
+        public int SearchFoward(Stream srcMSS, byte[] pattern)
+        {
+            MemoryStream srcMS = new MemoryStream();
+            srcMSS.CopyTo(srcMS);
+
+            byte[] src = srcMS.ToArray();
+            int c = src.Length - pattern.Length + 1;
+            int j;
+            for (int i = 0; i < c; i++)
+            {
+                if (src[i] != pattern[0]) continue;
+                for (j = pattern.Length - 1; j >= 1 && src[i + j] == pattern[j]; j--) ;
+                if (j == 0) return i;
+            }
+            return -1;
+        }
+
         protected long GetPatternPositions(Stream stream, byte[] pattern)
         {
             long initPos = stream.Position;
@@ -1656,6 +1733,39 @@ namespace FBRepacker.PAC
         public object ConvertBack(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
         {
             return value;
+        }
+    }
+
+    public class AudioFormatEnumConverter : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
+        {
+            switch ((int)value)
+            {
+                case 0:
+                    return audioFormatEnum.AT3;
+                case 1:
+                    return audioFormatEnum.IS14;
+                case 2:
+                    return audioFormatEnum.VAG;
+                default:
+                    return audioFormatEnum.AT3;
+            }
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
+        {
+            switch ((audioFormatEnum)value)
+            {
+                case audioFormatEnum.AT3:
+                    return 0;
+                case audioFormatEnum.IS14:
+                    return 1;
+                case audioFormatEnum.VAG:
+                    return 2;
+                default:
+                    return 0;
+            }
         }
     }
 

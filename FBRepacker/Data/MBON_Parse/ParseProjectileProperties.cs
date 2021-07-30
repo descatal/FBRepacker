@@ -16,6 +16,7 @@ namespace FBRepacker.Data.MBON_Parse
         Dictionary<uint, uint> convertAssistProjectileType = new Dictionary<uint, uint>()
         {
             { 0x3, 0x2 }, // Missiles
+            { 0x4, 0x8 }, // Spread Beam
             { 0x2A, 0x6 }, // Gerobi
             { 0x3C, 0x46 }, // Bafuku
             { 0xC3ECE, 0x52DA }, // Infinite Justice Boomerang
@@ -84,22 +85,22 @@ namespace FBRepacker.Data.MBON_Parse
                 proj.unk_0x2C = readUIntBigEndian();
                 proj.unk_0x30 = readUIntBigEndian();
                 proj.unk_0x34 = readUIntBigEndian();
-                proj.unk_0x38 = readUIntBigEndian();
+                proj.muzzle_random_angle_correction_multiplier = readUIntBigEndian();
                 proj.ammo_reduce_amount = readUIntBigEndian();
                 proj.duration_frame = readUIntBigEndian();
                 proj.max_travel_distance = readFloat(true);
                 proj.initial_speed = readFloat(true);
                 proj.acceleration = readFloat(true);
-                proj.unk_0x50 = readUIntBigEndian();
+                proj.acceleration_start_frame = readUIntBigEndian();
                 proj.unk_0x54 = readUIntBigEndian();
                 proj.max_speed = readFloat(true);
-                proj.unk_0x5C = readUIntBigEndian();
-                proj.unk_0x60 = readUIntBigEndian();
-                proj.unk_0x64 = readUIntBigEndian();
-                proj.unk_0x68 = readUIntBigEndian();
-                proj.unk_0x6C = readUIntBigEndian();
-                proj.unk_0x70 = readUIntBigEndian();
-                proj.unk_0x74 = readUIntBigEndian();
+                proj.throwable_arc_unk_0x5C = readUIntBigEndian();
+                proj.throwable_arc_unk_0x60 = readUIntBigEndian();
+                proj.throwable_arc_unk_0x64 = readUIntBigEndian();
+                proj.throwable_arc_unk_0x68 = readUIntBigEndian();
+                proj.throwable_arc_unk_0x6C = readUIntBigEndian();
+                proj.throwable_arc_unk_0x70 = readUIntBigEndian();
+                proj.throwable_arc_unk_0x74 = readUIntBigEndian();
                 proj.horizontal_guidance_amount = readFloat(true);
                 proj.horizontal_guidance_angle = readFloat(true);
                 proj.vertical_guidance_amount = readFloat(true);
@@ -125,21 +126,46 @@ namespace FBRepacker.Data.MBON_Parse
                 proj.unk_0xD0 = readUIntBigEndian();
                 proj.unk_0xD4 = readUIntBigEndian();
                 proj.unk_0xD8 = readUIntBigEndian();
-                proj.gerobi_wiggle = readFloat(true);
-                proj.effect_conductivity = readFloat(true);
-                proj.unk_0xE4 = readFloat(true);
-                proj.unk_0xE8 = readFloat(true);
-                proj.unk_0xEC = readFloat(true);
-                proj.unk_0xF0 = readFloat(true);
-                proj.unk_0xF4 = readFloat(true);
-                proj.unk_0xF8 = readFloat(true);
-                proj.unk_0xFC = readFloat(true);
-                proj.unk_0x100 = readFloat(true);
-                proj.unk_0x104 = readFloat(true);
-                proj.unk_0x108 = readFloat(true);
-                proj.unk_0x10C = readFloat(true);
-                proj.unk_0x110 = readFloat(true);
-                proj.unk_0x114 = readFloat(true);
+
+                if(proj.projectile_Type == 0x8 && Properties.Settings.Default.convertMBONProjecitle)
+                {
+                    // Spread shot projectile from MBON has a 0x10 extra info inside.
+                    fs.Seek(0x10, SeekOrigin.Current);
+                    proj.gerobi_wiggle = readFloat(true);
+                    proj.effect_conductivity = readFloat(true);
+                    proj.unk_0xE4 = readFloat(true);
+                    proj.unk_0xE8 = readFloat(true);
+                    proj.unk_0xEC = readFloat(true);
+                    proj.unk_0xF0 = readFloat(true);
+                    proj.unk_0xF4 = readFloat(true);
+                    proj.unk_0xF8 = readFloat(true);
+                    proj.unk_0xFC = readFloat(true);
+                    proj.unk_0x100 = readFloat(true);
+                    proj.unk_0x104 = readFloat(true);
+                    // Add in later
+                    proj.unk_0x108 = 0;
+                    proj.unk_0x10C = 0;
+                    proj.unk_0x110 = 0;
+                    proj.unk_0x114 = 0;
+                }
+                else
+                {
+                    proj.gerobi_wiggle = readFloat(true);
+                    proj.effect_conductivity = readFloat(true);
+                    proj.unk_0xE4 = readFloat(true);
+                    proj.unk_0xE8 = readFloat(true);
+                    proj.unk_0xEC = readFloat(true);
+                    proj.unk_0xF0 = readFloat(true);
+                    proj.unk_0xF4 = readFloat(true);
+                    proj.unk_0xF8 = readFloat(true);
+                    proj.unk_0xFC = readFloat(true);
+                    proj.unk_0x100 = readFloat(true);
+                    proj.unk_0x104 = readFloat(true);
+                    proj.unk_0x108 = readFloat(true);
+                    proj.unk_0x10C = readFloat(true);
+                    proj.unk_0x110 = readFloat(true);
+                    proj.unk_0x114 = readFloat(true);
+                }
 
                 if (ifMBON)
                 {
@@ -223,22 +249,22 @@ namespace FBRepacker.Data.MBON_Parse
                 appendUIntMemoryStream(output_projectile, proj.unk_0x2C, true);
                 appendUIntMemoryStream(output_projectile, proj.unk_0x30, true);
                 appendUIntMemoryStream(output_projectile, proj.unk_0x34, true);
-                appendUIntMemoryStream(output_projectile, proj.unk_0x38, true);
+                appendUIntMemoryStream(output_projectile, proj.muzzle_random_angle_correction_multiplier, true);
                 appendUIntMemoryStream(output_projectile, proj.ammo_reduce_amount, true);
                 appendUIntMemoryStream(output_projectile, proj.duration_frame, true);
                 appendFloatMemoryStream(output_projectile, proj.max_travel_distance, true);
                 appendFloatMemoryStream(output_projectile, proj.initial_speed, true);
                 appendFloatMemoryStream(output_projectile, proj.acceleration, true);
-                appendUIntMemoryStream(output_projectile, proj.unk_0x50, true);
+                appendUIntMemoryStream(output_projectile, proj.acceleration_start_frame, true);
                 appendUIntMemoryStream(output_projectile, proj.unk_0x54, true);
                 appendFloatMemoryStream(output_projectile, proj.max_speed, true);
-                appendUIntMemoryStream(output_projectile, proj.unk_0x5C, true);
-                appendUIntMemoryStream(output_projectile, proj.unk_0x60, true);
-                appendUIntMemoryStream(output_projectile, proj.unk_0x64, true);
-                appendUIntMemoryStream(output_projectile, proj.unk_0x68, true);
-                appendUIntMemoryStream(output_projectile, proj.unk_0x6C, true);
-                appendUIntMemoryStream(output_projectile, proj.unk_0x70, true);
-                appendUIntMemoryStream(output_projectile, proj.unk_0x74, true);
+                appendUIntMemoryStream(output_projectile, proj.throwable_arc_unk_0x5C, true);
+                appendUIntMemoryStream(output_projectile, proj.throwable_arc_unk_0x60, true);
+                appendUIntMemoryStream(output_projectile, proj.throwable_arc_unk_0x64, true);
+                appendUIntMemoryStream(output_projectile, proj.throwable_arc_unk_0x68, true);
+                appendUIntMemoryStream(output_projectile, proj.throwable_arc_unk_0x6C, true);
+                appendUIntMemoryStream(output_projectile, proj.throwable_arc_unk_0x70, true);
+                appendUIntMemoryStream(output_projectile, proj.throwable_arc_unk_0x74, true);
                 appendFloatMemoryStream(output_projectile, proj.horizontal_guidance_amount, true);
                 appendFloatMemoryStream(output_projectile, proj.horizontal_guidance_angle, true);
                 appendFloatMemoryStream(output_projectile, proj.vertical_guidance_amount, true);

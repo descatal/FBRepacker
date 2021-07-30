@@ -14,8 +14,13 @@ namespace FBRepacker.Data.FB_Parse
     {
         public Parse_Unit_Info_List()
         {
-            /*
-            string path = @"G:\Games\PS3\EXVSFB JPN\Pkg research\FB Repacker\Repack\PAC\Input\MBON Reimport Project\Common FB JSON\002.bin";
+
+        }
+
+        public void readFBUnitInfoList()
+        {
+            string path = Properties.Settings.Default.inputFBUnitInfoListBinary;
+            //@"G:\Games\PS3\EXVSFB JPN\Pkg research\FB Repacker\Repack\PAC\Input\MBON Reimport Project\Common FB JSON\002.bin";
             FileStream fs = File.OpenRead(path);
 
             List<Unit_Info_List> unit_Info_Lists = readInfoList(fs);
@@ -23,22 +28,24 @@ namespace FBRepacker.Data.FB_Parse
             JsonSerializerOptions json_options = new JsonSerializerOptions();
             json_options.WriteIndented = true;
             string JSON = JsonSerializer.Serialize<List<Unit_Info_List>>(unit_Info_Lists, json_options);
-            string opath = @"G:\Games\PS3\EXVSFB JPN\Pkg research\FB Repacker\Repack\PAC\Input\MBON Reimport Project\Common FB JSON\Original.json";
+            string opath = Properties.Settings.Default.outputFBUnitInfoListJSONFolder + @"\Unit List.json";
+            //@"G:\Games\PS3\EXVSFB JPN\Pkg research\FB Repacker\Repack\PAC\Input\MBON Reimport Project\Common FB JSON\Original.json";
 
             StreamWriter sw = File.CreateText(opath);
             sw.Write(JSON);
 
             sw.Close();
             fs.Close();
-            */
+        }
 
-            
-            string JSONIPath = @"G:\Games\PS3\EXVSFB JPN\Pkg research\FB Repacker\Repack\PAC\Input\MBON Reimport Project\Common FB JSON\Unit List.json";
+        public void writeFBUnitInfoList()
+        {
+            string JSONIPath = Properties.Settings.Default.inputFBUnitInfoListJSON;
+                //@"G:\Games\PS3\EXVSFB JPN\Pkg research\FB Repacker\Repack\PAC\Input\MBON Reimport Project\Common FB JSON\Unit List.json";
             string JSON = File.OpenText(JSONIPath).ReadToEnd();
             List<Unit_Info_List> unit_Info_Lists = JsonSerializer.Deserialize<List<Unit_Info_List>>(JSON);
 
             writeInfoList(unit_Info_Lists);
-            
         }
 
         public List<Unit_Info_List> readInfoList(FileStream fs)
@@ -130,7 +137,7 @@ namespace FBRepacker.Data.FB_Parse
 
                 unit_Info_List.internal_index = internal_index;
                 unit_Info_List.arcade_small_sprite_index = arcade_small_sprite_index;
-                unit_Info_List.arcade_small_sprite_index_2 = arcade_small_sprite_index_2;
+                unit_Info_List.arcade_unit_name_sprite = arcade_small_sprite_index_2;
                 unit_Info_List.unk_0x1B = unk_0x1B;
 
                 uint arcade_selection_sprite_costume_1_hash = readUIntBigEndian(fs);
@@ -213,7 +220,7 @@ namespace FBRepacker.Data.FB_Parse
                 unit_Info_List.figurine_sprite_hash = figurine_sprite_hash;
 
                 uint unused_MBON_style_sprite_hash = readUIntBigEndian(fs);
-                unit_Info_List.unused_MBON_style_sprite_hash = unused_MBON_style_sprite_hash;
+                unit_Info_List.target_small_sprite_hash = unused_MBON_style_sprite_hash;
 
                 uint unk_0x7C = readUIntBigEndian(fs);
                 unit_Info_List.unk_0x7C = unk_0x7C;
@@ -312,7 +319,7 @@ namespace FBRepacker.Data.FB_Parse
 
                 InfoMS.WriteByte(unit_Info_List.internal_index);
                 InfoMS.WriteByte(unit_Info_List.arcade_small_sprite_index);
-                InfoMS.WriteByte(unit_Info_List.arcade_small_sprite_index_2);
+                InfoMS.WriteByte(unit_Info_List.arcade_unit_name_sprite);
                 InfoMS.WriteByte(unit_Info_List.unk_0x1B);
 
                 appendUIntMemoryStream(InfoMS, unit_Info_List.arcade_selection_sprite_costume_1_hash, true);
@@ -350,7 +357,7 @@ namespace FBRepacker.Data.FB_Parse
                 appendUShortMemoryStream(InfoMS, unit_Info_List.unk_0x72, true);
 
                 appendUIntMemoryStream(InfoMS, unit_Info_List.figurine_sprite_hash, true);
-                appendUIntMemoryStream(InfoMS, unit_Info_List.unused_MBON_style_sprite_hash, true);
+                appendUIntMemoryStream(InfoMS, unit_Info_List.target_small_sprite_hash, true);
 
                 appendUIntMemoryStream(InfoMS, unit_Info_List.unk_0x7C, true);
                 appendUIntMemoryStream(InfoMS, unit_Info_List.unk_0x80, true);
@@ -421,8 +428,9 @@ namespace FBRepacker.Data.FB_Parse
                 appendUIntMemoryStream(InfoMS, unit_Info_List.unk_0x9C, true);
             }
 
-            string OutputPath = @"G:\Games\PS3\EXVSFB JPN\Pkg research\FB Repacker\Repack\PAC\Input\MBON Reimport Project\Common FB JSON\";
-            FileStream ofs = File.Create(OutputPath + "Unit List.bin");
+            string OutputPath = Properties.Settings.Default.outputFBUnitInfoListBinaryFolder;
+            //@"G:\Games\PS3\EXVSFB JPN\Pkg research\FB Repacker\Repack\PAC\Input\MBON Reimport Project\Common FB JSON\";
+            FileStream ofs = File.Create(OutputPath + @"\Unit List.bin");
 
             InfoMS.Seek(0, SeekOrigin.Begin);
             StrMS.Seek(0, SeekOrigin.Begin);
