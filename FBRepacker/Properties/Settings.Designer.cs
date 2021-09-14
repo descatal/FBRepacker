@@ -946,5 +946,101 @@ namespace FBRepacker.Properties {
                 this["convertMBONUnitData"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("C:\\")]
+        public string inputAudioPACInfoFolder {
+            get {
+                return ((string)(this["inputAudioPACInfoFolder"]));
+            }
+            set {
+                this["inputAudioPACInfoFolder"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("C:\\")]
+        public string outputAudioPACInfoFolder {
+            get {
+                return ((string)(this["outputAudioPACInfoFolder"]));
+            }
+            set {
+                this["outputAudioPACInfoFolder"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("003.STREAM")]
+        public string audioPACInfoSTREAMName {
+            get {
+                return ((string)(this["audioPACInfoSTREAMName"]));
+            }
+            set {
+                this["audioPACInfoSTREAMName"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("0")]
+        public int audioPACInfoNus3SoundHashFormat {
+            get {
+                return ((int)(this["audioPACInfoNus3SoundHashFormat"]));
+            }
+            set {
+                this["audioPACInfoNus3SoundHashFormat"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("C:\\")]
+        public string inputEFPBinary {
+            get {
+                return ((string)(this["inputEFPBinary"]));
+            }
+            set {
+                this["inputEFPBinary"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("C:\\")]
+        public string outputEFPJSONPath {
+            get {
+                return ((string)(this["outputEFPJSONPath"]));
+            }
+            set {
+                this["outputEFPJSONPath"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("C:\\")]
+        public string inputEFPJSON {
+            get {
+                return ((string)(this["inputEFPJSON"]));
+            }
+            set {
+                this["inputEFPJSON"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("C:\\")]
+        public string outputEFPBinaryPath {
+            get {
+                return ((string)(this["outputEFPBinaryPath"]));
+            }
+            set {
+                this["outputEFPBinaryPath"] = value;
+            }
+        }
     }
 }

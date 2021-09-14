@@ -49,6 +49,7 @@ namespace FBRepacker
         {
             tabCont.SelectedIndex = Properties.Settings.Default.SelectedTab;
             audioFormatComboBox.ItemsSource = Enum.GetValues(typeof(audioFormatEnum)).Cast<audioFormatEnum>();
+            PACInfoAudioFormatComboBox.ItemsSource = Enum.GetValues(typeof(audioFormatEnum)).Cast<audioFormatEnum>();
         }
 
         private void Open_Extract_PAC_File_Click(object sender, RoutedEventArgs e)
@@ -335,6 +336,19 @@ namespace FBRepacker
             Properties.Settings.Default.Save();
         }
 
+        private void OpenEFPBinary_Click(object sender, RoutedEventArgs e)
+        {
+            OpenFileDialog openFileDialog = new OpenFileDialog();
+            string EFPBinaryFilePath = System.IO.Path.GetDirectoryName(Properties.Settings.Default.inputEFPBinary);
+            openFileDialog.InitialDirectory = EFPBinaryFilePath;
+            openFileDialog.RestoreDirectory = true;
+            openFileDialog.ShowDialog();
+
+            EFPBinaryFilePath = openFileDialog.FileName;
+            Properties.Settings.Default.inputEFPBinary = File.Exists(EFPBinaryFilePath) ? EFPBinaryFilePath : Properties.Settings.Default.inputEFPBinary;
+            Properties.Settings.Default.Save();
+        }
+
         private void OpenUnitDataHashSchemaBinary_Click(object sender, RoutedEventArgs e)
         {
             OpenFileDialog openFileDialog = new OpenFileDialog();
@@ -462,6 +476,16 @@ namespace FBRepacker
             }
         }
 
+        private void change_EFP_JSON_Output_Path_Click(object sender, RoutedEventArgs e)
+        {
+            string outputEFPJSONFolderPath = openFolderDialog(Properties.Settings.Default.outputEFPJSONPath);
+            if (outputEFPJSONFolderPath != string.Empty)
+            {
+                Properties.Settings.Default.outputEFPJSONPath = outputEFPJSONFolderPath;
+                Properties.Settings.Default.Save();
+            }
+        }
+
         private void change_Unit_Data_Hash_Schema_JSON_Output_Path_Click(object sender, RoutedEventArgs e)
         {
             string outputUnitDataHashSchemaFolder = openFolderDialog(Properties.Settings.Default.outputUnitDataHashSchemaJSONPath);
@@ -552,6 +576,19 @@ namespace FBRepacker
 
             ProjecitleJSONFilePath = openFileDialog.FileName;
             Properties.Settings.Default.ProjecitleJSONFilePath = File.Exists(ProjecitleJSONFilePath) ? ProjecitleJSONFilePath : Properties.Settings.Default.ProjecitleJSONFilePath;
+            Properties.Settings.Default.Save();
+        }
+
+        private void OpenEFPJSON_Click(object sender, RoutedEventArgs e)
+        {
+            OpenFileDialog openFileDialog = new OpenFileDialog();
+            string EFPJSONFilePath = System.IO.Path.GetDirectoryName(Properties.Settings.Default.inputEFPJSON);
+            openFileDialog.InitialDirectory = EFPJSONFilePath;
+            openFileDialog.RestoreDirectory = true;
+            openFileDialog.ShowDialog();
+
+            EFPJSONFilePath = openFileDialog.FileName;
+            Properties.Settings.Default.inputEFPJSON = File.Exists(EFPJSONFilePath) ? EFPJSONFilePath : Properties.Settings.Default.inputEFPJSON;
             Properties.Settings.Default.Save();
         }
 
@@ -682,6 +719,26 @@ namespace FBRepacker
             Properties.Settings.Default.Save();
         }
 
+        private void change_Audio_PAC_Info_Output_Path_Click(object sender, RoutedEventArgs e)
+        {
+            string outputAudioPACInfoFolderPath = openFolderDialog(Properties.Settings.Default.outputAudioPACInfoFolder);
+            if (outputAudioPACInfoFolderPath != string.Empty)
+            {
+                Properties.Settings.Default.outputAudioPACInfoFolder = outputAudioPACInfoFolderPath;
+                Properties.Settings.Default.Save();
+            }
+        }
+
+        private void change_VoiceLogicJSON_Input_Path_Click(object sender, RoutedEventArgs e)
+        {
+            string inputVoiceLogicJSONFolderPath = openFolderDialog(Properties.Settings.Default.inputAudioPACInfoFolder);
+            if (inputVoiceLogicJSONFolderPath != string.Empty)
+            {
+                Properties.Settings.Default.inputAudioPACInfoFolder = inputVoiceLogicJSONFolderPath;
+                Properties.Settings.Default.Save();
+            }
+        }
+
         private void change_VoiceLogicJSON_Output_Path_Click(object sender, RoutedEventArgs e)
         {
             string outputVoiceLogicJSONFolderPath = openFolderDialog(Properties.Settings.Default.outputVoiceLogicJSONFolder);
@@ -738,6 +795,16 @@ namespace FBRepacker
             if (outputProjectileBinFolderPath != string.Empty)
             {
                 Properties.Settings.Default.outputProjectileBinFolderPath = outputProjectileBinFolderPath;
+                Properties.Settings.Default.Save();
+            }
+        }
+
+        private void change_EFP_Binary_Output_Path_Click(object sender, RoutedEventArgs e)
+        {
+            string outputEFPBinFolderPath = openFolderDialog(Properties.Settings.Default.outputEFPBinaryPath);
+            if (outputEFPBinFolderPath != string.Empty)
+            {
+                Properties.Settings.Default.outputEFPBinaryPath = outputEFPBinFolderPath;
                 Properties.Settings.Default.Save();
             }
         }
@@ -871,6 +938,23 @@ namespace FBRepacker
             debugMessageBox.AppendText("Projectile JSON Export Complete!");
         }
 
+        private void EFP_Export_JSON_Click(object sender, RoutedEventArgs e)
+        {
+            debugMessageBox.AppendText(Environment.NewLine);
+            debugMessageBox.AppendText("Starting EFP JSON Export");
+            try
+            {
+                new ParseEFP().parseEFP();
+            }
+            catch (Exception exp)
+            {
+                debugMessageBox.AppendText(Environment.NewLine);
+                debugMessageBox.AppendText("Error: " + exp + "." + @"\n Please restart the application.");
+            }
+            debugMessageBox.AppendText(Environment.NewLine);
+            debugMessageBox.AppendText("EFP JSON Export Complete!");
+        }
+
         private void Unit_Data_Hash_Schema_Export_JSON_Click(object sender, RoutedEventArgs e)
         {
             debugMessageBox.AppendText(Environment.NewLine);
@@ -885,7 +969,7 @@ namespace FBRepacker
                 debugMessageBox.AppendText("Error: " + exp + "." + @"\n Please restart the application.");
             }
             debugMessageBox.AppendText(Environment.NewLine);
-            debugMessageBox.AppendText(" Unit Data Hash Schema JSON Export Complete!");
+            debugMessageBox.AppendText("Unit Data Hash Schema JSON Export Complete!");
         }
 
         private void Unit_Data_Export_JSON_Click(object sender, RoutedEventArgs e)
@@ -903,7 +987,7 @@ namespace FBRepacker
                 debugMessageBox.AppendText("Error: " + exp + "." + @"\n Please restart the application.");
             }
             debugMessageBox.AppendText(Environment.NewLine);
-            debugMessageBox.AppendText(" Unit Data JSON Export Complete!");
+            debugMessageBox.AppendText("Unit Data JSON Export Complete!");
         }
 
         private void Unit_Data_Export_Binary_Click(object sender, RoutedEventArgs e)
@@ -921,7 +1005,7 @@ namespace FBRepacker
                 debugMessageBox.AppendText("Error: " + exp + "." + @"\n Please restart the application.");
             }
             debugMessageBox.AppendText(Environment.NewLine);
-            debugMessageBox.AppendText(" Unit Data Binary Export Complete!");
+            debugMessageBox.AppendText("Unit Data Binary Export Complete!");
         }
 
         private void Projectile_Export_Binary_Click(object sender, RoutedEventArgs e)
@@ -948,6 +1032,23 @@ namespace FBRepacker
                 debugMessageBox.AppendText("Error: " + exp + "." + @"\n Please restart the application.");
             }
             debugMessageBox.AppendText(Environment.NewLine);
+        }
+
+        private void EFP_Export_Binary_Click(object sender, RoutedEventArgs e)
+        {
+            debugMessageBox.AppendText(Environment.NewLine);
+            debugMessageBox.AppendText("Starting EFP Binary Export");
+            try
+            {
+                new ParseEFP().serializeEFP();
+            }
+            catch (Exception exp)
+            {
+                debugMessageBox.AppendText(Environment.NewLine);
+                debugMessageBox.AppendText("Error: " + exp + "." + @"\n Please restart the application.");
+            }
+            debugMessageBox.AppendText(Environment.NewLine);
+            debugMessageBox.AppendText("EFP Binary Export Complete!");
         }
 
         private void Reload_Export_JSON_Click(object sender, RoutedEventArgs e)
@@ -1342,7 +1443,7 @@ namespace FBRepacker
             debugMessageBox.AppendText("Deserializing Voice Logic");
             try
             {
-                new Voice_Line_Logic().deserializeVoiceLogicBinary();
+                new Parse_Voice_Line_Logic().deserializeVoiceLogicBinary();
             }
             catch (Exception exp)
             {
@@ -1359,7 +1460,7 @@ namespace FBRepacker
             debugMessageBox.AppendText("Serializing Voice Logic");
             try
             {
-                new Voice_Line_Logic().serializeVoiceLogicBinary();
+                new Parse_Voice_Line_Logic().serializeVoiceLogicBinary();
             }
             catch (Exception exp)
             {
@@ -1384,13 +1485,34 @@ namespace FBRepacker
             }
             debugMessageBox.AppendText(Environment.NewLine);
             debugMessageBox.AppendText("Nus3 Name and Hash export complete");
+
         }
+        private void Export_Audio_PAC_Info_Click(object sender, RoutedEventArgs e)
+        {
+            debugMessageBox.AppendText(Environment.NewLine);
+            debugMessageBox.AppendText("Exporting Audio PAC Info");
+            try
+            {
+                new GenerateAudioPACInfo((audioFormatEnum)Properties.Settings.Default.audioPACInfoNus3SoundHashFormat);
+                //((audioFormatEnum)Properties.Settings.Default.Nus3SoundHashFormat, Properties.Settings.Default.soundHashMainTitle);
+            }
+            catch (Exception exp)
+            {
+                debugMessageBox.AppendText(Environment.NewLine);
+                debugMessageBox.AppendText("Error: " + exp + "." + @"\n Please restart the application.");
+            }
+            debugMessageBox.AppendText(Environment.NewLine);
+            debugMessageBox.AppendText("Audio PAC Info export complete");
+        }
+
 
         private void Debug_Click(object sender, RoutedEventArgs e)
         {
             //new GenerateAudioPACInfo();
             //new ParseEFP();
-            new Parse_Unit_Data().combineDataHashSchema();
+            //new Parse_Unit_Data().combineDataHashSchema();
+            new FBRepacker.Tools.simpleExtract();
+
 
             //new nus3AudioNameHash();
             //new ParseALEO();

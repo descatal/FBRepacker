@@ -10,11 +10,11 @@ using System.Web.Script.Serialization;
 
 namespace FBRepacker.Data
 {
-    class Voice_Line_Logic : Internals
+    class Parse_Voice_Line_Logic : Internals
     {
-        uint unitID;
+        uint schemaVersion = 1;
 
-        public Voice_Line_Logic()
+        public Parse_Voice_Line_Logic()
         {
 
         }
@@ -23,12 +23,13 @@ namespace FBRepacker.Data
         {
             UnitIDList unitIDList = load_UnitID();
             SoundLogicUnitIDGroupList soundLogicUnitIDGroupList = load_GroupList();
-            List<Voice_Line_Logic_Set_Data> data = parse_Voice_Line_Logic(Properties.Settings.Default.inputVoiceLogicBinary, unitIDList, soundLogicUnitIDGroupList);
+
+            Voice_Line_Logic voice_Line_Logic = parse_Voice_Line_Logic(Properties.Settings.Default.inputVoiceLogicBinary, unitIDList, soundLogicUnitIDGroupList);
             //@"G:\Games\PS3\EXVSFB JPN\Pkg research\FB Repacker\Repack\PAC\Input\MBON Reimport Project\MBON Units\Wing Zero EW\Extract MBON\Data - 4A5DEE5F\001-MBON\002-FHM\007.bin", unitIDList, soundLogicUnitIDGroupList);
 
             string outputName = Path.GetFileNameWithoutExtension(Properties.Settings.Default.inputVoiceLogicBinary);
 
-            write_Voice_Line_Data_Json(data, Properties.Settings.Default.outputVoiceLogicJSONFolder + @"\" + outputName + ".JSON");
+            write_Voice_Line_Data_Json(Properties.Settings.Default.outputVoiceLogicJSONFolder + @"\" + outputName + ".JSON", voice_Line_Logic);
                 
             //@"G:\Games\PS3\EXVSFB JPN\Pkg research\FB Repacker\Repack\PAC\Input\MBON Reimport Project\MBON Units\Wing Zero EW\Converted from MBON\WingZeroEWVoiceLogic.json");
         }
@@ -38,11 +39,11 @@ namespace FBRepacker.Data
             StreamReader JSON = File.OpenText(Properties.Settings.Default.inputVoiceLogicJSON);
             string JSONStr = JSON.ReadToEnd();
 
-            List<Voice_Line_Logic_Set_Data> data = JsonConvert.DeserializeObject<List<Voice_Line_Logic_Set_Data>>(JSONStr);
+            Voice_Line_Logic voice_Line_Logic = JsonConvert.DeserializeObject<Voice_Line_Logic>(JSONStr);
 
             string outputName = Path.GetFileNameWithoutExtension(Properties.Settings.Default.inputVoiceLogicJSON);
 
-            write_FB_Voice_Line_Logic(data, Properties.Settings.Default.outputVoiceLogicJSONFolder + @"\" + outputName + ".bin");
+            write_FB_Voice_Line_Logic(Properties.Settings.Default.outputVoiceLogicJSONFolder + @"\" + outputName + ".bin", voice_Line_Logic);
                 
             //@"G:\Games\PS3\EXVSFB JPN\Pkg research\FB Repacker\Repack\PAC\Input\MBON Reimport Project\MBON Units\Wing Zero EW\Converted from MBON\Voice Logic.bin");
         }
@@ -63,24 +64,30 @@ namespace FBRepacker.Data
             return unit_ID_Group;
         }
 
-        public void write_Voice_Line_Data_Json(List<Voice_Line_Logic_Set_Data> data, string outputPath)
+        public void write_Voice_Line_Data_Json(string outputPath, Voice_Line_Logic voice_Line_Logic)
         {
             JsonSerializerOptions options = new JsonSerializerOptions { WriteIndented = true };
-            string jsonString = System.Text.Json.JsonSerializer.Serialize<List<Voice_Line_Logic_Set_Data>>(data, options);
+            string jsonString = System.Text.Json.JsonSerializer.Serialize<Voice_Line_Logic>(voice_Line_Logic, options);
             StreamWriter fs = File.CreateText(outputPath);
             fs.Write(jsonString);
             fs.Close();
         }
 
-        public List<Voice_Line_Logic_Set_Data> parse_Voice_Line_Logic(string path, UnitIDList unitIDList, SoundLogicUnitIDGroupList soundLogicUnitIDGroupList)
+        public Voice_Line_Logic parse_Voice_Line_Logic(string path, UnitIDList unitIDList, SoundLogicUnitIDGroupList soundLogicUnitIDGroupList)
         {
+            Voice_Line_Logic voice_Line_Logic = new Voice_Line_Logic();
+            voice_Line_Logic.schemaVersion = schemaVersion;
+
             FileStream fs = File.OpenRead(path);
             changeStreamFile(fs);
 
             List<Voice_Line_Logic_Set_Data> set_Data = new List<Voice_Line_Logic_Set_Data>();
 
-            Stream.Seek(0x4, SeekOrigin.Begin);
-            unitID = readUIntBigEndian();
+            uint magic = readUIntBigEndian();
+            uint unitID = readUIntBigEndian();
+
+            voice_Line_Logic.magic = magic;
+            voice_Line_Logic.unit_ID = unitID;
 
             uint pointer1 = readUIntBigEndian();
             uint pointer2 = readUIntBigEndian();
@@ -221,11 +228,14 @@ namespace FBRepacker.Data
 
             fs.Close();
 
-            return set_Data;
+            voice_Line_Logic.voice_Line_Logic_Set_Datas = set_Data;
+            return voice_Line_Logic;
         }
 
-        private void write_FB_Voice_Line_Logic(List<Voice_Line_Logic_Set_Data> data, string path)
+        private void write_FB_Voice_Line_Logic(string path, Voice_Line_Logic voice_Line_Logic)
         {
+            List<Voice_Line_Logic_Set_Data> data = voice_Line_Logic.voice_Line_Logic_Set_Datas;
+
             MemoryStream Voice_Line_Logic = new MemoryStream();
             MemoryStream header = new MemoryStream();
             MemoryStream Individual_Voice_Lines = new MemoryStream();
@@ -237,8 +247,8 @@ namespace FBRepacker.Data
             List<Voice_Line_Logic_Set_Data> Triggered = data.Where(s => s.voiceType.Equals(voiceType.Triggered)).ToList();
             List<Voice_Line_Logic_Set_Data> Paired = data.Where(s => s.voiceType.Equals(voiceType.Pair_Triggered)).ToList();
 
-            appendUIntMemoryStream(header, 0x1964B447, true); // No idea, the magic seems to be changing everytime. 
-            appendUIntMemoryStream(header, unitID, true);
+            appendUIntMemoryStream(header, voice_Line_Logic.magic, true);
+            appendUIntMemoryStream(header, voice_Line_Logic.unit_ID, true);
             appendUIntMemoryStream(header, (uint)Individual.Count, true);
 
             // Individual Voice Lines
@@ -446,42 +456,4 @@ namespace FBRepacker.Data
         }
     }
 
-    public enum voiceType
-    {
-        Individual,
-        Triggered, // Triggered by unit ID
-        Pair_Triggered, // Banters
-    }
-
-    class Voice_Line_Logic_Set_Data
-    {
-        public voiceType voiceType { get; set; }
-        public Voice_Line_Logic_Set_Data_Individual_Properties properties { get; set; }
-        public uint setPointer { get; set; }
-        public uint voiceCount { get; set; }
-        public List<uint> voiceHashes { get; set; }
-        public uint index { get; set; }
-        public uint triggerCondition { get; set; }
-        public List<uint> triggerUnitID { get; set; }
-
-        public Voice_Line_Logic_Set_Data() 
-        {
-            this.triggerCondition = 0;
-            this.triggerUnitID = new List<uint>();
-        }
-    }
-
-    class Voice_Line_Logic_Set_Data_Individual_Properties
-    {
-        public uint prop1 { get; set; }
-        public uint prop2 { get; set; }
-        public uint prop3 { get; set; }
-        public uint prop4 { get; set; }
-        public uint prop5 { get; set; }
-        public uint prop6 { get; set; }
-        public uint prop7 { get; set; }
-        public uint prop8 { get; set; }
-        public uint prop9 { get; set; }
-        public uint prop10 { get; set; }
-    }
 }

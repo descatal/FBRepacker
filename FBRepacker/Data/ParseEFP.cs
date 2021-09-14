@@ -1,5 +1,6 @@
 ﻿using FBRepacker.Data.DataTypes;
 using FBRepacker.PAC;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -13,9 +14,10 @@ namespace FBRepacker.Data
     {
         public ParseEFP()
         {
-            EFP FB_EFP = readEFP(@"G:\Games\PS3\EXVSFB JPN\Pkg research\FB Repacker\Repack\PAC\Input\MBON Reimport Project\Common FB Extract\1.09 EFP - PATCH34F85A51\001-FHM\002.bin");
+            
+            /*
             EFP MBON_EFP = readEFP(@"G:\Games\PS3\EXVSFB JPN\Pkg research\FB Repacker\Repack\PAC\Input\MBON Reimport Project\Common MBON\Common EFP - 34F85A51\001-FHM\002.bin");
-
+            
             List<EFP_Properties> MBON_Prop = MBON_EFP.EFP_Properties;
             List<EFP_Properties> FB_Prop = FB_EFP.EFP_Properties;
 
@@ -24,7 +26,7 @@ namespace FBRepacker.Data
 
             List<uint> exception = EFPFB.Except(EFPMBON).ToList();
 
-            /*
+            //
             Dictionary<uint, List<EFP_Properties>> result = MBON_Prop.Concat(FB_Prop)
                 .GroupBy(x => x.EFP_hash)
                 .ToDictionary(g => g.Key, g => g.ToList());
@@ -34,15 +36,42 @@ namespace FBRepacker.Data
             var results = MBON_Prop.Join(FB_Prop, l1 => l1.EFP_hash, l2 => l2.EFP_hash,
                 (lhs, rhs) => new { ID = lhs.EFP_hash, Name1 = lhs, Name2 = rhs }
             ).ToList();
-            */
+            //
 
             for (int i = 0; i < exception.Count; i++)
             {
                 EFP_Properties EFPHash = FB_Prop.FirstOrDefault(x => x.EFP_hash == exception[i]);
                 MBON_Prop.Add(EFPHash);
             }
+            */
 
-            writeEFP(@"G:\Games\PS3\EXVSFB JPN\Pkg research\FB Repacker\Repack\PAC\Input\MBON Reimport Project\Common MBON\Common EFP - 34F85A51\001-FHM\test.bin", MBON_EFP);
+            //writeEFP(@"G:\Games\PS3\EXVSFB JPN\Pkg research\FB Repacker\Repack\PAC\Input\MBON Reimport Project\Common MBON\Common EFP - 34F85A51\001-FHM\test.bin", MBON_EFP);
+        }
+
+        public void parseEFP()
+        {
+            //@"G:\Games\PS3\EXVSFB JPN\Pkg research\FB Repacker\Repack\PAC\Input\MBON Reimport Project\Common FB Extract\1.09 EFP - PATCH34F85A51\001-FHM\002.bin");
+
+            EFP FB_EFP = readEFP(Properties.Settings.Default.inputEFPBinary);
+            string JSON = JsonConvert.SerializeObject(FB_EFP, Formatting.Indented);
+
+            string JSONPath = Properties.Settings.Default.outputEFPJSONPath + @"/" + Path.GetFileNameWithoutExtension(Properties.Settings.Default.inputEFPBinary) + ".json";
+
+            StreamWriter JSONsw = File.CreateText(JSONPath);
+            JSONsw.Write(JSON);
+            JSONsw.Close();
+        }
+
+        public void serializeEFP()
+        {
+            StreamReader streamReader = File.OpenText(Properties.Settings.Default.inputEFPJSON);
+            string JSON = streamReader.ReadToEnd();
+            streamReader.Close();
+
+            string binaryPath = Properties.Settings.Default.outputEFPBinaryPath + @"/" + Path.GetFileNameWithoutExtension(Properties.Settings.Default.inputEFPJSON) + ".bin";
+
+            EFP efp = JsonConvert.DeserializeObject<EFP>(JSON);
+            writeEFP(binaryPath, efp);
         }
 
         public EFP readEFP(string EFPBinaryPath)

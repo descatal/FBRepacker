@@ -17,6 +17,8 @@ namespace FBRepacker.Data.MBON_Parse
         {
             { 0x3, 0x2 }, // Missiles
             { 0x4, 0x8 }, // Spread Beam
+            { 0x28, 0x3 }, // 
+            { 0x29, 0x4 }, // Curved Gerobi
             { 0x2A, 0x6 }, // Gerobi
             { 0x3C, 0x46 }, // Bafuku
             { 0xC3ECE, 0x52DA }, // Infinite Justice Boomerang
@@ -127,29 +129,19 @@ namespace FBRepacker.Data.MBON_Parse
                 proj.unk_0xD4 = readUIntBigEndian();
                 proj.unk_0xD8 = readUIntBigEndian();
 
-                if(proj.projectile_Type == 0x8 && Properties.Settings.Default.convertMBONProjecitle)
+                if(Properties.Settings.Default.convertMBONProjecitle)
                 {
-                    // Spread shot projectile from MBON has a 0x10 extra info inside.
-                    fs.Seek(0x10, SeekOrigin.Current);
-                    proj.gerobi_wiggle = readFloat(true);
-                    proj.effect_conductivity = readFloat(true);
-                    proj.unk_0xE4 = readFloat(true);
-                    proj.unk_0xE8 = readFloat(true);
-                    proj.unk_0xEC = readFloat(true);
-                    proj.unk_0xF0 = readFloat(true);
-                    proj.unk_0xF4 = readFloat(true);
-                    proj.unk_0xF8 = readFloat(true);
-                    proj.unk_0xFC = readFloat(true);
-                    proj.unk_0x100 = readFloat(true);
-                    proj.unk_0x104 = readFloat(true);
-                    // Add in later
-                    proj.unk_0x108 = 0;
-                    proj.unk_0x10C = 0;
-                    proj.unk_0x110 = 0;
-                    proj.unk_0x114 = 0;
-                }
-                else
-                {
+                    // for MBON, there's a new 0x10 appended after 0xD8, which is still unknown on the usage.
+                    // We will monitor if cases rises up for non 0 in this 0x10 here.
+                    if (ifMBON)
+                    {
+                        // TODO: Check what these does
+                        uint temp1 = readUIntBigEndian();
+                        float temp2 = readFloat(true);
+                        float temp3 = readFloat(true);
+                        float temp4 = readFloat(true);
+                    }
+
                     proj.gerobi_wiggle = readFloat(true);
                     proj.effect_conductivity = readFloat(true);
                     proj.unk_0xE4 = readFloat(true);
@@ -165,21 +157,37 @@ namespace FBRepacker.Data.MBON_Parse
                     proj.unk_0x10C = readFloat(true);
                     proj.unk_0x110 = readFloat(true);
                     proj.unk_0x114 = readFloat(true);
-                }
 
-                if (ifMBON)
-                {
-                    proj.unk_0x118 = readFloat(true);
-                    proj.unk_0x11C = readFloat(true);
-                    proj.unk_0x120 = readFloat(true);
-                    proj.unk_0x124 = readFloat(true);
+                    proj.unk_0x118 = 0; // temp 1
+                    proj.unk_0x11C = 0; // temp 2
+                    proj.unk_0x120 = 0; // temp 3
+                    proj.unk_0x124 = 0; // temp 4
                 }
                 else
                 {
-                    proj.unk_0x118 = 0;
-                    proj.unk_0x11C = 0;
-                    proj.unk_0x120 = 0;
-                    proj.unk_0x124 = 0;
+                    if(ifMBON)
+                    {
+                        proj.unk_0x118 = readFloat(true); // temp 1
+                        proj.unk_0x11C = readFloat(true); // temp 2
+                        proj.unk_0x120 = readFloat(true); // temp 3
+                        proj.unk_0x124 = readFloat(true); // temp 4
+                    }
+
+                    proj.gerobi_wiggle = readFloat(true);
+                    proj.effect_conductivity = readFloat(true);
+                    proj.unk_0xE4 = readFloat(true);
+                    proj.unk_0xE8 = readFloat(true);
+                    proj.unk_0xEC = readFloat(true);
+                    proj.unk_0xF0 = readFloat(true);
+                    proj.unk_0xF4 = readFloat(true);
+                    proj.unk_0xF8 = readFloat(true);
+                    proj.unk_0xFC = readFloat(true);
+                    proj.unk_0x100 = readFloat(true);
+                    proj.unk_0x104 = readFloat(true);
+                    proj.unk_0x108 = readFloat(true);
+                    proj.unk_0x10C = readFloat(true);
+                    proj.unk_0x110 = readFloat(true);
+                    proj.unk_0x114 = readFloat(true);
                 }
 
                 individual_projectiles.Add(proj);

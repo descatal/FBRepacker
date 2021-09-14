@@ -685,6 +685,38 @@
                             <Button Content="Export Name and Hash" Click="Export_Nus3_Name_and_Hash_Click" Width="150"/>
                         </DockPanel>
 
+                        <DockPanel>
+                            <Separator/>
+                        </DockPanel>
+
+                        <TextBlock Text="Generate Audio PAC Info" FontWeight="Bold" Margin="10,20,10,0" TextAlignment="Center"/>
+
+                        <DockPanel HorizontalAlignment="Center">
+                            <TextBlock Text="output Audio Format: " Width="150" Margin="10,0,10,0" TextAlignment="Right"/>
+                            <ComboBox x:Name="PACInfoAudioFormatComboBox" SelectedItem="{Binding audioPACInfoNus3SoundHashFormat, Mode=TwoWay, Source={x:Static pro:Settings.Default}, Converter={StaticResource AudioFormatEnumConverter}, UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Left" Margin="10,0,10,0" Width="200"></ComboBox>
+                        </DockPanel>
+
+                        <DockPanel HorizontalAlignment="Center">
+                            <TextBlock Text="output STREAM file name: " Width="150" TextAlignment="Right" />
+                            <TextBox x:Name="audioSTREAMFilePACInfo" Text="{Binding audioPACInfoSTREAMName, Mode=TwoWay, Source={x:Static pro:Settings.Default}, UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Stretch" Margin="10,0,10,0" TextAlignment="Center" MinWidth="120"/>
+                        </DockPanel>
+
+                        <DockPanel>
+                            <TextBlock Text="Audio Folder: " Width="100" Margin="10,0,10,0" TextAlignment="Right"/>
+                            <TextBlock x:Name="inputPACInfoAudioFolder" Text="{Binding inputAudioPACInfoFolder, Mode=TwoWay, Source={x:Static pro:Settings.Default}, UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Stretch" Margin="10,0,10,0" TextAlignment="Right"/>
+                            <Button Content="Open" Click="change_VoiceLogicJSON_Input_Path_Click" HorizontalAlignment="Right" Width="100"/>
+                        </DockPanel>
+
+                        <DockPanel>
+                            <TextBlock Text="Output Folder:" Width="100" Margin="10,0,10,0" TextAlignment="Right"/>
+                            <TextBlock x:Name="outputPACInfoAudioFolder" Text="{Binding outputAudioPACInfoFolder, Mode=TwoWay, Source={x:Static pro:Settings.Default}, UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Stretch" Margin="10,0,10,0" TextAlignment="Right"/>
+                            <Button Content="Change" Click="change_Audio_PAC_Info_Output_Path_Click" HorizontalAlignment="Right" Width="100"/>
+                        </DockPanel>
+
+                        <DockPanel>
+                            <Button Content="Export Audio PAC Info" Click="Export_Audio_PAC_Info_Click" Width="150"/>
+                        </DockPanel>
+                        
                     </StackPanel>
                 </TabItem>
 
@@ -858,6 +890,57 @@
 
                         <DockPanel>
                             <Button Content="Save JSON and Export Binary" Click="NTXB_Export_Binary_Click" Width="150"/>
+                        </DockPanel>
+
+                    </StackPanel>
+                </TabItem>
+
+                <TabItem Header="EFP (Permanent ALEO)">
+                    <StackPanel Orientation="Vertical" Margin="0,10,0,10">
+                        <StackPanel.Resources>
+                            <Style TargetType="{x:Type DockPanel}">
+                                <Setter Property="Margin" Value="0,10,0,0"/>
+                            </Style>
+                        </StackPanel.Resources>
+
+                        <TextBlock Text="Parse EFP (.bin to JSON)" FontWeight="Bold" Margin="10,0,10,0" TextAlignment="Center"/>
+
+                        <DockPanel>
+                            <TextBlock Text="EFP Binary: " Width="100" Margin="10,0,10,0" TextAlignment="Right"/>
+                            <TextBlock x:Name="inputEFPBinary" Text="{Binding inputEFPBinary, Mode=TwoWay, Source={x:Static pro:Settings.Default}, UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Stretch" Margin="10,0,10,0" TextAlignment="Right"/>
+                            <Button Content="Open" Click="OpenEFPBinary_Click" HorizontalAlignment="Right" Width="100"/>
+                        </DockPanel>
+
+                        <DockPanel>
+                            <TextBlock Text="Output Folder:" Width="100" Margin="10,0,10,0" TextAlignment="Right"/>
+                            <TextBlock x:Name="outputEFPJSONFolder" Text="{Binding outputEFPJSONPath, Mode=TwoWay, Source={x:Static pro:Settings.Default}, UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Stretch" Margin="10,0,10,0" TextAlignment="Right"/>
+                            <Button Content="Change" Click="change_EFP_JSON_Output_Path_Click" HorizontalAlignment="Right" Width="100"/>
+                        </DockPanel>
+
+                        <DockPanel>
+                            <Button Content="Export JSON" Click="EFP_Export_JSON_Click" Width="150"/>
+                        </DockPanel>
+
+                        <DockPanel>
+                            <Separator/>
+                        </DockPanel>
+
+                        <TextBlock Text="Serailize EFP JSON (JSON to .bin)" FontWeight="Bold" Margin="10,20,10,0" TextAlignment="Center"/>
+
+                        <DockPanel>
+                            <TextBlock Text="EFP JSON: " Width="100" Margin="10,0,10,0" TextAlignment="Right"/>
+                            <TextBlock x:Name="inputEFPJSONFolder" Text="{Binding inputEFPJSON, Mode=TwoWay, Source={x:Static pro:Settings.Default}, UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Stretch" Margin="10,0,10,0" TextAlignment="Right"/>
+                            <Button Content="Open" Click="OpenEFPJSON_Click" HorizontalAlignment="Right" Width="100"/>
+                        </DockPanel>
+
+                        <DockPanel>
+                            <TextBlock Text="Output Folder:" Width="100" Margin="10,0,10,0" TextAlignment="Right"/>
+                            <TextBlock x:Name="outputEFPFolder" Text="{Binding outputEFPBinaryPath, Mode=TwoWay, Source={x:Static pro:Settings.Default}, UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Stretch" Margin="10,0,10,0" TextAlignment="Right"/>
+                            <Button Content="Change" Click="change_EFP_Binary_Output_Path_Click" HorizontalAlignment="Right" Width="100"/>
+                        </DockPanel>
+
+                        <DockPanel>
+                            <Button Content="Export binary" Click="EFP_Export_Binary_Click" Width="150"/>
                         </DockPanel>
 
                     </StackPanel>

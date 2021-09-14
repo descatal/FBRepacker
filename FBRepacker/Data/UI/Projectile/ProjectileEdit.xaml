@@ -549,7 +549,7 @@
             <Separator Margin="10"></Separator>
             
             <DockPanel HorizontalAlignment="Stretch">
-                <Button Content="Save PAC Info" HorizontalAlignment="Left" Width="100" Click="Save_PAC_Click"></Button>
+                <Button Content="Save Projectile Info" HorizontalAlignment="Left" Width="150" Click="Save_PAC_Click"></Button>
                 <Button Content="Discard" HorizontalAlignment="Right" Width="100" Click="Discard_Click"></Button>
             </DockPanel>
             

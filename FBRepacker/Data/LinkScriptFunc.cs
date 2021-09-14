@@ -49,6 +49,8 @@ namespace FBRepacker.Data
 
             AhoCorasick.Trie trie = new AhoCorasick.Trie();
 
+            funcPointers.Sort();
+
             for (int i = 0; i < funcPointers.Count; i++)
             {
                 if(funcPointers[i] > Properties.Settings.Default.MinScriptPointer)
@@ -65,6 +67,10 @@ namespace FBRepacker.Data
                 if (!addedWord.Keys.Contains(word))
                 {
                     uint.TryParse(word.Remove(0, 2), NumberStyles.HexNumber, CultureInfo.InvariantCulture, out uint funcPointer);
+                    if(funcPointer == 287964)
+                    {
+
+                    }
                     int funcNumber = funcPointers.IndexOf(funcPointer);
                     string funcStr = "func_" + funcNumber;
                     addedWord[word] = funcStr;

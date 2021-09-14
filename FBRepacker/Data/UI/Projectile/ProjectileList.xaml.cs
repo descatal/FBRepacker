@@ -44,7 +44,7 @@ namespace FBRepacker.Data.UI
             var itemId = (item as Individual_Projectile_Properties)?.hash;
             int index = Individual_Projectile_Properties.FindIndex(s => s.hash == itemId);
             Individual_Projectile_Properties selectedInfo = Individual_Projectile_Properties[index];
-            Individual_Projectile_Properties backupInfo = (Individual_Projectile_Properties)selectedInfo.DeepClone();
+            Individual_Projectile_Properties backupInfo = (Individual_Projectile_Properties)selectedInfo.Clone();
             ProjectileEdit PACFileInfoEdit = new ProjectileEdit(selectedInfo, Individual_Projectile_Properties);
             bool? save = PACFileInfoEdit.ShowDialog();
 

@@ -29,7 +29,9 @@ namespace FBRepacker.Data.DataTypes
     public enum ammo_type_enum
     {
         normal = 0,
-        timed = 2
+        special = 1, // Like Alex's Shield or Deathscythe EW's Shield
+        timed = 2,
+        special_timed = 3 // Like Cherudim's Shield or Nu's Shield
     }
 
     public enum reload_type_enum

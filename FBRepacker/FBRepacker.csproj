@@ -134,6 +134,7 @@
     <Compile Include="Data\DataTypes\Sound_Hash.cs" />
     <Compile Include="Data\DataTypes\Unit_ID.cs" />
     <Compile Include="Data\DataTypes\Unit_Varaibles.cs" />
+    <Compile Include="Data\DataTypes\Voice_Line_Logic.cs" />
     <Compile Include="Data\FB_Parse\DataTypes\Series_Info_List.cs" />
     <Compile Include="Data\FB_Parse\DataTypes\Unit_Info_List.cs" />
     <Compile Include="Data\FB_Parse\Parse_Series_Info.cs" />
@@ -173,7 +174,8 @@
       <DependentUpon>ReloadList.xaml</DependentUpon>
     </Compile>
     <Compile Include="Data\Parse_Unit_Data.cs" />
-    <Compile Include="Data\Voice_Line_Logic.cs" />
+    <Compile Include="Data\Parse_Voice_Line_Logic.cs" />
+    <Compile Include="PAC\Internals\BoyerMoore.cs" />
     <Compile Include="PAC\Internals\FloatingPointTextBox.cs" />
     <Compile Include="PAC\Internals\OnlyDigitalBehavior.cs" />
     <Compile Include="PACInfoUI\FileSpecific\NTP3FileInfoWindow.xaml.cs">
@@ -220,6 +222,10 @@
     </Compile>
     <Compile Include="PAC\Extract\FileTypes\STREAM.cs" />
     <Compile Include="SimpleHelpers\FileEncoding.cs" />
+    <Compile Include="Tools\simpleExtract.cs" />
+    <Compile Include="Tools\simplifiedExtractor.xaml.cs">
+      <DependentUpon>simplifiedExtractor.xaml</DependentUpon>
+    </Compile>
     <Page Include="Data\UI\Hit\HitEdit.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -286,6 +292,10 @@
     <Page Include="Themes\Generic.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Tools\simplifiedExtractor.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
     </Page>
   </ItemGroup>
   <ItemGroup>
