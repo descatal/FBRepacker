@@ -49,6 +49,15 @@ namespace FBRepacker
         {
             tabCont.SelectedIndex = Properties.Settings.Default.SelectedTab;
             Directory.CreateDirectory(Directory.GetCurrentDirectory() + @"\temp");
+
+            bool thirdPartyExists = Directory.Exists(Directory.GetCurrentDirectory() + @"\3rd Party");
+            bool helpersExists = Directory.Exists(Directory.GetCurrentDirectory() + @"\Helpers");
+
+            if(!thirdPartyExists || !helpersExists)
+            {
+
+            }
+
             audioFormatComboBox.ItemsSource = Enum.GetValues(typeof(audioFormatEnum)).Cast<audioFormatEnum>();
             PACInfoAudioFormatComboBox.ItemsSource = Enum.GetValues(typeof(audioFormatEnum)).Cast<audioFormatEnum>();
         }
