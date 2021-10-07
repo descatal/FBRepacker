@@ -64,8 +64,9 @@
     <Reference Include="OpenTK, Version=3.2.0.0, Culture=neutral, PublicKeyToken=bad199fe84eb3df4, processorArchitecture=MSIL">
       <HintPath>..\packages\OpenTK.3.2\lib\net20\OpenTK.dll</HintPath>
     </Reference>
-    <Reference Include="SFGraphics.Utils">
-      <HintPath>G:\Games\PS3\EXVSFB JPN\Pkg research\SFGraphics-master\Projects\SFGraphics.Utils\bin\Release\SFGraphics.Utils.dll</HintPath>
+    <Reference Include="SFGraphics.Utils, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>.\SFGraphics.Utils.dll</HintPath>
     </Reference>
     <Reference Include="SharpGLTF.Core, Version=1.0.0.0, Culture=neutral, PublicKeyToken=78da2f4877323311, processorArchitecture=MSIL">
       <HintPath>..\packages\Ultraviolet.SharpGLTF.Core.1.0.0\lib\netstandard2.0\SharpGLTF.Core.dll</HintPath>
@@ -352,6 +353,10 @@
   <ItemGroup>
     <Resource Include="ColladaDAESchema.xml" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Content Include="SFGraphics.Utils.dll">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
