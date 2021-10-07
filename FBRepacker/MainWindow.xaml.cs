@@ -26,7 +26,6 @@ using FBRepacker.Data.FB_Parse;
 using System.Globalization;
 using FBRepacker.Data.UI;
 using static FBRepacker.Data.MBON_Parse.nus3AudioNameHash;
-using SevenZip;
 
 namespace FBRepacker
 {
@@ -57,15 +56,19 @@ namespace FBRepacker
             if(!thirdPartyExists || !helpersExists)
             {
                 // https://stackoverflow.com/questions/7646328/how-to-use-the-7z-sdk-to-compress-and-decompress-a-file
-                string roccoPath = Directory.GetParent(Directory.GetParent(Directory.GetCurrentDirectory()).FullName).FullName + @"\rocco.bin";
+                string roccoPath = Directory.GetCurrentDirectory() + @"\rocco.bin";
                 if (File.Exists(roccoPath))
                 {
-                    FileStream fs = File.OpenRead(roccoPath);
-                    SevenZipExtractor tmp = new SevenZipExtractor(roccoPath);
-
-                    for(int i = 0; i < tmp.ArchiveFileData.Count; i++)
+                    using (Process mscdec = new Process())
                     {
-                        tmp.ExtractFiles(Directory.GetCurrentDirectory(), tmp.ArchiveFileData[i].Index);
+                        mscdec.StartInfo.FileName = "7za.exe";
+                        mscdec.StartInfo.UseShellExecute = false;
+                        mscdec.StartInfo.RedirectStandardOutput = true;
+                        mscdec.StartInfo.CreateNoWindow = true;
+                        mscdec.StartInfo.Arguments = "-y x rocco.bin";
+                        mscdec.Start();
+                        string logOutput = mscdec.StandardOutput.ReadToEnd();
+                        mscdec.WaitForExit();
                     }
                 }
             }
