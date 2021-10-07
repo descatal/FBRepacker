@@ -26,6 +26,7 @@ using FBRepacker.Data.FB_Parse;
 using System.Globalization;
 using FBRepacker.Data.UI;
 using static FBRepacker.Data.MBON_Parse.nus3AudioNameHash;
+using SevenZip;
 
 namespace FBRepacker
 {
@@ -55,7 +56,18 @@ namespace FBRepacker
 
             if(!thirdPartyExists || !helpersExists)
             {
+                // https://stackoverflow.com/questions/7646328/how-to-use-the-7z-sdk-to-compress-and-decompress-a-file
+                string roccoPath = Directory.GetParent(Directory.GetParent(Directory.GetCurrentDirectory()).FullName).FullName + @"\rocco.bin";
+                if (File.Exists(roccoPath))
+                {
+                    FileStream fs = File.OpenRead(roccoPath);
+                    SevenZipExtractor tmp = new SevenZipExtractor(roccoPath);
 
+                    for(int i = 0; i < tmp.ArchiveFileData.Count; i++)
+                    {
+                        tmp.ExtractFiles(Directory.GetCurrentDirectory(), tmp.ArchiveFileData[i].Index);
+                    }
+                }
             }
 
             audioFormatComboBox.ItemsSource = Enum.GetValues(typeof(audioFormatEnum)).Cast<audioFormatEnum>();
