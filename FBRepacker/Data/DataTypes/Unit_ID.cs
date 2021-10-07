@@ -13,7 +13,7 @@ namespace FBRepacker.Data.DataTypes
 
     public class UnitID
     {
-        public string id { get; set; }
+        public uint id { get; set; }
         public string name_english { get; set; }
         public string name_japanese { get; set; }
         public string name_chinese { get; set; }
