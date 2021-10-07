@@ -48,6 +48,7 @@ namespace FBRepacker
         private void init()
         {
             tabCont.SelectedIndex = Properties.Settings.Default.SelectedTab;
+            Directory.CreateDirectory(Directory.GetCurrentDirectory() + @"\temp");
             audioFormatComboBox.ItemsSource = Enum.GetValues(typeof(audioFormatEnum)).Cast<audioFormatEnum>();
             PACInfoAudioFormatComboBox.ItemsSource = Enum.GetValues(typeof(audioFormatEnum)).Cast<audioFormatEnum>();
         }
