@@ -99,6 +99,42 @@ namespace FBRepacker.Data
 
             StringBuilder B4ACScript = new StringBuilder();
 
+            B4ACScript.AppendLine("void parse_B4AC_0x2e(int arg0)");
+            B4ACScript.AppendLine("{");
+
+            B4ACScript.AppendLine("if (arg0 == 0)");
+            B4ACScript.AppendLine("{");
+
+            B4ACScript.AppendLine("return 0x0;");
+
+            B4ACScript.AppendLine("}");
+
+            for (int j = 1; j < dataSets.Count; j++)
+            {
+                List<uint> dataSet = dataSets[j];
+
+                uint data_0x03 = dataSet[0x2];
+                uint data_0x2e = dataSet[0x2d];
+
+                if (data_0x2e != 0)
+                {
+                    string parse_0x2e_Start = "else if (";
+
+                    string new_0x2e = parse_0x2e_Start + "arg0 == 0x" + data_0x2e.ToString("X") + ")";
+
+                    B4ACScript.AppendLine(new_0x2e);
+                    B4ACScript.AppendLine("{");
+
+                    B4ACScript.AppendLine("return 0x" + data_0x03.ToString("X") + ";");
+
+                    B4ACScript.AppendLine("}");
+                }
+            }
+
+            B4ACScript.AppendLine("}");
+
+            B4ACScript.AppendLine("");
+
             B4ACScript.AppendLine("void add_B4AC()");
             B4ACScript.AppendLine("{");
 

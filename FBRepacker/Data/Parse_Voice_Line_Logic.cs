@@ -48,14 +48,6 @@ namespace FBRepacker.Data
             //@"G:\Games\PS3\EXVSFB JPN\Pkg research\FB Repacker\Repack\PAC\Input\MBON Reimport Project\MBON Units\Wing Zero EW\Converted from MBON\Voice Logic.bin");
         }
 
-
-        public UnitIDList load_UnitID()
-        {
-            string jsonString = Properties.Resources.Unit_IDs;
-            UnitIDList unit_ID = System.Text.Json.JsonSerializer.Deserialize<UnitIDList>(jsonString);
-            return unit_ID;
-        }
-
         public SoundLogicUnitIDGroupList load_GroupList()
         {
             // Group list in MBON

@@ -67,10 +67,6 @@ namespace FBRepacker.Data
                 if (!addedWord.Keys.Contains(word))
                 {
                     uint.TryParse(word.Remove(0, 2), NumberStyles.HexNumber, CultureInfo.InvariantCulture, out uint funcPointer);
-                    if(funcPointer == 287964)
-                    {
-
-                    }
                     int funcNumber = funcPointers.IndexOf(funcPointer);
                     string funcStr = "func_" + funcNumber;
                     addedWord[word] = funcStr;

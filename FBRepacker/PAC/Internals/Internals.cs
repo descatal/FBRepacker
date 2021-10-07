@@ -1,4 +1,5 @@
-﻿using OpenTK.Graphics.OpenGL;
+﻿using FBRepacker.Data.DataTypes;
+using OpenTK.Graphics.OpenGL;
 using System;
 using System.Buffers.Binary;
 using System.Collections.Generic;
@@ -1683,6 +1684,13 @@ namespace FBRepacker.PAC
 
             stream.Seek(initPos, SeekOrigin.Begin);
             return -1;
+        }
+
+        public UnitIDList load_UnitID()
+        {
+            string jsonString = Properties.Resources.Unit_IDs;
+            UnitIDList unit_ID = System.Text.Json.JsonSerializer.Deserialize<UnitIDList>(jsonString);
+            return unit_ID;
         }
     }
 

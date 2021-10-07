@@ -1511,7 +1511,7 @@ namespace FBRepacker
             //new GenerateAudioPACInfo();
             //new ParseEFP();
             //new Parse_Unit_Data().combineDataHashSchema();
-            new FBRepacker.Tools.simpleExtract();
+            new FBRepacker.Tools.MBONExport();
 
 
             //new nus3AudioNameHash();

@@ -67,8 +67,8 @@
     <Reference Include="SFGraphics.Utils">
       <HintPath>G:\Games\PS3\EXVSFB JPN\Pkg research\SFGraphics-master\Projects\SFGraphics.Utils\bin\Release\SFGraphics.Utils.dll</HintPath>
     </Reference>
-    <Reference Include="SharpGLTF.Core, Version=1.0.0.0, Culture=neutral, PublicKeyToken=6f8b67557d279fe6, processorArchitecture=MSIL">
-      <HintPath>..\packages\SharpGLTF.Core.1.0.0-alpha0020\lib\netstandard2.0\SharpGLTF.Core.dll</HintPath>
+    <Reference Include="SharpGLTF.Core, Version=1.0.0.0, Culture=neutral, PublicKeyToken=78da2f4877323311, processorArchitecture=MSIL">
+      <HintPath>..\packages\Ultraviolet.SharpGLTF.Core.1.0.0\lib\netstandard2.0\SharpGLTF.Core.dll</HintPath>
     </Reference>
     <Reference Include="SharpGLTF.Toolkit, Version=1.0.0.0, Culture=neutral, PublicKeyToken=6f8b67557d279fe6, processorArchitecture=MSIL">
       <HintPath>..\packages\SharpGLTF.Toolkit.1.0.0-alpha0020\lib\netstandard2.0\SharpGLTF.Toolkit.dll</HintPath>
@@ -222,6 +222,7 @@
     </Compile>
     <Compile Include="PAC\Extract\FileTypes\STREAM.cs" />
     <Compile Include="SimpleHelpers\FileEncoding.cs" />
+    <Compile Include="Tools\MBONExport.cs" />
     <Compile Include="Tools\simpleExtract.cs" />
     <Compile Include="Tools\simplifiedExtractor.xaml.cs">
       <DependentUpon>simplifiedExtractor.xaml</DependentUpon>
