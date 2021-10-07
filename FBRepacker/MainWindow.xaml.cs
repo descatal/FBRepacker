@@ -59,16 +59,16 @@ namespace FBRepacker
                 string roccoPath = Directory.GetCurrentDirectory() + @"\rocco.bin";
                 if (File.Exists(roccoPath))
                 {
-                    using (Process mscdec = new Process())
+                    using (Process sevenzip = new Process())
                     {
-                        mscdec.StartInfo.FileName = "7za.exe";
-                        mscdec.StartInfo.UseShellExecute = false;
-                        mscdec.StartInfo.RedirectStandardOutput = true;
-                        mscdec.StartInfo.CreateNoWindow = true;
-                        mscdec.StartInfo.Arguments = "-y x rocco.bin";
-                        mscdec.Start();
-                        string logOutput = mscdec.StandardOutput.ReadToEnd();
-                        mscdec.WaitForExit();
+                        sevenzip.StartInfo.FileName = "7za.exe";
+                        sevenzip.StartInfo.UseShellExecute = false;
+                        sevenzip.StartInfo.RedirectStandardOutput = true;
+                        sevenzip.StartInfo.CreateNoWindow = true;
+                        sevenzip.StartInfo.Arguments = "-y x rocco.bin";
+                        sevenzip.Start();
+                        string logOutput = sevenzip.StandardOutput.ReadToEnd();
+                        sevenzip.WaitForExit();
                     }
                 }
             }
