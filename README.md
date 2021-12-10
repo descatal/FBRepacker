@@ -1,5 +1,18 @@
 # FBRepacker
-Repacker tool for FB
+The one stop tool for modifying game files for Gundam Extreme Vs. Full Boost on PS3.
+
+Includes:
+- Extract / Repack .PAC (FHM) file containers
+- Parse and Serailize TBL files (.PAC regconizing TOC file)
+- Converting 3D model NUD files alongside the skeleton structure VBN files into .DAE with the ability to be converted back.
+- Parsing unit's variables binary into relevant JSON and serializing back.
+- Parsing projectile, reload, and hit properties binary into relevant JSON and serializing back.
+- Parsing voice line logic binary into relevant JSON and serializing back.
+- Parsing text NTXB binary into relevant JSON and serializing back.
+- Parsing unit and series list binary into relevant JSON and serializing back.
+- Autolink script function for unit's MSC script
+- Generate B4AC and additional info for MBON's unit MSC script
+- Converting MBON's ALEO, LMB, unit's MSC script into FB compatible version.
 
 ## Build
 1. Clone the repository
