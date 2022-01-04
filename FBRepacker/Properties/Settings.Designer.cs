@@ -12,7 +12,7 @@ namespace FBRepacker.Properties {
     
     
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
-    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.VisualStudio.Editors.SettingsDesigner.SettingsSingleFileGenerator", "16.7.0.0")]
+    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.VisualStudio.Editors.SettingsDesigner.SettingsSingleFileGenerator", "17.0.3.0")]
     internal sealed partial class Settings : global::System.Configuration.ApplicationSettingsBase {
         
         private static Settings defaultInstance = ((Settings)(global::System.Configuration.ApplicationSettingsBase.Synchronized(new Settings())));
@@ -1040,6 +1040,174 @@ namespace FBRepacker.Properties {
             }
             set {
                 this["outputEFPBinaryPath"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("C:\\")]
+        public string inputUnitDataReloadBinary {
+            get {
+                return ((string)(this["inputUnitDataReloadBinary"]));
+            }
+            set {
+                this["inputUnitDataReloadBinary"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool scriptModifyLink {
+            get {
+                return ((bool)(this["scriptModifyLink"]));
+            }
+            set {
+                this["scriptModifyLink"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool scriptModifyRefactor {
+            get {
+                return ((bool)(this["scriptModifyRefactor"]));
+            }
+            set {
+                this["scriptModifyRefactor"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("C:\\")]
+        public string inputScriptRefactorTxtFolder {
+            get {
+                return ((string)(this["inputScriptRefactorTxtFolder"]));
+            }
+            set {
+                this["inputScriptRefactorTxtFolder"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("C:\\")]
+        public string inputPsarcTBLBinary {
+            get {
+                return ((string)(this["inputPsarcTBLBinary"]));
+            }
+            set {
+                this["inputPsarcTBLBinary"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("C:\\")]
+        public string outputPsarcTBLJson {
+            get {
+                return ((string)(this["outputPsarcTBLJson"]));
+            }
+            set {
+                this["outputPsarcTBLJson"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("C:\\")]
+        public string inputPsarcJSON {
+            get {
+                return ((string)(this["inputPsarcJSON"]));
+            }
+            set {
+                this["inputPsarcJSON"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("C:\\")]
+        public string outputPsarcTBLBinary {
+            get {
+                return ((string)(this["outputPsarcTBLBinary"]));
+            }
+            set {
+                this["outputPsarcTBLBinary"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("C:\\")]
+        public string psarcTBLParseRepackFolder {
+            get {
+                return ((string)(this["psarcTBLParseRepackFolder"]));
+            }
+            set {
+                this["psarcTBLParseRepackFolder"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool identifyPACFilesTBLParse {
+            get {
+                return ((bool)(this["identifyPACFilesTBLParse"]));
+            }
+            set {
+                this["identifyPACFilesTBLParse"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool outputPsarcTBLBinaryNameasPatch {
+            get {
+                return ((bool)(this["outputPsarcTBLBinaryNameasPatch"]));
+            }
+            set {
+                this["outputPsarcTBLBinaryNameasPatch"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool truncateProjectileType {
+            get {
+                return ((bool)(this["truncateProjectileType"]));
+            }
+            set {
+                this["truncateProjectileType"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool allUnitInfoListInputMBON {
+            get {
+                return ((bool)(this["allUnitInfoListInputMBON"]));
+            }
+            set {
+                this["allUnitInfoListInputMBON"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool allSeriesInfoListInputMBON {
+            get {
+                return ((bool)(this["allSeriesInfoListInputMBON"]));
+            }
+            set {
+                this["allSeriesInfoListInputMBON"] = value;
             }
         }
     }

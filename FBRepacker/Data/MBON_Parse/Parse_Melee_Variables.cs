@@ -81,14 +81,14 @@ namespace FBRepacker.Data.MBON_Parse
 
                 if(melee_var_count == 0)
                 {
-                    MeleeVarScript.AppendLine("if(set_hash == 0x" + set_hash.ToString("X") + ")");
+                    MeleeVarScript.AppendLine("    if(set_hash == 0x" + set_hash.ToString("X") + ")");
                 }
                 else
                 {
-                    MeleeVarScript.AppendLine("else if(set_hash == 0x" + set_hash.ToString("X") + ")");
+                    MeleeVarScript.AppendLine("    else if(set_hash == 0x" + set_hash.ToString("X") + ")");
                 }
 
-                MeleeVarScript.AppendLine("{");
+                MeleeVarScript.AppendLine("    {");
 
                 uint vars_count = 0;
                 Dictionary<uint, uint> vars = melee_var.Value;
@@ -96,19 +96,19 @@ namespace FBRepacker.Data.MBON_Parse
                 {
                     if(vars_count == 0)
                     {
-                        MeleeVarScript.AppendLine("if(var_hash == 0x" + var.Key.ToString("X") + ")");
+                        MeleeVarScript.AppendLine("        if(var_hash == 0x" + var.Key.ToString("X") + ")");
                     }
                     else
                     {
-                        MeleeVarScript.AppendLine("else if(var_hash == 0x" + var.Key.ToString("X") + ")");
+                        MeleeVarScript.AppendLine("        else if(var_hash == 0x" + var.Key.ToString("X") + ")");
                     }
-                    MeleeVarScript.AppendLine("{");
-                    MeleeVarScript.AppendLine("return 0x" + var.Value.ToString("X") + ";");
-                    MeleeVarScript.AppendLine("}");
+                    MeleeVarScript.AppendLine("        {");
+                    MeleeVarScript.AppendLine("            return 0x" + var.Value.ToString("X") + ";");
+                    MeleeVarScript.AppendLine("        }");
                     vars_count++;
                 }
 
-                MeleeVarScript.AppendLine("}");
+                MeleeVarScript.AppendLine("    }");
 
                 melee_var_count++;
             }

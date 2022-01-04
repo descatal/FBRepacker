@@ -11,6 +11,7 @@ using System.Reflection;
 using System.Runtime.Remoting.Metadata.W3cXsd2001;
 using System.Text;
 using System.Text.RegularExpressions;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Automation.Peers;
 using System.Windows.Data;
@@ -491,6 +492,18 @@ namespace FBRepacker.PAC
             return memStream;
         }
 
+        protected MemoryStream addHalfPaddingStream(MemoryStream memStream)
+        {
+            memStream.Seek(0, SeekOrigin.End);
+            int moduloResult = ((int)memStream.Length % 0x8);
+            int paddingRequired = 0;
+            if (moduloResult != 0)
+                paddingRequired = 0x8 - moduloResult;
+            byte[] zeroBuffer = new byte[paddingRequired];
+            memStream.Write(zeroBuffer, 0, paddingRequired);
+            return memStream;
+        }
+
         protected MemoryStream addPaddingStream(MemoryStream memStream, byte padByte)
         {
             memStream.Seek(0, SeekOrigin.End);
@@ -522,6 +535,17 @@ namespace FBRepacker.PAC
             uint paddingRequired = 0;
             if (moduloResult != 0)
                 paddingRequired = 0x10 - moduloResult;
+            return paddingRequired + size;
+        }
+
+        protected uint addHalfPaddingSizeCalculation(uint size)
+        {
+            // size % 0x8 = Modulus of size and 0x8, the remainder will be the number that is extra. 
+            // 0x8 - extra = Number of bytes needed to be padded to the file.
+            uint moduloResult = (size % 0x8);
+            uint paddingRequired = 0;
+            if (moduloResult != 0)
+                paddingRequired = 0x8 - moduloResult;
             return paddingRequired + size;
         }
 
@@ -1597,6 +1621,107 @@ namespace FBRepacker.PAC
             return outputAudioBuffer;
         }
 
+        public void compileMSC(string inputpath, string outputpath)
+        {
+            ProcessStartInfo startInfo = new ProcessStartInfo();
+            startInfo.CreateNoWindow = false;
+            startInfo.UseShellExecute = false;
+            startInfo.RedirectStandardOutput = true;
+            startInfo.FileName = Directory.GetCurrentDirectory() + @"\3rd Party\msclang\msclang.exe";
+            startInfo.WindowStyle = ProcessWindowStyle.Normal;
+            //startInfo.RedirectStandardOutput = true;
+            startInfo.Arguments = @"""" + inputpath + @"""" + " -o " + @"""" + outputpath + @"""" + @" -i";
+
+            try
+            {
+                // Start the process with the info we specified.
+                // Call WaitForExit and then the using statement will close.
+                using (Process exeProcess = Process.Start(startInfo))
+                {
+                    Console.WriteLine(exeProcess.StandardOutput.ReadToEnd());
+                    exeProcess.WaitForExit();
+                }
+            }
+            catch
+            {
+                throw new Exception();
+                // Log error.
+            }
+        }
+
+        public void convertNUS3toWav(string inputpath, string outputpath)
+        {
+            ProcessStartInfo startInfo = new ProcessStartInfo();
+            startInfo.CreateNoWindow = false;
+            startInfo.UseShellExecute = false;
+            startInfo.RedirectStandardOutput = true;
+            startInfo.FileName = Directory.GetCurrentDirectory() + @"\3rd Party\VGMSTREAM\test.exe";
+            startInfo.WindowStyle = ProcessWindowStyle.Normal;
+            //startInfo.RedirectStandardOutput = true;
+            startInfo.Arguments = "-S 0 " + @"""" + inputpath + @"""" + " -o " + @"""" + outputpath + @"\" + @"?s_(?n).wav" + @"""";
+
+            try
+            {
+                // Start the process with the info we specified.
+                // Call WaitForExit and then the using statement will close.
+                using (Process exeProcess = Process.Start(startInfo))
+                {
+                    Console.WriteLine(exeProcess.StandardOutput.ReadToEnd());
+                    exeProcess.WaitForExit();
+                }
+            }
+            catch
+            {
+                // Log error.
+            }
+        }
+
+        FileStream WaitForFile(string fullPath, FileMode mode, FileAccess access, FileShare share)
+        {
+            for (int numTries = 0; numTries < 10; numTries++)
+            {
+                FileStream fs = null;
+                try
+                {
+                    fs = new FileStream(fullPath, mode, access, share);
+                    return fs;
+                }
+                catch (IOException)
+                {
+                    if (fs != null)
+                    {
+                        fs.Dispose();
+                    }
+                    Thread.Sleep(50);
+                }
+            }
+
+            return null;
+        }
+
+        public StreamWriter WaitForTextWrite(string fullPath)
+        {
+            for (int numTries = 0; numTries < 10000; numTries++)
+            {
+                StreamWriter fs = null;
+                try
+                {
+                    fs = File.CreateText(fullPath);
+                    return fs;
+                }
+                catch (IOException)
+                {
+                    if (fs != null)
+                    {
+                        fs.Dispose();
+                    }
+                    Thread.Sleep(50);
+                }
+            }
+
+            return null;
+        }
+
         public int Search(byte[] src, byte[] pattern)
         {
             int c = src.Length - pattern.Length + 1;
@@ -1624,6 +1749,24 @@ namespace FBRepacker.PAC
             return -1;
         }
 
+        public int Search(MemoryStream srcMS, byte[] pattern, int offset)
+        {
+            srcMS.Seek(offset, SeekOrigin.Begin);
+            MemoryStream cutMS = new MemoryStream();
+            srcMS.CopyTo(cutMS);
+
+            byte[] src = cutMS.ToArray();
+            int c = src.Length - pattern.Length + 1;
+            int j;
+            for (int i = 0; i < c; i++)
+            {
+                if (src[i] != pattern[0]) continue;
+                for (j = pattern.Length - 1; j >= 1 && src[i + j] == pattern[j]; j--) ;
+                if (j == 0) return i + offset;
+            }
+            return -1;
+        }
+
         public int SearchFoward(MemoryStream srcMS, byte[] pattern)
         {
             int originalPos = (int)srcMS.Position;
@@ -1644,6 +1787,23 @@ namespace FBRepacker.PAC
                 }
             }
             return -1;
+        }
+
+        public List<int> SearchAllOccurences(MemoryStream srcMS, byte[] pattern)
+        {
+            List<int> allPointers = new List<int>();
+            srcMS.Seek(0, SeekOrigin.Begin);
+            while(srcMS.Position < srcMS.Length)
+            {
+                int pos = Search(srcMS, pattern, (int)srcMS.Position);
+                if(pos != -1)
+                {
+                    allPointers.Add(pos);
+                    srcMS.Seek(pos + pattern.Length, SeekOrigin.Begin);
+                }
+                else { break; }
+            }
+            return allPointers;
         }
 
         protected long GetPatternPositions(Stream stream, byte[] pattern)
@@ -1691,6 +1851,42 @@ namespace FBRepacker.PAC
             string jsonString = Properties.Resources.Unit_IDs;
             UnitIDList unit_ID = System.Text.Json.JsonSerializer.Deserialize<UnitIDList>(jsonString);
             return unit_ID;
+        }
+
+        protected static void DirectoryCopy(string sourceDirName, string destDirName, bool copySubDirs)
+        {
+            // Get the subdirectories for the specified directory.
+            DirectoryInfo dir = new DirectoryInfo(sourceDirName);
+
+            if (!dir.Exists)
+            {
+                throw new DirectoryNotFoundException(
+                    "Source directory does not exist or could not be found: "
+                    + sourceDirName);
+            }
+
+            DirectoryInfo[] dirs = dir.GetDirectories();
+
+            // If the destination directory doesn't exist, create it.       
+            Directory.CreateDirectory(destDirName);
+
+            // Get the files in the directory and copy them to the new location.
+            FileInfo[] files = dir.GetFiles();
+            foreach (FileInfo file in files)
+            {
+                string tempPath = Path.Combine(destDirName, file.Name);
+                file.CopyTo(tempPath, true);
+            }
+
+            // If copying subdirectories, copy them and their contents to new location.
+            if (copySubDirs)
+            {
+                foreach (DirectoryInfo subdir in dirs)
+                {
+                    string tempPath = Path.Combine(destDirName, subdir.Name);
+                    DirectoryCopy(subdir.FullName, tempPath, copySubDirs);
+                }
+            }
         }
     }
 

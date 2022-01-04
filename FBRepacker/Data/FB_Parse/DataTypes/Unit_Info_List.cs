@@ -86,6 +86,7 @@ namespace FBRepacker.Data.FB_Parse.DataTypes
             unk_0x80 = 0;
             catalog_pilot_costume_2_sprite_hash = 0;
             catalog_pilot_costume_3_sprite_hash = 0;
+            unk_0x9C = 0;
         }
     }
 }

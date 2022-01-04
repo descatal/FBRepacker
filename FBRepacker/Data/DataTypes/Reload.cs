@@ -39,7 +39,12 @@ namespace FBRepacker.Data.DataTypes
         constant = 0,
         depleted = 1,
         one_time = 2,
-        manual = 3 // Unicorn BR
+        manual = 3, // Unicorn BR
+        // this is only found in 3 cases:
+        // GP02's CSb Charge, 2263099163
+        // Tallgeese III's not used ammo, 3944396171
+        // Zakrello's idk what, 3285651340
+        special = 4
     }
 
     [Flags]
@@ -48,7 +53,7 @@ namespace FBRepacker.Data.DataTypes
         no_charge = 0,
         shoot = 1,
         melee = 2,
-        jump = 4 // Unicorn BR
+        jump = 4
     }
 
     public class Reload_FB
@@ -115,7 +120,7 @@ namespace FBRepacker.Data.DataTypes
         public uint inactive_reload_duration_frame { get; set; }
         public uint inactive_burst_reload_duration_frame { get; set; }
         public uint burst_replenish { get; set; }
-        public float unk_0x38 { get; set; }
+        public float s_burst_reload_rate_multiplier { get; set; }
         public float unk_0x3C { get; set; }
         public float unk_0x40 { get; set; }
         public float unk_0x44 { get; set; }

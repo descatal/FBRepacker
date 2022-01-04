@@ -105,6 +105,9 @@ namespace FBRepacker.Data.FB_Parse
                 uint series_movie_hash = readUIntBigEndian(fs);
                 Series_Info_List.series_movie_hash = series_movie_hash;
 
+                if (Properties.Settings.Default.allSeriesInfoListInputMBON)
+                    fs.Seek(0x14, SeekOrigin.Current);
+
                 Series_Info_Lists.Add(Series_Info_List);
             }
 

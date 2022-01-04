@@ -1,4 +1,5 @@
-﻿using System;
+﻿using FBRepacker.Psarc.V2;
+using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
@@ -21,7 +22,9 @@ namespace FBRepacker.Psarc
     /// </summary>
     public partial class PsarcFileInfo : Window
     {
-        RepackPsarc repackPsarc = new RepackPsarc(Properties.Settings.Default.PsarcRepackFolder);
+        //RepackPsarc repackPsarc = new RepackPsarc(Properties.Settings.Default.PsarcRepackFolder);
+        TOCFileInfo tocFileInfo;
+        RepackPsarcV2 repackPsarcV2 = new RepackPsarcV2();
         public static uint totalFileCount { get; set; }
         public string outputFileName { get; set; }
 
@@ -30,56 +33,60 @@ namespace FBRepacker.Psarc
             InitializeComponent();
             this.DataContext = this;
             this.outputFileName = outputFileName;
-            psarcInfolv.ItemsSource = repackPsarc.TBL.fileInfos;
-            totalFileCount = repackPsarc.TBL.totalFileCount;
+            
+            tocFileInfo = repackPsarcV2.importTocJSON();
+
+            psarcInfolv.ItemsSource = tocFileInfo.allFiles;
+            totalFileCount = tocFileInfo.totalFileEntries;
         }
 
         private void Add_File_Button_Click(object sender, RoutedEventArgs e)
         {
-            PACFileInfo newInfo = new PACFileInfo();
-            uint lastRelativePathIndex = repackPsarc.TBL.fileInfos.Where(s => s.fileFlags.HasFlag(PACFileInfo.fileFlagsEnum.hasFileName)).Last().relativePathIndex;
-            uint totalFileCount = repackPsarc.TBL.totalFileCount;
-            PACFileInfoUI PACFileInfoEdit = new PACFileInfoUI(newInfo, lastRelativePathIndex, totalFileCount);
+            PACFileInfoV2 newInfo = new PACFileInfoV2();
+            uint lastRelativePathIndex = (uint)tocFileInfo.allFiles.Count(); //tocFileInfo.allFiles.Where(s => s.fileFlags.HasFlag(PACFileInfo.fileFlagsEnum.hasFileName)).Last().relativePathIndex;
+            uint totalFileCount = tocFileInfo.totalFileEntries;
+            PACFileInfoUI PACFileInfoEdit = new PACFileInfoUI(newInfo, lastRelativePathIndex, totalFileCount, lastRelativePathIndex);
             bool? save = PACFileInfoEdit.ShowDialog();
             if (save == true)
             {
-                repackPsarc.TBL.fileInfos.Add(newInfo);
+                tocFileInfo.allFiles.Add(newInfo);
 
                 if (newInfo.fileInfoIndex > totalFileCount - 1)
-                    repackPsarc.TBL.totalFileCount++;
+                    tocFileInfo.totalFileEntries++;
             }
             psarcInfolv.Items.Refresh();
         }
 
         private void Export_Psarc_Button_Click(object sender, RoutedEventArgs e)
         {
-            repackPsarc.exportToc();
-            repackPsarc.repackPsarc(outputFileName);
+            repackPsarcV2.exportToc(tocFileInfo);
+            
+            // repackPsarc.repackPsarc(outputFileName);
             DialogResult = true;
         }
 
         private void Edit_File_Button_Click(object sender, RoutedEventArgs e)
         {
             var item = ((sender as Button)?.Tag as ListViewItem)?.DataContext;
-            var itemId = (item as PACFileInfo)?.nameHash;
-            int index = repackPsarc.TBL.fileInfos.FindIndex(s => s.nameHash == itemId);
-            PACFileInfo selectedInfo = repackPsarc.TBL.fileInfos[index];
-            PACFileInfo backupInfo = (PACFileInfo)selectedInfo.Clone();
-            uint lastRelativePathIndex = repackPsarc.TBL.fileInfos.Where(s => s.fileFlags.HasFlag(PACFileInfo.fileFlagsEnum.hasFileName)).Last().relativePathIndex;
-            uint totalFileCount = repackPsarc.TBL.totalFileCount;
-            PACFileInfoUI PACFileInfoEdit = new PACFileInfoUI(selectedInfo, lastRelativePathIndex, totalFileCount);
+            var itemId = (item as PACFileInfoV2)?.nameHash;
+            int index = tocFileInfo.allFiles.FindIndex(s => s.nameHash == itemId);
+            PACFileInfoV2 selectedInfo = tocFileInfo.allFiles[index];
+            PACFileInfoV2 backupInfo = (PACFileInfoV2)selectedInfo.Clone();
+            uint lastRelativePathIndex = (uint)tocFileInfo.allFiles.Count();
+            uint totalFileCount = tocFileInfo.totalFileEntries;
+            PACFileInfoUI PACFileInfoEdit = new PACFileInfoUI(selectedInfo, lastRelativePathIndex, totalFileCount, (uint)index);
             bool? save = PACFileInfoEdit.ShowDialog();
 
             if (save == false)
             {
-                repackPsarc.TBL.fileInfos[index] = backupInfo;    
+                tocFileInfo.allFiles[index] = backupInfo;    
             }
             else
             {
                 if (selectedInfo.fileInfoIndex > totalFileCount - 1)
-                    repackPsarc.TBL.totalFileCount++;
+                    tocFileInfo.totalFileEntries++;
 
-                repackPsarc.TBL.fileInfos[index] = selectedInfo;
+                tocFileInfo.allFiles[index] = selectedInfo;
             }
 
             psarcInfolv.Items.Refresh();
@@ -88,6 +95,13 @@ namespace FBRepacker.Psarc
         private void Delete_File_Button_Click(object sender, RoutedEventArgs e)
         {
 
+        }
+
+        private void sort_Button_Click(object sender, RoutedEventArgs e)
+        {
+            tocFileInfo.allFiles = tocFileInfo.allFiles.OrderBy(s => s.relativePatchPath).ToList();
+            psarcInfolv.ItemsSource = tocFileInfo.allFiles;
+            psarcInfolv.Items.Refresh();
         }
     }
 

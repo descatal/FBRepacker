@@ -12,12 +12,18 @@
         <local:UIntToHexStrConverter x:Key="UIntToHexStrConverter" />
     </Window.Resources>
     <DockPanel>
-        <DockPanel DockPanel.Dock="Top" HorizontalAlignment="Stretch">
-            <TextBlock HorizontalAlignment="Left" Margin="10,10,10,10" FontSize="15">PATCH.TBL Files:</TextBlock>
-            <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
-                <TextBlock HorizontalAlignment="Left" Margin="10,10,10,10" FontSize="10">Total File Indexes:</TextBlock>
-                <TextBlock HorizontalAlignment="Right" Margin="10,10,10,10" FontSize="10" Text="{Binding totalFileCount, UpdateSourceTrigger=PropertyChanged}"></TextBlock>
-            </StackPanel>
+        <DockPanel DockPanel.Dock="Top">
+            <DockPanel DockPanel.Dock="Top" HorizontalAlignment="Stretch">
+                <TextBlock HorizontalAlignment="Left" Margin="10,10,10,10" FontSize="15">PATCH.TBL Files:</TextBlock>
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                    <TextBlock HorizontalAlignment="Left" Margin="10,10,10,10" FontSize="10">Total File Indexes:</TextBlock>
+                    <TextBlock HorizontalAlignment="Right" Margin="10,10,10,10" FontSize="10" Text="{Binding totalFileCount, UpdateSourceTrigger=PropertyChanged}"></TextBlock>
+                </StackPanel>
+            </DockPanel>
+
+            <DockPanel DockPanel.Dock="Bottom">
+                <Button Content="Sort by path" HorizontalAlignment="Right" Margin="10" Width="100" Click="sort_Button_Click" Height="33"/>
+            </DockPanel>
         </DockPanel>
 
         <DockPanel DockPanel.Dock="Bottom">
@@ -30,6 +36,8 @@
                                 <TextBlock Text="{Binding nameHash, Converter={StaticResource UIntToHexStrConverter}, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Margin="10,0,10,0" FontWeight="Bold" HorizontalAlignment="Stretch"/>
                                 <Button Tag ="{Binding RelativeSource={RelativeSource AncestorType={x:Type ListViewItem}}, UpdateSourceTrigger=PropertyChanged}" Content="Edit" Width="100" Margin="10,0,10,0" Click="Edit_File_Button_Click"/>
                                 <Button Tag ="{Binding RelativeSource={RelativeSource AncestorType={x:Type ListViewItem}}, UpdateSourceTrigger=PropertyChanged}" Content="Delete" Width="100" Margin="10,0,10,0" Click="Delete_File_Button_Click"/>
+                                <TextBlock Text="Path: " Margin="10,0,10,0" />
+                                <TextBlock Text="{Binding relativePatchPath, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Margin="10,0,10,0" FontWeight="Bold" HorizontalAlignment="Stretch"/>
                             </DockPanel>
                         </WrapPanel>
                     </DataTemplate>
@@ -38,7 +46,7 @@
 
             <DockPanel DockPanel.Dock="Bottom">
                 <Button Content="Add File" HorizontalAlignment="Left" Margin="10" Width="100" Click="Add_File_Button_Click" Height="33"/>
-                <Button Content="Export Psarc" HorizontalAlignment="Right" Margin="10" Width="100" Click="Export_Psarc_Button_Click" Height="33"/>
+                <Button Content="Export TBL" HorizontalAlignment="Right" Margin="10" Width="100" Click="Export_Psarc_Button_Click" Height="33"/>
             </DockPanel>
         </DockPanel>
 

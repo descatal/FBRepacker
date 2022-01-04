@@ -11,12 +11,14 @@ using System.Windows.Data;
 using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
-using static FBRepacker.Psarc.PACFileInfo;
+//using static FBRepacker.Psarc.PACFileInfo;
 using System.Windows.Media.Imaging;
 using System.IO;
 using System.Windows.Forms;
 using System.Buffers.Binary;
 using System.Text.RegularExpressions;
+using FBRepacker.Psarc.V2;
+using static FBRepacker.Psarc.V2.PACFileInfoV2;
 
 namespace FBRepacker.Psarc
 {
@@ -25,15 +27,16 @@ namespace FBRepacker.Psarc
     /// </summary>
     public partial class PACFileInfoUI : Window
     {
-        public PACFileInfo pacFileInfo { get; set; }
+        public PACFileInfoV2 pacFileInfo { get; set; }
 
         public bool hasPath { get; set; }
 
         private uint lastRelativePathIndex { get; set; }
+        public uint currentRelativePathIndex { get;set; }
 
         private uint totalFileCount { get; set; }
 
-        public PACFileInfoUI(PACFileInfo pacFileInfo, uint lastRelativePathIndex, uint totalFileCount)
+        public PACFileInfoUI(PACFileInfoV2 pacFileInfo, uint lastRelativePathIndex, uint totalFileCount, uint currentRelativePathIndex)
         {
             InitializeComponent();
             this.pacFileInfo = pacFileInfo;
@@ -44,6 +47,7 @@ namespace FBRepacker.Psarc
                 hasPath = true;
             this.hasPath = hasPath;
             this.lastRelativePathIndex = lastRelativePathIndex;
+            this.currentRelativePathIndex = currentRelativePathIndex;
             patchNoCB.ItemsSource = Enum.GetValues(typeof(patchNoEnum)).Cast<patchNoEnum>();
             prefixCB.ItemsSource = Enum.GetValues(typeof(prefixEnum)).Cast<prefixEnum>();
         }
@@ -122,7 +126,7 @@ namespace FBRepacker.Psarc
             }
 
             pacFileInfo.fileFlags |= fileFlagsEnum.hasFileName;
-            pacFileInfo.relativePathIndex = res;
+            //pacFileInfo.relativePathIndex = res;
         }
 
         private void Save_Sub_Directory_Click(object sender, RoutedEventArgs e)

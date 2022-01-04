@@ -139,7 +139,10 @@ namespace FBRepacker.Data.MBON_Parse
 
             uint chunkCount = readUIntSmallEndian();
             if (chunkCount != 7)
-                throw new Exception("Chunk Count not 7!");
+            {
+
+            }
+                //throw new Exception("Chunk Count not 7!");
 
             uint BINFOffset = 0;
             uint TONEOffset = 0;

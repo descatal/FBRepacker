@@ -28,9 +28,29 @@
                     <Setter Property="Margin" Value="0,10,0,0"/>
                 </Style>
             </StackPanel.Resources>
+<!--
+            <DockPanel>
+                <Button Content="Get the last Relative Path Index" Width="200" Click="Get_Last_Relative_Path_Index_Click" Margin="10,0,10,0"></Button>
+            </DockPanel>
+
+            <DockPanel HorizontalAlignment="Center">
+                <TextBlock Text="Relative Path Index: " Width="105" TextAlignment="Right" />
+                <TextBox x:Name="relativePathIndexInput" Text="{Binding pacFileInfo.relativePathIndex, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Stretch" Margin="10,0,10,0" TextAlignment="Center"/>
+                <Button Content="Save" HorizontalAlignment="Left" Width="100" Click="Save_Relative_Path_Index_Click"></Button>
+            </DockPanel>
+-->
+            <DockPanel>
+                <Separator/>
+            </DockPanel>
 
             <DockPanel HorizontalAlignment="Center">
                 <TextBlock Text="Psarc Infos: " Width="100" TextAlignment="Center" />
+            </DockPanel>
+
+            <DockPanel HorizontalAlignment="Center">
+                <TextBlock Text="Relative Path Index: " Width="105" TextAlignment="Right" />
+                <TextBlock x:Name="relativePathIndexInput" Text="{Binding currentRelativePathIndex, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Stretch" Margin="10,0,10,0" TextAlignment="Center"/>
+                <!--<Button Content="Save" HorizontalAlignment="Left" Width="100" Click="Save_Relative_Path_Index_Click"></Button>-->
             </DockPanel>
 
             <DockPanel>
@@ -93,20 +113,6 @@
                 <TextBlock Text="Extension: " Width="105" TextAlignment="Right" />
                 <TextBox x:Name="extensionInput" Text="{Binding pacFileInfo.relativePatchPath, Converter={StaticResource getPatchExtensionConverter} ,Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Stretch" Margin="10,0,10,0" TextAlignment="Center" MinWidth="100"/>
                 <Button Content="Save" HorizontalAlignment="Left" Width="100" Click="Save_Extension_Click"></Button>
-            </DockPanel>
-
-            <DockPanel>
-                <Separator/>
-            </DockPanel>
-            
-            <DockPanel>
-                <Button Content="Get the last Relative Path Index" Width="200" Click="Get_Last_Relative_Path_Index_Click" Margin="10,0,10,0"></Button>
-            </DockPanel>
-
-            <DockPanel HorizontalAlignment="Center">
-                <TextBlock Text="Relative Path Index: " Width="105" TextAlignment="Right" />
-                <TextBox x:Name="relativePathIndexInput" Text="{Binding pacFileInfo.relativePathIndex, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Stretch" Margin="10,0,10,0" TextAlignment="Center"/>
-                <Button Content="Save" HorizontalAlignment="Left" Width="100" Click="Save_Relative_Path_Index_Click"></Button>
             </DockPanel>
 
             <DockPanel>

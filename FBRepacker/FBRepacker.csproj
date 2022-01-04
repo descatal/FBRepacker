@@ -36,6 +36,9 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
+  <PropertyGroup>
+    <ApplicationManifest>app.manifest</ApplicationManifest>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="InvertedTomato.Crc, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\InvertedTomato.Crc.1.1.3\lib\netstandard1.0\InvertedTomato.Crc.dll</HintPath>
@@ -122,6 +125,9 @@
     <Reference Include="WindowsBase" />
     <Reference Include="PresentationCore" />
     <Reference Include="PresentationFramework" />
+    <Reference Include="ZetaLongPaths, Version=1.0.0.41, Culture=neutral, PublicKeyToken=b764f59068f31f38, processorArchitecture=MSIL">
+      <HintPath>..\packages\ZetaLongPaths.1.0.0.41\lib\net452-full\ZetaLongPaths.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <ApplicationDefinition Include="App.xaml">
@@ -132,6 +138,7 @@
     <Compile Include="Data\DataTypes\CosmeticProperties.cs" />
     <Compile Include="Data\DataTypes\EFP.cs" />
     <Compile Include="Data\DataTypes\Hit.cs" />
+    <Compile Include="Data\DataTypes\LMB.cs" />
     <Compile Include="Data\DataTypes\NTXB.cs" />
     <Compile Include="Data\DataTypes\Projectile_Properties.cs" />
     <Compile Include="Data\DataTypes\Reload.cs" />
@@ -140,11 +147,13 @@
     <Compile Include="Data\DataTypes\Unit_Varaibles.cs" />
     <Compile Include="Data\DataTypes\Voice_Line_Logic.cs" />
     <Compile Include="Data\FB_Parse\DataTypes\Series_Info_List.cs" />
+    <Compile Include="Data\FB_Parse\DataTypes\Unit_Files_List.cs" />
     <Compile Include="Data\FB_Parse\DataTypes\Unit_Info_List.cs" />
     <Compile Include="Data\FB_Parse\Parse_Series_Info.cs" />
+    <Compile Include="Data\FB_Parse\Parse_Unit_Files_List.cs" />
     <Compile Include="Data\FB_Parse\Parse_Unit_Info_List.cs" />
     <Compile Include="Data\Generate_Script_B4AC.cs" />
-    <Compile Include="Data\LinkScriptFunc.cs" />
+    <Compile Include="Data\ModifyUnitScript.cs" />
     <Compile Include="Data\MBON_Parse\GenerateAudioPACInfo.cs" />
     <Compile Include="Data\MBON_Parse\MBON_Image_List.cs" />
     <Compile Include="Data\MBON_Parse\nus3AudioNameHash.cs" />
@@ -153,7 +162,7 @@
     <Compile Include="Data\MBON_Parse\ParseProjectileProperties.cs" />
     <Compile Include="Data\MBON_Parse\ParseUnitIDGroup.cs" />
     <Compile Include="Data\MBON_Parse\Parse_Hit.cs" />
-    <Compile Include="Data\MBON_Parse\Parse_LMB.cs" />
+    <Compile Include="Data\MBON_Parse\Parse_MBON_LMB.cs" />
     <Compile Include="Data\MBON_Parse\Parse_Melee_Variables.cs" />
     <Compile Include="Data\MBON_Parse\Parse_Reload.cs" />
     <Compile Include="Data\ParseEFP.cs" />
@@ -220,17 +229,21 @@
       <DependentUpon>PsarcFileInfo.xaml</DependentUpon>
     </Compile>
     <Compile Include="Psarc\RepackPsarc.cs" />
+    <Compile Include="Psarc\V2\PACFileInfoV2.cs" />
+    <Compile Include="Psarc\V2\RepackPsarcV2.cs" />
     <Compile Include="Psarc\Toc.cs" />
+    <Compile Include="Psarc\V2\TOCFileInfo.cs" />
     <Compile Include="SettingsWindow.xaml.cs">
       <DependentUpon>SettingsWindow.xaml</DependentUpon>
     </Compile>
     <Compile Include="PAC\Extract\FileTypes\STREAM.cs" />
     <Compile Include="SimpleHelpers\FileEncoding.cs" />
+    <Compile Include="SimpleHelpers\FileUtil.cs" />
+    <Compile Include="Tools\BlankTemplate.cs" />
     <Compile Include="Tools\MBONExport.cs" />
+    <Compile Include="Tools\recompilescript.cs" />
+    <Compile Include="Tools\ReimportAllMBON.cs" />
     <Compile Include="Tools\simpleExtract.cs" />
-    <Compile Include="Tools\simplifiedExtractor.xaml.cs">
-      <DependentUpon>simplifiedExtractor.xaml</DependentUpon>
-    </Compile>
     <Page Include="Data\UI\Hit\HitEdit.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -298,10 +311,6 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Tools\simplifiedExtractor.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs">
@@ -326,6 +335,7 @@
     <Resource Include="Data\JSON\Unit_IDs.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Resource>
+    <None Include="app.manifest" />
     <None Include="packages.config" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
@@ -367,5 +377,6 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

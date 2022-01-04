@@ -102,12 +102,12 @@ namespace FBRepacker.Data
             B4ACScript.AppendLine("void parse_B4AC_0x2e(int arg0)");
             B4ACScript.AppendLine("{");
 
-            B4ACScript.AppendLine("if (arg0 == 0)");
-            B4ACScript.AppendLine("{");
+            B4ACScript.AppendLine("    if (arg0 == 0)");
+            B4ACScript.AppendLine("    {");
 
-            B4ACScript.AppendLine("return 0x0;");
+            B4ACScript.AppendLine("        return 0x0;");
 
-            B4ACScript.AppendLine("}");
+            B4ACScript.AppendLine("    }");
 
             for (int j = 1; j < dataSets.Count; j++)
             {
@@ -118,16 +118,16 @@ namespace FBRepacker.Data
 
                 if (data_0x2e != 0)
                 {
-                    string parse_0x2e_Start = "else if (";
+                    string parse_0x2e_Start = "    else if (";
 
                     string new_0x2e = parse_0x2e_Start + "arg0 == 0x" + data_0x2e.ToString("X") + ")";
 
                     B4ACScript.AppendLine(new_0x2e);
-                    B4ACScript.AppendLine("{");
+                    B4ACScript.AppendLine("    {");
 
-                    B4ACScript.AppendLine("return 0x" + data_0x03.ToString("X") + ";");
+                    B4ACScript.AppendLine("        return 0x" + data_0x03.ToString("X") + ";");
 
-                    B4ACScript.AppendLine("}");
+                    B4ACScript.AppendLine("    }");
                 }
             }
 
@@ -138,7 +138,7 @@ namespace FBRepacker.Data
             B4ACScript.AppendLine("void add_B4AC()");
             B4ACScript.AppendLine("{");
 
-            string sys_2D_Start = "sys_2D(0x3, ";
+            string sys_2D_Start = "    sys_2D(0x3, ";
             uint starting_DataSet_Index = 0x11;
 
             for(int j = 1; j < dataSets.Count; j++)
@@ -153,7 +153,7 @@ namespace FBRepacker.Data
 
                     B4ACScript.AppendLine(new_sys_2D);
                 }
-                B4ACScript.AppendLine("assign_B4AC_Weapon_Inputs(" + "0x" + (starting_DataSet_Index - 0x10).ToString("X") + ");");
+                B4ACScript.AppendLine("    assign_B4AC_Weapon_Inputs(" + "0x" + (starting_DataSet_Index - 0x10).ToString("X") + ");");
                 starting_DataSet_Index++;
             }
 
@@ -163,6 +163,10 @@ namespace FBRepacker.Data
             txt.Write(B4ACScript);
 
             txt.Close();
+
+            StreamWriter txtCount = File.CreateText(Properties.Settings.Default.outputScriptFolderPath + @"\B4ACCount.txt");
+            txtCount.Write(dataSets.Count);
+            txtCount.Close();
         }
 
         private void writeExtraB4AC(Dictionary<uint, Dictionary<uint, List<uint>>> dataSets)
@@ -309,7 +313,7 @@ namespace FBRepacker.Data
                             ifcondition += ")";
                             ExtraScript.AppendLine(ifcondition);
                             ExtraScript.AppendLine("{");
-                            ExtraScript.AppendLine("return " + "0x" + dat.Key.ToString("X") + ";");
+                            ExtraScript.AppendLine("   return " + "0x" + dat.Key.ToString("X") + ";");
                             ExtraScript.AppendLine("}");
                             count++;
                         }
@@ -317,13 +321,13 @@ namespace FBRepacker.Data
 
                     if (count == 0)
                     {
-                        ExtraScript.AppendLine("return " + "0x" + max_count_var.ToString("X") + ";");
+                        ExtraScript.AppendLine("   return " + "0x" + max_count_var.ToString("X") + ";");
                     }
                     else
                     {
                         ExtraScript.AppendLine("else");
                         ExtraScript.AppendLine("{");
-                        ExtraScript.AppendLine("return " + "0x" + max_count_var.ToString("X") + ";");
+                        ExtraScript.AppendLine("   return " + "0x" + max_count_var.ToString("X") + ";");
                         ExtraScript.AppendLine("}");
                     }
 
@@ -338,7 +342,7 @@ namespace FBRepacker.Data
                     ExtraScript.AppendLine(Environment.NewLine);
                     ExtraScript.AppendLine("int parse_Extra_B4AC_0x" + (i + 1).ToString("x") + " (int set)");
                     ExtraScript.AppendLine("{");
-                    ExtraScript.AppendLine("return " + "0x0" + ";");
+                    ExtraScript.AppendLine("   return " + "0x0" + ";");
                     ExtraScript.AppendLine("}");
                 }
             }
@@ -389,6 +393,10 @@ namespace FBRepacker.Data
             txt.Write(ExtraScript);
 
             txt.Close();
+
+            StreamWriter txtCount = File.CreateText(Properties.Settings.Default.outputScriptFolderPath + @"\extraB4ACCount.txt");
+            txtCount.Write(dataSets.Count);
+            txtCount.Close();
         }
     }
 }

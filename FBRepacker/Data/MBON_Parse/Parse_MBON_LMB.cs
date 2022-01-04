@@ -8,9 +8,9 @@ using System.Threading.Tasks;
 
 namespace FBRepacker.Data.MBON_Parse
 {
-    class Parse_LMB : Internals
+    class Parse_MBON_LMB : Internals
     {
-        public Parse_LMB()
+        public Parse_MBON_LMB()
         {
             FileStream fs = File.OpenRead(Properties.Settings.Default.inputLMBFilePath);
 
@@ -83,9 +83,26 @@ namespace FBRepacker.Data.MBON_Parse
                     data_list.Add(data_Count);
                     //if (data_Count != 0x8)
                         //throw new Exception("reachh!!");
+                    uint data_set_count = readUIntSmallEndian(fs);
+                    data_list.Add(data_set_count);
+                    for (uint i = 0; i < data_set_count; i++)
+                    {
+                        uint read_size = readUIntSmallEndian(fs);
+                        data_list.Add(read_size);
+
+                        uint actual_read_size = (read_size + 3 - ((read_size + 3) % 4)) / 4;
+                        for(int j = 0; j < actual_read_size; j++)
+                        {
+                            uint readData = readUIntBigEndian(fs);
+                            data_list.Add(readData);
+                        }
+                    }
+
+                    /*
                     for (int i = 0; i < data_Count; i++)
                     {
                         uint readData = 0;
+
                         if (i == 2 || i == 4 || i == 5 || i == 6)
                         {
                             readData = readUIntBigEndian(fs);
@@ -96,6 +113,7 @@ namespace FBRepacker.Data.MBON_Parse
                         }
                         data_list.Add(readData);
                     }
+                    */
                 }
                 else if (magic == 0xF00C)
                 {

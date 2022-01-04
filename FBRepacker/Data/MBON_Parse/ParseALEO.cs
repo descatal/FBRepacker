@@ -251,7 +251,10 @@ namespace FBRepacker.Data.MBON_Parse
                                     ALEO.Seek(-0x8, SeekOrigin.Current);
                                     uint pointer_enum = readUIntCD(ALEO, false);
                                     if (pointer_enum != 0 && pointer_enum < 0xFF)
-                                        throw new Exception("Unidentified Pointer!");
+                                    {
+
+                                    }
+                                        //throw new Exception("Unidentified Pointer!");
                                     ALEO.Seek(returnAddress, SeekOrigin.Begin);
                                 }
                                 appendUIntMemoryStream(extra_data, extra_data_uint32, true);
@@ -580,6 +583,34 @@ namespace FBRepacker.Data.MBON_Parse
                             }
                             else if (pointer_type == extra_data_type.unk_0x1F4)
                             {
+                                // God Gundam's 037.ALEO
+                                if(pointer_count == 1)
+                                {
+                                    int set_index = set_offsets.IndexOf(extra_data_uint32);
+
+                                    uint offset = (uint)(0x60 + (set_index * 0x1F8));
+
+                                    if(extra_data_count == 0)
+                                    {
+                                        extra_data_uint32 = offset;
+                                    }
+
+                                    if (extra_data_uint32 > pointer && extra_data_uint32 < ALEO.Length && extra_data_count != 0 && extra_data_count != 6)
+                                    {
+                                        uint returnAddress = (uint)ALEO.Position;
+                                        ALEO.Seek(-0x8, SeekOrigin.Current);
+                                        uint pointer_enum = readUIntCD(ALEO, false);
+                                        if (pointer_enum != 0 && pointer_enum <= 0xFF)
+                                            throw new Exception("Unidentified Pointer unk_0x168!");
+                                        ALEO.Seek(returnAddress, SeekOrigin.Begin);
+                                    }
+
+                                    if (extra_data_count != 1)
+                                    {
+                                        appendUIntMemoryStream(extra_data, extra_data_uint32, true);
+                                    }
+                                }
+
                                 // 107.ALEO MBON Common - 8620
                                 if (pointer_count == 2)
                                 {

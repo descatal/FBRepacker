@@ -97,6 +97,7 @@ namespace FBRepacker.Data.MBON_Parse
         {
             StringBuilder info = new StringBuilder();
             List<string> AudioFiles = Directory.GetFiles(Properties.Settings.Default.inputAudioPACInfoFolder).ToList();
+            AudioFiles = AudioFiles.OrderBy(x => uint.Parse(Path.GetFileNameWithoutExtension(x.Split('_')[0]))).ToList();
 
             string streamName = Properties.Settings.Default.audioPACInfoSTREAMName;
             string fileName = "";

@@ -60,45 +60,46 @@ namespace FBRepacker.Psarc
 
             foreach (var s in files)
             {
-                Uri repackPathUri = new Uri(repackPath + @"\");
-                Uri repackFilePathUri = new Uri(s);
-                Uri repackFileRelativeUri = repackPathUri.MakeRelativeUri(repackFilePathUri);
-                repackFilesUriArgs += " " + repackFileRelativeUri.OriginalString;
+                //Uri repackPathUri = new Uri(repackPath + @"\");
+                //Uri repackFilePathUri = new Uri(s);
+                //Uri repackFileRelativeUri = repackPathUri.MakeRelativeUri(repackFilePathUri);
+                //repackFilesUriArgs += " " + repackFileRelativeUri.OriginalString;
+                repackFilesUriArgs += " " + @"""" + s + @"""";
                 Console.WriteLine(repackFilesUriArgs);
             }
 
-            FileStream fs = File.OpenRead(psarcexeSource);
-            FileStream exeFs = File.Create(Path.Combine(repackPath, "psarc.exe"));
+            //FileStream fs = File.OpenRead(psarcexeSource);
+            //FileStream exeFs = File.Create(Path.Combine(repackPath, "psarc.exe"));
 
-            fs.CopyTo(exeFs);
-            exeFs.Close();
-            fs.Close();
+            //fs.CopyTo(exeFs);
+            //exeFs.Close();
+            //fs.Close();
 
             //File.Copy(psarcexeSource, Path.Combine(repackPath, "psarc.exe"), true);
 
             using (Process psarc = new Process())
             {
-                psarc.StartInfo.WorkingDirectory = repackPath;
-                psarc.StartInfo.FileName = "psarc.exe";
+                //psarc.StartInfo.WorkingDirectory = repackPath;
+                psarc.StartInfo.FileName = psarcexeSource;
                 psarc.StartInfo.UseShellExecute = false;
                 psarc.StartInfo.RedirectStandardOutput = true;
                 psarc.StartInfo.CreateNoWindow = true;
-                psarc.StartInfo.Arguments = "create -y -v -oOutput.psarc" + repackFilesUriArgs;
+                psarc.StartInfo.Arguments = "create -y -v -o" + @"""" + Path.Combine(Properties.Settings.Default.OutputRepackPsarc, outputFileName + ".psarc") + @"""" + repackFilesUriArgs;
                 psarc.Start();
                 Console.WriteLine(psarc.StandardOutput.ReadToEnd());
                 psarc.WaitForExit();
             }
 
-            File.Copy(Path.Combine(repackPath, "Output.psarc"), Path.Combine(Properties.Settings.Default.OutputRepackPsarc, outputFileName + ".psarc"), true);
+            //File.Copy(Path.Combine(repackPath, "Output.psarc"), Path.Combine(Properties.Settings.Default.OutputRepackPsarc, outputFileName + ".psarc"), true);
 
             try
             {
-                File.Delete(Path.Combine(repackPath, "Output.psarc"));
-                File.Delete(Path.Combine(repackPath, "psarc.exe"));
+                //File.Delete(Path.Combine(repackPath, "Output.psarc"));
+                //File.Delete(Path.Combine(repackPath, "psarc.exe"));
             }
             catch (Exception e)
             {
-                throw new Exception("Cannot delete. Error: " + e);
+                //throw new Exception("Cannot delete. Error: " + e);
             }
         }
     }

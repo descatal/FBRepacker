@@ -32,7 +32,7 @@ namespace FBRepacker.Data.MBON_Parse
             for (int i = 0; i < groupCount; i++)
             {
                 SoundLogicUnitIDGroup properties = new SoundLogicUnitIDGroup();
-                uint groupID = readUIntBigEndian();
+                int groupID = (int)readUIntBigEndian();
                 properties.groupID = groupID;
 
                 uint groupPointer = readUIntBigEndian();

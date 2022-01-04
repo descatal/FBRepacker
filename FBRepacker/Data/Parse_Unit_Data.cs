@@ -133,6 +133,8 @@ namespace FBRepacker.Data
 
         public Data_Hash_Schema parseDataHashSchema(string path)
         {
+            if (!File.Exists(path))
+                throw new Exception("Invalid Unit Data Schema JSON file!");
             string JSONPath = path;
             StreamReader sR = File.OpenText(JSONPath);
             string JSON = sR.ReadToEnd();
@@ -144,6 +146,37 @@ namespace FBRepacker.Data
         public void readVariables()
         {
             FileStream fs = File.OpenRead(Properties.Settings.Default.inputUnitDataBinary);
+            FileStream reloadfs = File.OpenRead(Properties.Settings.Default.inputUnitDataReloadBinary);
+
+            reloadfs.Seek(0x10, SeekOrigin.Begin);
+            uint reloadHashCount = readUIntBigEndian(reloadfs);
+            reloadfs.Seek(0x60, SeekOrigin.Begin);
+
+            List<uint> reloadHashes = new List<uint>();
+            for(int i = 0; i < reloadHashCount; i++)
+            {
+                uint reloadHash = readUIntBigEndian(reloadfs);
+                reloadHashes.Add(reloadHash);
+            }
+
+            reloadfs.Seek(0x20, SeekOrigin.Begin);
+
+            List<uint> reloadHashIndex = new List<uint>();
+            for(int i = 0; i < 5; i++)
+            {
+                uint reloadHashInitialIndex = readUIntBigEndian(reloadfs);
+                if(reloadHashes.Contains(reloadHashInitialIndex))
+                {
+                    uint index = (uint)reloadHashes.IndexOf(reloadHashInitialIndex);
+                    reloadHashIndex.Add(index);
+                }
+                else
+                {
+                    reloadHashIndex.Add(0xFFFFFFFF);
+                }
+
+            }
+
 
             Data_Hash_Schema data_Hash_Schema = parseDataHashSchema(Properties.Settings.Default.inputUnitDataHashSchemaJSON);
             List<Data_Hash> data_Hashes = data_Hash_Schema.Data_Hashes; 
@@ -168,26 +201,40 @@ namespace FBRepacker.Data
             uint unitDataSetIndexChunk = readUIntBigEndian(fs);
             uint unitDataValueChunk = readUIntBigEndian(fs);
 
-            uint unk_0x20 = readUIntBigEndian(fs);
-            uint unk_0x24 = readUIntBigEndian(fs);
-            uint unk_0x28 = readUIntBigEndian(fs);
-            uint unk_0x2C = readUIntBigEndian(fs);
+            uint reloadHashIndex_1 = readUIntBigEndian(fs); // depreceated stuff, since they don't store used reload hash here anymore
+            uint reloadHashIndex_2 = readUIntBigEndian(fs); // depreceated stuff, since they don't store used reload hash here anymore
+            uint reloadHashIndex_3 = readUIntBigEndian(fs); // depreceated stuff, since they don't store used reload hash here anymore
+            uint reloadHashIndex_4 = readUIntBigEndian(fs); // depreceated stuff, since they don't store used reload hash here anymore
 
-            // should be 0, 1, 2, 3
-            unit_Varaibles.unk_0x20 = unk_0x20;
-            unit_Varaibles.unk_0x24 = unk_0x24;
-            unit_Varaibles.unk_0x28 = unk_0x28;
-            unit_Varaibles.unk_0x2C = unk_0x2C;
+            unit_Varaibles.reloadHashIndex_Slot_1 = reloadHashIndex[0]; // reloadHashIndex_1;
+            unit_Varaibles.reloadHashIndex_Slot_2 = reloadHashIndex[1]; // reloadHashIndex_2;
+            unit_Varaibles.reloadHashIndex_Slot_3 = reloadHashIndex[2]; // reloadHashIndex_3;
+            unit_Varaibles.reloadHashIndex_Slot_4 = reloadHashIndex[3]; // reloadHashIndex_4;
+
+            // TODO: add 5th ammo?
 
             fs.Seek(ammoHashChunkPointer, SeekOrigin.Begin);
             uint ammoSlotCount = readUIntBigEndian(fs);
 
             List<Ammo_Data> ammoSlotHashes = unit_Varaibles.ammo_Datas;
+
+            if (ammoSlotCount != 0x4)
+                throw new Exception("ammoSlot is not depreceated!");
+
+            /*
             for (int i = 0; i < ammoSlotCount; i++)
             {
                 Ammo_Data ammo_Data = new Ammo_Data();
-                uint ammo_Hash = readUIntBigEndian(fs);
+                uint ammo_Hash = readUIntBigEndian(fs); // probably nothing here.
                 ammo_Data.ammo_Hash = ammo_Hash;
+                ammoSlotHashes.Add(ammo_Data);
+            }
+            */
+
+            foreach(uint reloadHash in reloadHashes)
+            {
+                Ammo_Data ammo_Data = new Ammo_Data();
+                ammo_Data.ammo_Hash = reloadHash;
                 ammoSlotHashes.Add(ammo_Data);
             }
 
@@ -197,9 +244,15 @@ namespace FBRepacker.Data
 
             for(int i = 0; i < setCount; i++)
             {
-                uint index = readUIntBigEndian(fs);
+                int index = (int)readUIntBigEndian(fs);
+
+                unit_Varaibles.set_Data_Assignment_Index.Add(index);
+
                 if (index != i)
-                    throw new Exception("index mismatch!");
+                {
+
+                }
+                    //throw new Exception("index mismatch!");
             }
 
             fs.Seek(unitDataHashChunk, SeekOrigin.Begin);
@@ -714,10 +767,11 @@ namespace FBRepacker.Data
             }
 
             MemoryStream data_Set_Index_MS = new MemoryStream();
+            List<int> set_Data_Assignment_Index = unit_Varaibles.set_Data_Assignment_Index;
             appendUIntMemoryStream(data_Set_Index_MS, unit_Varaibles.setCount, true);
-            for (uint i = 0; i < unit_Varaibles.setCount; i++)
+            for (int i = 0; i < unit_Varaibles.setCount; i++)
             {
-                appendUIntMemoryStream(data_Set_Index_MS, i, true);
+                appendUIntMemoryStream(data_Set_Index_MS, (uint)set_Data_Assignment_Index[i], true);
             }
 
             MemoryStream data_Hash_MS = new MemoryStream();
@@ -786,10 +840,10 @@ namespace FBRepacker.Data
             appendUIntMemoryStream(Unit_Variable_MS, 0x30 + (uint)ammo_Hash_Chunk_MS.Length + (uint)data_Hash_MS.Length + (uint)data_Type_MS.Length, true);
             appendUIntMemoryStream(Unit_Variable_MS, 0x30 + (uint)ammo_Hash_Chunk_MS.Length + (uint)data_Hash_MS.Length + (uint)data_Type_MS.Length + (uint)data_Set_Index_MS.Length, true);
 
-            appendUIntMemoryStream(Unit_Variable_MS, unit_Varaibles.unk_0x20, true);
-            appendUIntMemoryStream(Unit_Variable_MS, unit_Varaibles.unk_0x24, true);
-            appendUIntMemoryStream(Unit_Variable_MS, unit_Varaibles.unk_0x28, true);
-            appendUIntMemoryStream(Unit_Variable_MS, unit_Varaibles.unk_0x2C, true);
+            appendUIntMemoryStream(Unit_Variable_MS, unit_Varaibles.reloadHashIndex_Slot_1, true);
+            appendUIntMemoryStream(Unit_Variable_MS, unit_Varaibles.reloadHashIndex_Slot_2, true);
+            appendUIntMemoryStream(Unit_Variable_MS, unit_Varaibles.reloadHashIndex_Slot_3, true);
+            appendUIntMemoryStream(Unit_Variable_MS, unit_Varaibles.reloadHashIndex_Slot_4, true);
 
             ammo_Hash_Chunk_MS.CopyTo(Unit_Variable_MS);
             data_Hash_MS.CopyTo(Unit_Variable_MS);

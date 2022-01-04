@@ -26,6 +26,7 @@ using FBRepacker.Data.FB_Parse;
 using System.Globalization;
 using FBRepacker.Data.UI;
 using static FBRepacker.Data.MBON_Parse.nus3AudioNameHash;
+using FBRepacker.Psarc.V2;
 
 namespace FBRepacker
 {
@@ -123,6 +124,64 @@ namespace FBRepacker
             NUDfileDirectoryPath = openFileDialog.FileName;
             Properties.Settings.Default.PsarcPACFilePathList = File.Exists(NUDfileDirectoryPath) ? NUDfileDirectoryPath : Properties.Settings.Default.PsarcPACFilePathList;
             Properties.Settings.Default.Save();
+        }
+
+        private void Open_Psarc_TBL_Binary_Click(object sender, RoutedEventArgs e)
+        {
+            // Open file select dialog
+            OpenFileDialog openFileDialog = new OpenFileDialog();
+            string psarc_TBL_Binary = System.IO.Path.GetDirectoryName(Properties.Settings.Default.inputPsarcTBLBinary);
+            openFileDialog.InitialDirectory = psarc_TBL_Binary;
+            openFileDialog.RestoreDirectory = true;
+            openFileDialog.ShowDialog();
+
+            psarc_TBL_Binary = openFileDialog.FileName;
+            Properties.Settings.Default.inputPsarcTBLBinary = File.Exists(psarc_TBL_Binary) ? psarc_TBL_Binary : Properties.Settings.Default.inputPsarcTBLBinary;
+            Properties.Settings.Default.Save();
+        }
+
+        private void Open_Psarc_TBL_JSON_Click(object sender, RoutedEventArgs e)
+        {
+            // Open file select dialog
+            OpenFileDialog openFileDialog = new OpenFileDialog();
+            string psarc_TBL_JSON = System.IO.Path.GetDirectoryName(Properties.Settings.Default.inputPsarcJSON);
+            openFileDialog.InitialDirectory = psarc_TBL_JSON;
+            openFileDialog.RestoreDirectory = true;
+            openFileDialog.ShowDialog();
+
+            psarc_TBL_JSON = openFileDialog.FileName;
+            Properties.Settings.Default.inputPsarcJSON = File.Exists(psarc_TBL_JSON) ? psarc_TBL_JSON : Properties.Settings.Default.inputPsarcJSON;
+            Properties.Settings.Default.Save();
+        }
+
+        private void change_Psarc_TBL_JSON_Output_Path_Click(object sender, RoutedEventArgs e)
+        {
+            string outputPsarcTBLFolder = openFolderDialog(Properties.Settings.Default.outputPsarcTBLJson);
+            if (outputPsarcTBLFolder != string.Empty)
+            {
+                Properties.Settings.Default.outputPsarcTBLJson = outputPsarcTBLFolder;
+                Properties.Settings.Default.Save();
+            }
+        }
+
+        private void change_Psarc_TBL_JSON_Link_Psarc_Folder_Path_Click(object sender, RoutedEventArgs e)
+        {
+            string psarcTBLParseRepackFolder = openFolderDialog(Properties.Settings.Default.psarcTBLParseRepackFolder);
+            if (psarcTBLParseRepackFolder != string.Empty)
+            {
+                Properties.Settings.Default.psarcTBLParseRepackFolder = psarcTBLParseRepackFolder;
+                Properties.Settings.Default.Save();
+            }
+        }
+
+        private void change_Psarc_TBL_Binary_Output_Path_Click(object sender, RoutedEventArgs e)
+        {
+            string outputPsarcTBLFolder = openFolderDialog(Properties.Settings.Default.outputPsarcTBLBinary);
+            if (outputPsarcTBLFolder != string.Empty)
+            {
+                Properties.Settings.Default.outputPsarcTBLBinary = outputPsarcTBLFolder;
+                Properties.Settings.Default.Save();
+            }
         }
 
         private void Open_Psarc_PAC_Repack_Folder_Click(object sender, RoutedEventArgs e)
@@ -275,6 +334,15 @@ namespace FBRepacker
             Properties.Settings.Default.BABBFilePath = File.Exists(BABBFilePath) ? BABBFilePath : Properties.Settings.Default.BABBFilePath;
             Properties.Settings.Default.Save();
         }
+        private void OpenB4ACTxtFolder_Click(object sender, RoutedEventArgs e)
+        {
+            string inputScriptRefactorTxtFolder = openFolderDialog(Properties.Settings.Default.inputScriptRefactorTxtFolder);
+            if (inputScriptRefactorTxtFolder != string.Empty)
+            {
+                Properties.Settings.Default.inputScriptRefactorTxtFolder = inputScriptRefactorTxtFolder;
+                Properties.Settings.Default.Save();
+            }
+        }
 
         private void OpenB4ACFile_Click(object sender, RoutedEventArgs e)
         {
@@ -397,6 +465,19 @@ namespace FBRepacker
 
             UnitDataBinaryFilePath = openFileDialog.FileName;
             Properties.Settings.Default.inputUnitDataBinary = File.Exists(UnitDataBinaryFilePath) ? UnitDataBinaryFilePath : Properties.Settings.Default.inputUnitDataBinary;
+            Properties.Settings.Default.Save();
+        }
+
+        private void OpenUnitDataReloadBinary_Click(object sender, RoutedEventArgs e)
+        {
+            OpenFileDialog openFileDialog = new OpenFileDialog();
+            string UnitDataBinaryReloadFilePath = System.IO.Path.GetDirectoryName(Properties.Settings.Default.inputUnitDataReloadBinary);
+            openFileDialog.InitialDirectory = UnitDataBinaryReloadFilePath;
+            openFileDialog.RestoreDirectory = true;
+            openFileDialog.ShowDialog();
+
+            UnitDataBinaryReloadFilePath = openFileDialog.FileName;
+            Properties.Settings.Default.inputUnitDataReloadBinary = File.Exists(UnitDataBinaryReloadFilePath) ? UnitDataBinaryReloadFilePath : Properties.Settings.Default.inputUnitDataReloadBinary;
             Properties.Settings.Default.Save();
         }
 
@@ -1265,9 +1346,10 @@ namespace FBRepacker
         {
             debugMessageBox.AppendText(Environment.NewLine);
             debugMessageBox.AppendText("Starting ALEO conversion");
+            new ParseALEO();
             try
             {
-                new ParseALEO();
+                //new ParseALEO();
             }
             catch (Exception exp)
             {
@@ -1282,7 +1364,7 @@ namespace FBRepacker
         {
             debugMessageBox.AppendText(Environment.NewLine);
             debugMessageBox.AppendText("Starting LMB conversion");
-            new Parse_LMB();
+            new Parse_MBON_LMB();
             try
             {
                 
@@ -1383,10 +1465,27 @@ namespace FBRepacker
             new CopyPACFiles(Properties.Settings.Default.PsarcPACFilePathList, Properties.Settings.Default.PsarcRepackFolder);
         }
 
-        private void repackPsarc_Click(object sender, RoutedEventArgs e)
+        private void export_Psarc_TBL_JSON_Click(object sender, RoutedEventArgs e)
         {
             debugMessageBox.AppendText(Environment.NewLine);
-            debugMessageBox.AppendText("Starts Repack Psarc to: " + Properties.Settings.Default.OutputRepackPsarc);
+            debugMessageBox.AppendText("Exporting TBL in JSON format");
+            try
+            {
+                new RepackPsarcV2().exportTocJSON();
+            }
+            catch (Exception exp)
+            {
+                debugMessageBox.AppendText(Environment.NewLine);
+                debugMessageBox.AppendText("Error: " + exp + "." + @"\n Please restart the application.");
+            }
+            debugMessageBox.AppendText(Environment.NewLine);
+            debugMessageBox.AppendText("Export complete!");
+        }
+
+        private void export_Psarc_TBL_Binary_Click(object sender, RoutedEventArgs e)
+        {
+            debugMessageBox.AppendText(Environment.NewLine);
+            debugMessageBox.AppendText("Exporting TBL in JSON format");
             try
             {
                 Properties.Settings.Default.PsarcOutputFileName = PsarcFileName.Text;
@@ -1408,15 +1507,34 @@ namespace FBRepacker
                 debugMessageBox.AppendText(Environment.NewLine);
                 debugMessageBox.AppendText("Error: " + exp + "." + @"\n Please restart the application.");
             }
+            debugMessageBox.AppendText(Environment.NewLine);
+            debugMessageBox.AppendText("Export complete!");
         }
 
-        private void Link_Script_Click(object sender, RoutedEventArgs e)
+        private void repackPsarc_Click(object sender, RoutedEventArgs e)
+        {
+            debugMessageBox.AppendText(Environment.NewLine);
+            debugMessageBox.AppendText("Starts Repack Psarc to: " + Properties.Settings.Default.OutputRepackPsarc);
+            try
+            {
+                new RepackPsarcV2().repackPsarc(Properties.Settings.Default.PsarcOutputFileName);
+            }
+            catch (Exception exp)
+            {
+                debugMessageBox.AppendText(Environment.NewLine);
+                debugMessageBox.AppendText("Error: " + exp + "." + @"\n Please restart the application.");
+            }
+            debugMessageBox.AppendText(Environment.NewLine);
+            debugMessageBox.AppendText("Psarc Repack complete!");
+        }
+
+        private void Modify_Unit_Script_Link(object sender, RoutedEventArgs e)
         {
             debugMessageBox.AppendText(Environment.NewLine);
             debugMessageBox.AppendText("Linking Script from: " + Properties.Settings.Default.CScriptFilePath + " with BABB from " + Properties.Settings.Default.BABBFilePath);
             try
             {
-                new LinkScriptFunc();
+                new ModifyUnitScript();
                 //new ModelConverter().fromDAEtoNUD();
             }
             catch (Exception exp)
@@ -1530,14 +1648,26 @@ namespace FBRepacker
             debugMessageBox.AppendText("Audio PAC Info export complete");
         }
 
+        private void Debug_Click_2(object sender, RoutedEventArgs e)
+        {
+            new Tools.recompilescript();
+        }
 
         private void Debug_Click(object sender, RoutedEventArgs e)
         {
             //new GenerateAudioPACInfo();
             //new ParseEFP();
             //new Parse_Unit_Data().combineDataHashSchema();
-            new FBRepacker.Tools.MBONExport();
 
+            //new Tools.ReimportAllMBON();
+            new Tools.MBONExport();
+            // new Tools.BlankTemplate();
+
+            //new RepackPsarcV2().exportTocJSON();
+
+            //new Parse_Unit_Files_List();
+            //new FBRepacker.Tools.MBONExport();
+            //new FBRepacker.Tools.simpleExtract();
 
             //new nus3AudioNameHash();
             //new ParseALEO();

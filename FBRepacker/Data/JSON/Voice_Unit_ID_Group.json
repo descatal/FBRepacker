@@ -1,5 +1,18 @@
 {
   "soundLogicUnitIDGroupList": [
+	{
+      "groupID": -1,
+      "groupPointer": 4088,
+      "unitIDs": [
+        14021,
+		14041,
+		14061,
+		27011,
+		27021,
+		80091,
+		14091
+      ]
+    },
     {
       "groupID": 1,
       "groupPointer": 4088,

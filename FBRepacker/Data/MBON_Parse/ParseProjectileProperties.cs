@@ -15,16 +15,36 @@ namespace FBRepacker.Data.MBON_Parse
     {
         Dictionary<uint, uint> convertAssistProjectileType = new Dictionary<uint, uint>()
         {
+            // Left - MBON, Right - FB  
+            { 0x2, 0xD }, // Gattlings, Berga Giros, 44 F9 93 56
             { 0x3, 0x2 }, // Missiles
             { 0x4, 0x8 }, // Spread Beam
+            { 0x5, 0x1 }, // Age's Dods rifle, we have no equivalent so use normal ones for now
+            { 0x7, 0x2 }, // Special Missiles? Found on Mack Knife (CSb) and Zabanya (Sub), use missles for now
+            { 0x14, 0xA },
+            { 0x15, 0xE }, // Hildolfr, A2 1C 89 0B
             { 0x28, 0x3 }, // 
             { 0x29, 0x4 }, // Curved Gerobi
             { 0x2A, 0x6 }, // Gerobi
-            { 0x3C, 0x46 }, // Bafuku
-            { 0xC3ECE, 0x52DA }, // Infinite Justice Boomerang
-            { 0xC3ED8, 0x52E4 }, // Infinite Justice Anchor
-            { 0xC3EC4, 0x52D0 }, // Infinite Justice Backpack Sub
-            { 0xC3EE2, 0x5302 }, // Infinite Justice Assist
+            { 0x2B, 0x14 }, // 00 Gundam, DF 7C B2 E5
+            { 0x2D, 0x6 }, // Gerobi again, Turn X, C1 E0 EA C5
+            { 0x3C, 0x46 }, // Explosion
+            { 0x3D, 0x4C }, // Gunner Zaku Warrior, D4 65 19 1B
+            { 0x46, 0x49 }, // Zaku II Kai, 96 81 03 0B
+            { 0x66, 0x28 }, // Cherudim, 11 57 84 3A
+            { 0x64, 0xB }, // Forbidden, 41 B4 D8 8C
+            { 0x65, 0x13 }, // Extreme Gundam Carnage Phase, 41 E0 55 7E
+            { 0x67, 0x4D }, // Extreme Gundam Eclipse-F, B8 70 8A B6
+            { 0x68, 0xF }, // Regnant, 40 D0 3F C7
+            { 0x69, 0x10 }, // Regnant, 2nd 40 D0 3F C7
+            { 0x6a, 0x11 }, // Regnant, 3rd 40 D0 3F C7
+            { 0x6b, 0x47 }, // Dragon, 57 5B D6 A2
+            { 0x6c, 0x48 }, // Extreme Gundam Tachyon Phase, 1C 04 C3 7F
+            { 0x6d, 0x4e }, // Perfect Gundam, A5 FA EC CD
+            //{ 0xC3ECE, 0x52DA }, // Infinite Justice Boomerang
+            //{ 0xC3ED8, 0x52E4 }, // Infinite Justice Anchor
+            //{ 0xC3EC4, 0x52D0 }, // Infinite Justice Backpack Sub
+            //{ 0xC3EE2, 0x5302 }, // Infinite Justice Assist
         };
 
         public ParseProjectileProperties()
@@ -71,8 +91,27 @@ namespace FBRepacker.Data.MBON_Parse
                 proj.hash = projectile_hash;
                 proj.projectile_Type = readUIntBigEndian();
 
-                if (convertAssistProjectileType.ContainsKey(proj.projectile_Type) && Properties.Settings.Default.convertMBONProjecitle)
-                    proj.projectile_Type = convertAssistProjectileType[proj.projectile_Type];
+                if(Properties.Settings.Default.convertMBONProjecitle)
+                {
+                    if (convertAssistProjectileType.ContainsKey(proj.projectile_Type))
+                    {
+                        proj.projectile_Type = convertAssistProjectileType[proj.projectile_Type];
+                    }
+                    else if (proj.projectile_Type > 0xFF && Properties.Settings.Default.truncateProjectileType)
+                    {
+                        string projectileTypeStr = proj.projectile_Type.ToString();
+                        string removedProjectiles = projectileTypeStr.Remove(projectileTypeStr.Length - 4, 1);
+                        proj.projectile_Type = uint.Parse(removedProjectiles);
+                    }
+                    else if (proj.projectile_Type < 0xFF && proj.projectile_Type != 1 && proj.projectile_Type != 6)
+                    {
+                        throw new Exception("Unregcongized projectile type!");
+                    }
+                    else if (proj.projectile_Type == 0x6)
+                    {
+                        // Only found in forbidden's last 2 ex burst thing, not sure what. Not called probably, ignore for now
+                    }
+                }
 
                 proj.hit_properties_hash = readUIntBigEndian();
                 proj.model_nud_hash = readUIntBigEndian();
@@ -214,6 +253,7 @@ namespace FBRepacker.Data.MBON_Parse
             StreamReader fs = File.OpenText(Properties.Settings.Default.ProjecitleJSONFilePath);
             string JSON = fs.ReadToEnd();
             Projectile_Properties projectile_Properties = JsonConvert.DeserializeObject<Projectile_Properties>(JSON);
+            fs.Close();
 
             return projectile_Properties;
         }
@@ -328,6 +368,49 @@ namespace FBRepacker.Data.MBON_Parse
                 output_projectile.CopyTo(ofs);
                 ofs.Close();
             }
+        }
+
+        // Function to delete nth digit
+        // from ending
+        static uint deleteFromEnd(uint num, int n)
+        {
+
+            // Declare a variable
+            // to form the reverse resultant number
+            uint rev_new_num = 0;
+
+            // Loop with the number
+            for (int i = 1; num != 0; i++)
+            {
+
+                uint digit = num % 10;
+                num = num / 10;
+
+                if (i == n)
+                {
+                    continue;
+                }
+                else
+                {
+                    rev_new_num = (rev_new_num * 10) + digit;
+                }
+            }
+
+            // Declare a variable
+            // to form the resultant number
+            uint new_num = 0;
+
+            // Loop with the number
+            for (int i = 0; rev_new_num != 0; i++)
+            {
+
+                new_num = (new_num * 10)
+                        + (rev_new_num % 10);
+                rev_new_num = rev_new_num / 10;
+            }
+
+            // Return the resultant number
+            return new_num;
         }
     }
 }

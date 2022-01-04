@@ -256,7 +256,7 @@ namespace FBRepacker.Data.MBON_Parse
 
                 reload_MBON.burst_replenish = readUIntBigEndian(fs);
 
-                reload_MBON.unk_0x38 = readFloat(fs, true);
+                reload_MBON.s_burst_reload_rate_multiplier = readFloat(fs, true);
 
                 //if (reload_MBON.unk_0x38 != 3 && (i < total_ammo_count - 3))
                     //throw new Exception("0x38 not 3!");
@@ -284,8 +284,8 @@ namespace FBRepacker.Data.MBON_Parse
                 uint charge_input = readUIntBigEndian(fs);
                 bool isChargeInput = Enum.IsDefined(typeof(charge_input_enum), (int)charge_input);
 
-                if (!isChargeInput && (i < total_ammo_count - 3))
-                    throw new Exception("Unidentified Charge Type!");
+                //if (!isChargeInput && (i < total_ammo_count - 3))
+                    //throw new Exception("Unidentified Charge Type!");
 
                 reload_MBON.charge_input = (charge_input_enum)charge_input;
                 reload_MBON.charge_duration_frame = readUIntBigEndian(fs);
@@ -293,16 +293,26 @@ namespace FBRepacker.Data.MBON_Parse
                 reload_MBON.release_charge_duration_frame = readUIntBigEndian(fs);
 
                 reload_MBON.unk_0x68 = readFloat(fs, true);
-                if ((reload_MBON.unk_0x68 != 2 && reload_MBON.unk_0x68 != 0) && (i < total_ammo_count - 3))
+                if ((reload_MBON.unk_0x68 != 2 && reload_MBON.unk_0x68 != 0 && reload_MBON.unk_0x68 != 1) && (i < total_ammo_count - 3))
+                {
+                    // 1 - Zeta Gundam, 1270689065
                     throw new Exception("Unidentified 0x68");
+                }
+                    
 
                 reload_MBON.unk_0x6C = readFloat(fs, true);
                 if ((reload_MBON.unk_0x6C != 1 && reload_MBON.unk_0x6C != 0) && (i < total_ammo_count - 3))
                     throw new Exception("Unidentified 0x6C");
 
                 reload_MBON.unk_0x70 = readFloat(fs, true);
-                if ((reload_MBON.unk_0x70 != 2 && reload_MBON.unk_0x70 != 0) && (i < total_ammo_count - 3))
+                if ((reload_MBON.unk_0x70 != 2 && reload_MBON.unk_0x70 != 0 && reload_MBON.unk_0x70 != 4 && reload_MBON.unk_0x70 != 5 && reload_MBON.unk_0x70 != 1) && (i < total_ammo_count - 3))
+                {
+                    // 1 = 00 Gundam, 276112298
+                    // 4 = Char's Gelgoog, 1645609885
+                    // 5 = GP01, 603925848
                     throw new Exception("Unidentified 0x70");
+                }
+                    
 
                 reload_MBON.unk_0x74 = readFloat(fs, true);
                 if ((reload_MBON.unk_0x74 != 1 && reload_MBON.unk_0x74 != 0) && (i < total_ammo_count - 3))
@@ -360,9 +370,9 @@ namespace FBRepacker.Data.MBON_Parse
                 reload_FB.assault_burst_reload_duration_frame = reload_MBON.burst_reload_duration_frame;
 
                 uint ori_burst_reload_duration_frame = reload_MBON.burst_reload_duration_frame;
-
-                // S burst is usually burst duration frame / 3.
-                uint S_burst_reload_duration_frame = (ori_burst_reload_duration_frame / 3);
+                    
+                // S burst is usually burst duration frame / 3 OR more strictly, burst_replenish_rate_multiplier.
+                uint S_burst_reload_duration_frame = (uint)(ori_burst_reload_duration_frame / reload_MBON.s_burst_reload_rate_multiplier);
                 // Assign the / 3 value to blast burst reload.
                 reload_FB.blast_burst_reload_duration_frame = S_burst_reload_duration_frame;
 
@@ -517,6 +527,7 @@ namespace FBRepacker.Data.MBON_Parse
             StreamReader fs = File.OpenText(Properties.Settings.Default.ReloadJSONFilePath);
             string JSON = fs.ReadToEnd();
             Reload reload = JsonConvert.DeserializeObject<Reload>(JSON);
+            fs.Close();
 
             return reload;
         }

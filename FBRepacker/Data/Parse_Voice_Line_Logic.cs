@@ -153,7 +153,7 @@ namespace FBRepacker.Data
             {
                 uint triggerCondition = readUIntBigEndian();
                 uint index = readUIntBigEndian();
-                uint groupID = readUIntBigEndian();
+                int groupID = (int)readUIntBigEndian(); 
                 uint voiceCount = readUIntBigEndian();
                 uint setPointer = readUIntBigEndian();
 
@@ -172,6 +172,8 @@ namespace FBRepacker.Data
                     uint voiceHash = readUIntBigEndian();
                     voiceHashes.Add(voiceHash);
                 }
+
+                // For some reason groupID = -1 is possible, where the unit ID list is fetched from Xi's old corresponding trigger unitIDs
 
                 List<uint> triggerUnitIDs = soundLogicUnitIDGroupList.soundLogicUnitIDGroupList.FirstOrDefault(s => s.groupID.Equals(groupID)).unitIDs;
 
@@ -193,7 +195,7 @@ namespace FBRepacker.Data
             {
                 uint triggerCondition = readUIntBigEndian();
                 uint index = readUIntBigEndian();
-                uint groupID = readUIntBigEndian();
+                int groupID = (int)readUIntBigEndian();
                 uint voiceCount = 2; // Paired is always two
                 uint setPointer = 0; // There's no pointer
                 uint self_VoiceHash = readUIntBigEndian();
@@ -396,11 +398,14 @@ namespace FBRepacker.Data
 
                 uint pairedUnitIDCount = (uint)Paired[i].triggerUnitID.Count;
 
-                if (pairedUnitIDCount != 1)
-                    throw new System.Exception("Paired unit ID count != 1!");
+                //if (pairedUnitIDCount != 1)
+                    //throw new System.Exception("Paired unit ID count != 1!");
 
                 appendUIntMemoryStream(Paired_Voice_Hash, pairedUnitIDCount, true);
-                appendUIntMemoryStream(Paired_Voice_Hash, (uint)Paired[i].triggerUnitID[0], true);
+                for (int j = 0; j < pairedUnitIDCount; j++)
+                {
+                    appendUIntMemoryStream(Paired_Voice_Hash, (uint)Paired[i].triggerUnitID[j], true);
+                }
             }
 
             uint Paired_Voice_Hash_Start_Offset = 0x20 + (uint)Individual_Voice_Lines.Length + (uint)Triggered_Voice_Lines.Length + 0x10 + (uint)(Paired.Count * 0x04); // header size +　Individual section size + Triggered set count section size + Triggered Pointer section size

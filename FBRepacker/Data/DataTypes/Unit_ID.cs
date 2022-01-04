@@ -31,13 +31,23 @@ namespace FBRepacker.Data.DataTypes
 
     class SoundLogicUnitIDGroup
     {
-        public uint groupID { get; set; }
+        public int groupID { get; set; }
         public uint groupPointer { get; set; }
         public List<uint> unitIDs { get; set; }
+
+        public SoundLogicUnitIDGroup()
+        {
+            unitIDs = new List<uint>(); 
+        }
     }
 
     class SoundLogicUnitIDGroupList
     {
         public List<SoundLogicUnitIDGroup> soundLogicUnitIDGroupList { get; set; }
+
+        public SoundLogicUnitIDGroupList()
+        {
+            soundLogicUnitIDGroupList = new List<SoundLogicUnitIDGroup>();
+        }
     }
 }

@@ -112,6 +112,64 @@
                             <Separator />
                         </DockPanel>
 
+                        <TextBlock Text="Parse TBL (.TBL to JSON)" FontWeight="Bold" Margin="10,0,10,0" TextAlignment="Center"/>
+
+                        <DockPanel>
+                            <TextBlock Text="TBL Binary:" Width="120" Margin="10,0,10,0" TextAlignment="Right"/>
+                            <TextBlock Text="{Binding inputPsarcTBLBinary, Mode=TwoWay, Source={x:Static pro:Settings.Default}, UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Stretch" Margin="10,0,10,0" TextAlignment="Right"/>
+                            <Button Content="Open File" Click="Open_Psarc_TBL_Binary_Click" HorizontalAlignment="Right" Width="100"/>
+                        </DockPanel>
+
+                        <DockPanel>
+                            <TextBlock Text="Output JSON Folder:" Width="120" Margin="10,0,10,0" TextAlignment="Right"/>
+                            <TextBlock Text="{Binding outputPsarcTBLJson, Mode=TwoWay, Source={x:Static pro:Settings.Default}, UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Stretch" Margin="10,0,10,0" TextAlignment="Right"/>
+                            <Button Content="Open Folder" Click="change_Psarc_TBL_JSON_Output_Path_Click" HorizontalAlignment="Right" Width="100"/>
+                        </DockPanel>
+
+                        <DockPanel HorizontalAlignment="Right">
+                            <CheckBox Content="Link files inside repack folder based on hash" IsChecked="{Binding identifyPACFilesTBLParse, Mode=TwoWay, Source={x:Static pro:Settings.Default}, UpdateSourceTrigger=PropertyChanged}" Margin="0,10,0,0"/>
+                        </DockPanel>
+
+                        <DockPanel IsEnabled="{Binding identifyPACFilesTBLParse, Mode=TwoWay, Source={x:Static pro:Settings.Default}, UpdateSourceTrigger=PropertyChanged}">
+                            <TextBlock Text="Repack Psarc Folder:" Width="120" Margin="10,0,10,0" TextAlignment="Right"/>
+                            <TextBlock Text="{Binding psarcTBLParseRepackFolder, Mode=TwoWay, Source={x:Static pro:Settings.Default}, UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Stretch" Margin="10,0,10,0" TextAlignment="Right"/>
+                            <Button Content="Open Folder" Click="change_Psarc_TBL_JSON_Link_Psarc_Folder_Path_Click" HorizontalAlignment="Right" Width="100"/>
+                        </DockPanel>
+
+                        <DockPanel>
+                            <Button Content="Export JSON" Click="export_Psarc_TBL_JSON_Click" Width="100"/>
+                        </DockPanel>
+
+                        <DockPanel>
+                            <Separator />
+                        </DockPanel>
+
+                        <TextBlock Text="Serialize TBL (JSON to .TBL)" FontWeight="Bold" Margin="10,0,10,0" TextAlignment="Center"/>
+
+                        <DockPanel HorizontalAlignment="Right">
+                            <CheckBox Content="Output TBL name as PATCH.TBL" IsChecked="{Binding outputPsarcTBLBinaryNameasPatch, Mode=TwoWay, Source={x:Static pro:Settings.Default}, UpdateSourceTrigger=PropertyChanged}" Margin="0,10,0,0"/>
+                        </DockPanel>
+
+                        <DockPanel>
+                            <TextBlock Text="TBL JSON:" Width="120" Margin="10,0,10,0" TextAlignment="Right"/>
+                            <TextBlock Text="{Binding inputPsarcJSON, Mode=TwoWay, Source={x:Static pro:Settings.Default}, UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Stretch" Margin="10,0,10,0" TextAlignment="Right"/>
+                            <Button Content="Open File" Click="Open_Psarc_TBL_JSON_Click" HorizontalAlignment="Right" Width="100"/>
+                        </DockPanel>
+
+                        <DockPanel>
+                            <TextBlock Text="TBL JSON:" Width="120" Margin="10,0,10,0" TextAlignment="Right"/>
+                            <TextBlock Text="{Binding outputPsarcTBLBinary, Mode=TwoWay, Source={x:Static pro:Settings.Default}, UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Stretch" Margin="10,0,10,0" TextAlignment="Right"/>
+                            <Button Content="Open Folder" Click="change_Psarc_TBL_Binary_Output_Path_Click" HorizontalAlignment="Right" Width="100"/>
+                        </DockPanel>
+
+                        <DockPanel>
+                            <Button Content="Export TBL" Click="export_Psarc_TBL_Binary_Click" Width="100"/>
+                        </DockPanel>
+
+                        <DockPanel>
+                            <Separator />
+                        </DockPanel>
+
                         <DockPanel>
                             <TextBlock Text="Repack Psarc Folder:" Width="120" Margin="10,0,10,0" TextAlignment="Right"/>
                             <TextBlock Text="{Binding PsarcRepackFolder, Mode=TwoWay, Source={x:Static pro:Settings.Default}, UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Stretch" Margin="10,0,10,0" TextAlignment="Right"/>
@@ -256,6 +314,12 @@
                         </DockPanel>
 
                         <DockPanel>
+                            <TextBlock Text="Unit Data Reload Binary: " Width="200" Margin="10,0,10,0" TextAlignment="Right"/>
+                            <TextBlock x:Name="inputUnitDataReloadBinary" Text="{Binding inputUnitDataReloadBinary, Mode=TwoWay, Source={x:Static pro:Settings.Default}, UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Stretch" Margin="10,0,10,0" TextAlignment="Right"/>
+                            <Button Content="Open" Click="OpenUnitDataReloadBinary_Click" HorizontalAlignment="Right" Width="100"/>
+                        </DockPanel>
+
+                        <DockPanel>
                             <TextBlock Text="Output Folder:" Width="200" Margin="10,0,10,0" TextAlignment="Right"/>
                             <TextBlock x:Name="outputUnitDataJSON" Text="{Binding outputUnitDataJSONPath, Mode=TwoWay, Source={x:Static pro:Settings.Default}, UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Stretch" Margin="10,0,10,0" TextAlignment="Right"/>
                             <Button Content="Change" Click="change_Unit_Data_JSON_Output_Path_Click" HorizontalAlignment="Right" Width="100"/>
@@ -327,6 +391,7 @@
                         
                         <DockPanel HorizontalAlignment="Right">
                             <CheckBox Content="Convert MBON Projectile Type" IsChecked="{Binding convertMBONProjecitle, Mode=TwoWay, Source={x:Static pro:Settings.Default}, UpdateSourceTrigger=PropertyChanged}" x:Name="convertMBONProjectileType" Margin="0,10,0,0"/>
+                            <CheckBox Content="Truncate projectile type" IsChecked="{Binding truncateProjectileType, Mode=TwoWay, Source={x:Static pro:Settings.Default}, UpdateSourceTrigger=PropertyChanged}" Margin="20,10,0,0"/>
                         </DockPanel>
                         
                         <DockPanel>
@@ -507,26 +572,39 @@
                             <TextBlock x:Name="CScriptFilePath" Text="{Binding CScriptFilePath, Mode=TwoWay, Source={x:Static pro:Settings.Default}, UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Stretch" Margin="10,0,10,0" TextAlignment="Right"/>
                             <Button Content="Open C Script File" Click="OpenCScriptFile_Click" HorizontalAlignment="Right" Width="100"/>
                         </DockPanel>
-
- 
-
+                        
+                        
                         <DockPanel HorizontalAlignment="Center">
+                            <CheckBox Content="Link Script Func" IsChecked="{Binding scriptModifyLink, Mode=TwoWay, Source={x:Static pro:Settings.Default}, UpdateSourceTrigger=PropertyChanged}" x:Name="scriptModifyLink" Margin="0,10,0,0" />
+                        </DockPanel>
+
+                        <DockPanel HorizontalAlignment="Center" IsEnabled="{Binding scriptModifyLink, Mode=TwoWay, Source={x:Static pro:Settings.Default}, UpdateSourceTrigger=PropertyChanged}">
                             <DockPanel HorizontalAlignment="Center">
-                                <TextBlock Text="Min Pointer: " Width="100" TextAlignment="Right" />
+                                <TextBlock Text="Min Linkage Pointer: " Width="100" TextAlignment="Right" />
                                 <TextBox x:Name="Min_Pointer" Text="{Binding MinScriptPointer, Mode=TwoWay, Source={x:Static pro:Settings.Default}, UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Stretch" Margin="10,0,10,0" TextAlignment="Center" MinWidth="120"/>
                             </DockPanel>
 
                             <CheckBox Content="Big Endian" IsChecked="{Binding scriptBigEndian, Mode=TwoWay, Source={x:Static pro:Settings.Default}, UpdateSourceTrigger=PropertyChanged}" x:Name="scriptBigEndian" Margin="0,10,0,0" />
                         </DockPanel>
 
-                        <DockPanel>
+                        <DockPanel IsEnabled="{Binding scriptModifyLink, Mode=TwoWay, Source={x:Static pro:Settings.Default}, UpdateSourceTrigger=PropertyChanged}">
                             <TextBlock Text="BABB File Path: " Width="100" Margin="10,0,10,0" TextAlignment="Right"/>
                             <TextBlock x:Name="CompiledFilePath" Text="{Binding BABBFilePath, Mode=TwoWay, Source={x:Static pro:Settings.Default}, UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Stretch" Margin="10,0,10,0" TextAlignment="Right"/>
                             <Button Content="Open BABB File" Click="OpenBABBFile_Click" HorizontalAlignment="Right" Width="100"/>
                         </DockPanel>
 
+                        <DockPanel HorizontalAlignment="Center">
+                            <CheckBox Content="Refactor Script" IsChecked="{Binding scriptModifyRefactor, Mode=TwoWay, Source={x:Static pro:Settings.Default}, UpdateSourceTrigger=PropertyChanged}" x:Name="scriptModifyRefactor" Margin="0,10,0,0" />
+                        </DockPanel>
+
+                        <DockPanel IsEnabled="{Binding scriptModifyRefactor, Mode=TwoWay, Source={x:Static pro:Settings.Default}, UpdateSourceTrigger=PropertyChanged}">
+                            <TextBlock Text="B4AC / Melee data txt folder: " Width="200" Margin="10,0,10,0" TextAlignment="Right"/>
+                            <TextBlock x:Name="B4ACFolder" Text="{Binding inputScriptRefactorTxtFolder, Mode=TwoWay, Source={x:Static pro:Settings.Default}, UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Stretch" Margin="10,0,10,0" TextAlignment="Right"/>
+                            <Button Content="Select folder" Click="OpenB4ACTxtFolder_Click" HorizontalAlignment="Right" Width="100"/>
+                        </DockPanel>
+
                         <DockPanel>
-                            <Button Content="Link Script" Click="Link_Script_Click" Width="150"/>
+                            <Button Content="Modify Script" Click="Modify_Unit_Script_Link" Width="150"/>
                         </DockPanel>
 
                         <DockPanel>
@@ -757,6 +835,12 @@
                             </Style>
                         </StackPanel.Resources>
 
+                        <TextBlock Text="All output is in FB format" FontWeight="Bold" Margin="10,20,10,0" TextAlignment="Center"/>
+
+                        <DockPanel>
+                            <Separator/>
+                        </DockPanel>
+
                         <TextBlock Text="Parse FB Unit Info List (.bin to JSON)" FontWeight="Bold" Margin="10,0,10,0" TextAlignment="Center"/>
 
                         <DockPanel>
@@ -802,6 +886,10 @@
                         </DockPanel>
 
                         <TextBlock Text="Parse FB Series Info List (.bin to JSON)" FontWeight="Bold" Margin="10,0,10,0" TextAlignment="Center"/>
+
+                        <DockPanel HorizontalAlignment="Right">
+                            <CheckBox Content="Input MBON format" IsChecked="{Binding allSeriesInfoListInputMBON, Mode=TwoWay, Source={x:Static pro:Settings.Default}, UpdateSourceTrigger=PropertyChanged}" Margin="0,10,0,0" IsEnabled="{Binding ReloadBinaryInputGameVer, Mode=TwoWay, Source={x:Static pro:Settings.Default}, Converter={StaticResource GameSelectionEnumConverter}}"/>
+                        </DockPanel>
 
                         <DockPanel>
                             <TextBlock Text="FB Series Info List Binary: " Width="200" Margin="10,0,10,0" TextAlignment="Right"/>
@@ -956,6 +1044,10 @@
 
                         <DockPanel>
                             <Button Content="Debug" Click="Debug_Click" Width="150"/>
+                        </DockPanel>
+
+                        <DockPanel>
+                            <Button Content="Debug" Click="Debug_Click_2" Width="150"/>
                         </DockPanel>
 
                     </StackPanel>

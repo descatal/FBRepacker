@@ -12,11 +12,21 @@ namespace FBRepacker.Tools
     {
         public simpleExtract()
         {
-            FileStream fs = File.OpenRead(@"C:\Users\descatal\Desktop\SD G Generation\system.pkd");
-            string outputPath = @"C:\Users\descatal\Desktop\SD G Generation\system output";
-            string extension = ".hca";
+            
+        }
 
-            byte[] seperationMagic = new byte[] { 0x48, 0x43, 0x41, 0x00 };
+        public void clearDataUntilHeader()
+        {
+
+        }
+
+        public void extractFiles()
+        {
+            FileStream fs = File.OpenRead(@"D:\Dynasty Warrior Gundam 3 extract\2963.unknown");
+            string outputPath = @"D:\Dynasty Warrior Gundam 3 extract\Voice Lines";
+            string extension = ".at3";
+
+            byte[] seperationMagic = new byte[] { 0x52, 0x49, 0x46, 0x46 };
 
             MemoryStream fss = new MemoryStream();
             fs.Seek(0, SeekOrigin.Begin);
@@ -26,7 +36,7 @@ namespace FBRepacker.Tools
             byte[] ba = fss.ToArray();
             List<int> boyerPointers = new BoyerMoore(seperationMagic).Search(ba).ToList();
 
-            for(int i = 0; i < boyerPointers.Count; i++)
+            for (int i = 0; i < boyerPointers.Count; i++)
             {
                 uint pointer = (uint)boyerPointers[i];
                 uint nextpointer = 0;
@@ -42,18 +52,17 @@ namespace FBRepacker.Tools
 
                 byte[] fileChunk = extractChunk(fs, pointer, nextpointer - pointer);
 
-                /*
+
                 fss.Seek(pointer + 0x4, SeekOrigin.Begin);
                 uint fileSize = readUIntSmallEndian(fss);
 
-                
 
                 int a = fileChunk[0x28];
-                if(a == 1)
+                if (a == 1)
                 {
-                    fileChunk[0x28] = 0x3;
+                    fileChunk[0x28] = 0x3; // for cases where you need to change the channel to stereo
                 }
-                */
+
 
                 MemoryStream ms = new MemoryStream(fileChunk);
 
@@ -68,6 +77,5 @@ namespace FBRepacker.Tools
 
             fs.Close();
         }
-
     }
 }

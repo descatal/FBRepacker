@@ -1,5 +1,7 @@
 ﻿using FBRepacker.Data.DataTypes;
+using FBRepacker.Data.FB_Parse.DataTypes;
 using FBRepacker.PAC;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -25,7 +27,87 @@ namespace FBRepacker.Tools
     {
         public MBONExport()
         {
-            extractScript();
+            //extractScript();
+            extractNPCSounds();
+        }
+
+        public void extractNPCImages()
+        {
+            
+        }
+
+        public void extractNPCSounds()
+        {
+            string totalMBONExportFolder = @"D:\Games\PS3\EXVSFB JPN\Pkg research\FB Repacker\Repack\PAC\Input\MBON Reimport Project\Total MBON Export";
+            List<string> allUnitFolders = Directory.GetDirectories(totalMBONExportFolder, "*", SearchOption.TopDirectoryOnly).ToList();
+
+            string json = File.OpenText(@"D:\Games\PS3\EXVSFB JPN\Pkg research\FB Repacker\Repack\PAC\Input\MBON Reimport Project\AllUnitsPACHashes.json").ReadToEnd();
+            List<Unit_Files_List> unit_Files_List = JsonConvert.DeserializeObject<List<Unit_Files_List>>(json);
+
+            List<string> allbossunitsoundeffectsfolder = Directory.GetDirectories(@"D:\Games\PS3\EXVSFB JPN\Pkg research\FB Repacker\Extract\Output\MBON\v2\All Boss Unit Image & Sound Effects", "*", SearchOption.TopDirectoryOnly).ToList();
+
+            foreach (string unitFolder in allUnitFolders)
+            {
+                string unitFolderName = Path.GetFileName(unitFolder.TrimEnd(Path.DirectorySeparatorChar));
+
+                int unit_ID_str_index = unitFolderName.IndexOf("- ");
+                string unit_ID_str = string.Empty;
+                if (unit_ID_str_index >= 0)
+                    unit_ID_str = unitFolderName.Substring(unit_ID_str_index + 2, unitFolderName.Length - unit_ID_str_index - 2);
+
+                uint unit_ID = Convert.ToUInt32(unit_ID_str);
+                Unit_Files_List unit_Files = unit_Files_List.FirstOrDefault(x => x.Unit_ID == unit_ID);
+
+                if(unit_ID >= 0x13880 && unit_ID <= 0x13a00)
+                {
+                    if (unit_Files != null && unit_Files.MBONAdded) // Bosses
+                    {
+                        // Sound Effects
+                        string BossFolder = allbossunitsoundeffectsfolder.FirstOrDefault(s => s.Contains(unit_ID.ToString()));
+                        string SEFolder = Directory.GetDirectories(BossFolder, "*", SearchOption.TopDirectoryOnly).FirstOrDefault(s => Path.GetFileName(s).Contains("Sound Effect"));
+                        string SE = SEFolder + @"\001-MBON\002.nus3bank";
+
+                        if (!File.Exists(SE))
+                            throw new Exception();
+
+                        string reimportSEFolder = unitFolder + @"\Extracted MBON\Sound Effects";
+
+                        Directory.CreateDirectory(reimportSEFolder);
+
+                        File.Copy(SE, unitFolder + @"\Extracted MBON\Sound Effect.nus3bank", true);
+
+                        convertNUS3toWav(SE, reimportSEFolder);
+
+                        // Local Voice Files
+
+                        List<string> nus3AudioVoiceFiles = Directory.GetFiles(unitFolder + @"\Extracted MBON", "*.nus3audio", SearchOption.TopDirectoryOnly).ToList();
+                        string LocalVoiceFile = nus3AudioVoiceFiles.FirstOrDefault(s => Path.GetFileName(s).Contains("Local Voice Files"));
+
+                        if (!File.Exists(LocalVoiceFile))
+                            throw new Exception();
+
+                        string reimportLVFFolder = unitFolder + @"\Extracted MBON\Local Voice Files";
+
+                        Directory.CreateDirectory(reimportLVFFolder);
+
+                        convertNUS3toWav(LocalVoiceFile, reimportLVFFolder);
+
+
+                        // Global Voice Files
+
+                        string GlobalVoiceFile = nus3AudioVoiceFiles.FirstOrDefault(s => Path.GetFileName(s).Contains("Global Voice Files"));
+
+                        if (!File.Exists(GlobalVoiceFile))
+                            throw new Exception();
+
+                        string reimportGVFFolder = unitFolder + @"\Extracted MBON\Global Voice Files";
+
+                        Directory.CreateDirectory(reimportGVFFolder);
+
+                        convertNUS3toWav(GlobalVoiceFile, reimportGVFFolder);
+                    }
+                }
+            }
         }
 
         public void extractScript()
