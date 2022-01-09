@@ -1659,8 +1659,8 @@ namespace FBRepacker
             //new ParseEFP();
             //new Parse_Unit_Data().combineDataHashSchema();
 
-            //new Tools.ReimportAllMBON();
-            new Tools.MBONExport();
+            new Tools.ReimportAllMBON();
+            //new Tools.MBONExport();
             // new Tools.BlankTemplate();
 
             //new RepackPsarcV2().exportTocJSON();

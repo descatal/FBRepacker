@@ -48,7 +48,8 @@ namespace FBRepacker.Tools
             new RepackPsarcV2().exportToc(tocFileInfo);
             */
 
-            reimportAllFB();
+            //reimportAllFB();
+            reimportImages();
         }
 
         public TOCFileInfo addNullSPRXTBL(TOCFileInfo tocFileInfo, string patch_06_00_OriginalJson)
@@ -198,7 +199,6 @@ namespace FBRepacker.Tools
                     
                     if (unit_Files.MBONAdded)
                     {
-                        /*
                         MBONlog.AppendLine(@"//----------------------- " + unitName + @"-----------------------//");
                         // Manually add own made hashes to newly added MBON units
                         Crc32 crc32 = new Crc32();
@@ -284,9 +284,155 @@ namespace FBRepacker.Tools
                         last_unk_0x80++;
 
                         unit_Info_List.Add(new_Unit_Files);
-                        */
                     }
                     
+                }
+            }
+
+            foreach (string unitFolder in allUnitFolders)
+            {
+                Match unitNoMatch = Regex.Match(unitFolder, @"([0-9]{1,100}). ");
+                string unitNoStr = unitNoMatch.Groups[0].Captures[0].Value;
+                uint.TryParse(unitNoStr, out uint unitNo);
+
+                string unitFolderName = Path.GetFileName(unitFolder.TrimEnd(Path.DirectorySeparatorChar));
+
+                int unit_ID_str_index = unitFolderName.IndexOf("- ");
+                string unit_ID_str = string.Empty;
+                if (unit_ID_str_index >= 0)
+                    unit_ID_str = unitFolderName.Substring(unit_ID_str_index + 2, unitFolderName.Length - unit_ID_str_index - 2);
+
+                uint unit_ID = Convert.ToUInt32(unit_ID_str);
+                Unit_Info_List unit_Infos = unit_Info_List.FirstOrDefault(x => x.unit_ID == unit_ID);
+                Unit_Files_List unit_Files = unit_Files_List.FirstOrDefault(x => x.Unit_ID == unit_ID);
+
+                if (unit_ID > 59900 && unit_Files != null && !already_repacked.Contains(unit_ID))
+                {
+                    string unitName = unit_Names.Unit_ID.FirstOrDefault(s => s.id == unit_Files.Unit_ID).name_english.Replace(" ", "_");
+
+                    string arcade_selection_sprite_costume_1_folder = unitFolder + @"\Extracted MBON\Arcade_Selection_Sprite_Costume_1";
+                    string loading_ally_sprite_costume_1_folder = unitFolder + @"\Extracted MBON\Loading_Ally_Sprite_Costume_1";
+                    string loading_enemy_sprite_costume_1_folder = unitFolder + @"\Extracted MBON\Loading_Enemy_Sprite_Costume_1";
+                    string free_battle_selection_sprite_costume_1_folder = unitFolder + @"\Extracted MBON\Free_Battle_Selection_Sprite_Costume_1";
+                    string loading_enemy_target_unit_sprite_costume_1_folder = unitFolder + @"\Extracted MBON\Loading_Enemy_Target_Unit_Sprite_Costume_1";
+                    string loading_enemy_target_pilot_sprite_costume_1_folder = unitFolder + @"\Extracted MBON\Loading_Enemy_Target_Pilot_Sprite_Costume_1";
+                    string in_game_sortie_and_awakening_sprite_costume_1_folder = unitFolder + @"\Extracted MBON\In_Game_Sortie_and_Awakening_Sprite_Costume_1";
+                    string result_small_sprite_folder = unitFolder + @"\Extracted MBON\Result_Small_Sprite";
+                    string figurine_sprite_folder = unitFolder + @"\Extracted MBON\Figurine_Sprite";
+                    string target_small_sprite_folder = unitFolder + @"\Extracted MBON\Target_Small_Sprite";
+
+                    Directory.CreateDirectory(arcade_selection_sprite_costume_1_folder);
+                    Directory.CreateDirectory(loading_ally_sprite_costume_1_folder);
+                    Directory.CreateDirectory(loading_enemy_sprite_costume_1_folder);
+                    Directory.CreateDirectory(free_battle_selection_sprite_costume_1_folder);
+                    Directory.CreateDirectory(loading_enemy_target_unit_sprite_costume_1_folder);
+                    Directory.CreateDirectory(loading_enemy_target_pilot_sprite_costume_1_folder);
+                    Directory.CreateDirectory(in_game_sortie_and_awakening_sprite_costume_1_folder);
+                    Directory.CreateDirectory(result_small_sprite_folder);
+                    Directory.CreateDirectory(figurine_sprite_folder);
+                    Directory.CreateDirectory(target_small_sprite_folder);
+
+                    string reimportFolder = totalMBONReimportFolder + @"\" + unitFolderName;
+                    string reimportConvertedfromMBONFolder = totalMBONReimportFolder + @"\" + unitFolderName + @"\" + "Converted from MBON";
+                    string reimportFilestoRepack = totalMBONReimportFolder + @"\" + unitFolderName + @"\" + "Files to Repack";
+                    string reimportRepackedFiles = totalMBONReimportFolder + @"\" + unitFolderName + @"\" + "Repacked Files";
+
+                    Directory.CreateDirectory(reimportFolder);
+                    Directory.CreateDirectory(reimportConvertedfromMBONFolder);
+                    Directory.CreateDirectory(reimportFilestoRepack);
+                    Directory.CreateDirectory(reimportRepackedFiles);
+
+                    string unitImageFolder = allUnitImageFolder.FirstOrDefault(s => s.Contains(unit_ID.ToString()));
+                    string pilotImageFolder = allUnitImageFolder.FirstOrDefault(s => s.Contains(unit_ID.ToString()));
+
+                    if (unit_Files.MBONAdded)
+                    {
+                        MBONlog.AppendLine(@"//----------------------- " + unitName + @"-----------------------//");
+                        // Manually add own made hashes to newly added MBON units
+                        Crc32 crc32 = new Crc32();
+                        string arcade_selection_str = unitName + "_arcade_selection_sprite_costume_1";
+                        uint arcade_selection_hash = crc32.Get(Encoding.UTF8.GetBytes(arcade_selection_str.ToLower()));
+                        MBONlog.AppendLine(arcade_selection_str + " - 0x" + arcade_selection_hash.ToString("X8"));
+
+                        string loading_ally_sprite_costume_1_str = unitName + "_loading_ally_sprite_costume_1";
+                        uint loading_ally_sprite_costume_1_hash = crc32.Get(Encoding.UTF8.GetBytes(loading_ally_sprite_costume_1_str.ToLower()));
+                        MBONlog.AppendLine(loading_ally_sprite_costume_1_str + " - 0x" + loading_ally_sprite_costume_1_hash.ToString("X8"));
+
+                        string loading_enemy_sprite_costume_1_str = unitName + "_loading_enemy_sprite_costume_1";
+                        uint loading_enemy_sprite_costume_1_hash = crc32.Get(Encoding.UTF8.GetBytes(loading_enemy_sprite_costume_1_str.ToLower()));
+                        MBONlog.AppendLine(loading_enemy_sprite_costume_1_str + " - 0x" + loading_enemy_sprite_costume_1_hash.ToString("X8"));
+
+                        string free_battle_selection_sprite_costume_1_str = unitName + "_arcade_selection_sprite_costume_1";
+                        uint free_battle_selection_sprite_costume_1_hash = crc32.Get(Encoding.UTF8.GetBytes(free_battle_selection_sprite_costume_1_str.ToLower()));
+                        MBONlog.AppendLine(free_battle_selection_sprite_costume_1_str + " - 0x" + free_battle_selection_sprite_costume_1_hash.ToString("X8"));
+
+                        string loading_enemy_target_unit_sprite_costume_1_str = unitName + "_arcade_selection_sprite_costume_1";
+                        uint loading_enemy_target_unit_sprite_costume_1_hash = crc32.Get(Encoding.UTF8.GetBytes(loading_enemy_target_unit_sprite_costume_1_str.ToLower()));
+                        MBONlog.AppendLine(loading_enemy_target_unit_sprite_costume_1_str + " - 0x" + loading_enemy_target_unit_sprite_costume_1_hash.ToString("X8"));
+
+                        string loading_enemy_target_pilot_sprite_costume_1_str = unitName + "_arcade_selection_sprite_costume_1";
+                        uint loading_enemy_target_pilot_sprite_costume_1_hash = crc32.Get(Encoding.UTF8.GetBytes(loading_enemy_target_pilot_sprite_costume_1_str.ToLower()));
+                        MBONlog.AppendLine(loading_enemy_target_pilot_sprite_costume_1_str + " - 0x" + loading_enemy_target_pilot_sprite_costume_1_hash.ToString("X8"));
+
+                        uint in_game_sortie_and_awakening_sprite_costume_1_hash = unit_Files.sortie_and_awakening_sprites_PAC_hash;
+
+                        uint KPKP_hash = unit_Files.sortie_mouth_anim_enum_KPKP_PAC_hash;
+
+                        string result_small_sprite_str = unitName + "_result_small_sprite";
+                        uint result_small_sprite_hash = crc32.Get(Encoding.UTF8.GetBytes(result_small_sprite_str.ToLower()));
+                        MBONlog.AppendLine(result_small_sprite_str + " - 0x" + result_small_sprite_hash.ToString("X8"));
+
+                        string figurine_sprite_str = unitName + "_figurine_sprite";
+                        uint figurine_sprite_hash = crc32.Get(Encoding.UTF8.GetBytes(figurine_sprite_str.ToLower()));
+                        MBONlog.AppendLine(figurine_sprite_str + " - 0x" + figurine_sprite_hash.ToString("X8"));
+
+                        string target_small_sprite_str = unitName + "_target_small_sprite";
+                        uint target_small_sprite_hash = crc32.Get(Encoding.UTF8.GetBytes(target_small_sprite_str.ToLower()));
+                        MBONlog.AppendLine(target_small_sprite_str + " - 0x" + target_small_sprite_hash.ToString("X8"));
+
+                        Unit_Info_List new_Unit_Files = new Unit_Info_List();
+
+                        new_Unit_Files.unit_index = (byte)last_unit_index;
+                        new_Unit_Files.series_index = (byte)(last_series_index + 1);
+                        new_Unit_Files.unit_ID = unit_ID;
+                        new_Unit_Files.release_string = "リリース";
+                        new_Unit_Files.F_string = "F" + unit_ID;
+                        new_Unit_Files.F_out_string = "F_OUT_" + unit_ID;
+                        new_Unit_Files.P_string = "P" + unit_ID;
+
+                        List<Unit_Info_List> units_In_Series = unit_Info_List.Where(x => x.series_index == (last_series_index + 1)).ToList();
+                        new_Unit_Files.internal_index = (byte)units_In_Series.Count();
+
+                        new_Unit_Files.arcade_small_sprite_index = (byte)last_arcade_small_sprite_index;
+                        new_Unit_Files.arcade_unit_name_sprite = (byte)last_arcade_unit_name_sprite;
+                        new_Unit_Files.arcade_selection_sprite_costume_1_hash = arcade_selection_hash;
+                        new_Unit_Files.loading_ally_sprite_costume_1_hash = arcade_selection_hash;
+                        new_Unit_Files.loading_enemy_sprite_costume_1_hash = loading_enemy_sprite_costume_1_hash;
+                        new_Unit_Files.free_battle_selection_sprite_costume_1_hash = free_battle_selection_sprite_costume_1_hash;
+                        new_Unit_Files.loading_enemy_target_unit_sprite_costume_1_hash = loading_enemy_target_unit_sprite_costume_1_hash;
+                        new_Unit_Files.loading_enemy_target_pilot_sprite_costume_1_hash = loading_enemy_target_pilot_sprite_costume_1_hash;
+                        new_Unit_Files.in_game_sortie_and_awakening_sprite_costume_1_hash = in_game_sortie_and_awakening_sprite_costume_1_hash;
+                        new_Unit_Files.KPKP_hash = KPKP_hash;
+                        new_Unit_Files.result_small_sprite_hash = result_small_sprite_hash;
+                        new_Unit_Files.figurine_sprite_index = (byte)last_figurine_sprite_index;
+                        new_Unit_Files.figurine_sprite_hash = figurine_sprite_hash;
+                        new_Unit_Files.target_small_sprite_hash = target_small_sprite_hash;
+                        new_Unit_Files.unk_0x7C = last_unk_0x7C;
+                        new_Unit_Files.unk_0x80 = last_unk_0x80;
+                        new_Unit_Files.IS_Costume_costume_2_string = "0.0";
+                        new_Unit_Files.IS_Costume_T_costume_2_string = "0.0";
+                        new_Unit_Files.IS_Costume_costume_3_string = "0.0";
+                        new_Unit_Files.IS_Costume_T_costume_3_string = "0.0";
+
+                        last_unit_index++;
+                        last_arcade_small_sprite_index++;
+                        last_arcade_unit_name_sprite++;
+                        last_figurine_sprite_index++;
+                        last_unk_0x7C++;
+                        last_unk_0x80++;
+
+                        unit_Info_List.Add(new_Unit_Files);
+                    }
                 }
             }
 
@@ -809,9 +955,13 @@ namespace FBRepacker.Tools
                     Properties.Settings.Default.audioPACInfoNus3SoundHashFormat = (int)audioFormatEnum.VAG;
 
                     new GenerateAudioPACInfo((audioFormatEnum)Properties.Settings.Default.audioPACInfoNus3SoundHashFormat);
-                    
 
-                    
+
+                    // -------------------------------------------- Image Files -----------------------------------------------------
+
+
+
+
                     // -------------------------------------------- EIDX ------------------------------------------------------------
 
                     Directory.CreateDirectory(reimportConvertedfromMBONFolder + @"\EIDX");
@@ -820,7 +970,6 @@ namespace FBRepacker.Tools
                     Properties.Settings.Default.outputALEOFolderPath = reimportConvertedfromMBONFolder + @"\EIDX";
 
                     new ParseALEO();
-                    
                     
                     
                     // -------------------------------------------- DNSO ------------------------------------------------------------

@@ -94,7 +94,21 @@ namespace FBRepacker.Psarc
 
         private void Delete_File_Button_Click(object sender, RoutedEventArgs e)
         {
+            var item = ((sender as Button)?.Tag as ListViewItem)?.DataContext;
+            var itemId = (item as PACFileInfoV2)?.nameHash;
+            int index = tocFileInfo.allFiles.FindIndex(s => s.nameHash == itemId);
 
+            System.Windows.Forms.DialogResult dialogResult = System.Windows.Forms.MessageBox.Show("Are you sure?", "Delete Entry", System.Windows.Forms.MessageBoxButtons.YesNo);
+            if (dialogResult == System.Windows.Forms.DialogResult.Yes)
+            {
+                tocFileInfo.allFiles.RemoveAt(index);
+            }
+            else if (dialogResult == System.Windows.Forms.DialogResult.No)
+            {
+                //do something else
+            }
+
+            psarcInfolv.Items.Refresh();
         }
 
         private void sort_Button_Click(object sender, RoutedEventArgs e)

@@ -33,7 +33,72 @@ namespace FBRepacker.Tools
 
         public void extractNPCImages()
         {
-            
+            string totalMBONExportFolder = @"D:\Games\PS3\EXVSFB JPN\Pkg research\FB Repacker\Repack\PAC\Input\MBON Reimport Project\Total MBON Export";
+            List<string> allUnitFolders = Directory.GetDirectories(totalMBONExportFolder, "*", SearchOption.TopDirectoryOnly).ToList();
+
+            string json = File.OpenText(@"D:\Games\PS3\EXVSFB JPN\Pkg research\FB Repacker\Repack\PAC\Input\MBON Reimport Project\AllUnitsPACHashes.json").ReadToEnd();
+            List<Unit_Files_List> unit_Files_List = JsonConvert.DeserializeObject<List<Unit_Files_List>>(json);
+
+            json = File.OpenText(@"D:\Games\PS3\EXVSFB JPN\Pkg research\FB Repacker\Repack\PAC\Input\MBON Reimport Project\Unit List MBON.json").ReadToEnd();
+            List<Unit_Info_List> unit_Info_List = JsonConvert.DeserializeObject<List<Unit_Info_List>>(json);
+
+            List<string> allbossunitimagesfolder = Directory.GetDirectories(@"D:\Games\PS3\EXVSFB JPN\Pkg research\FB Repacker\Extract\Output\MBON\v2\All Boss Unit Image & Sound Effects", "*", SearchOption.TopDirectoryOnly).ToList();
+
+            foreach (string unitFolder in allUnitFolders)
+            {
+                string unitFolderName = Path.GetFileName(unitFolder.TrimEnd(Path.DirectorySeparatorChar));
+
+                int unit_ID_str_index = unitFolderName.IndexOf("- ");
+                string unit_ID_str = string.Empty;
+                if (unit_ID_str_index >= 0)
+                    unit_ID_str = unitFolderName.Substring(unit_ID_str_index + 2, unitFolderName.Length - unit_ID_str_index - 2);
+
+                uint unit_ID = Convert.ToUInt32(unit_ID_str);
+                Unit_Files_List unit_Files = unit_Files_List.FirstOrDefault(x => x.Unit_ID == unit_ID);
+                Unit_Info_List unit_Infos = unit_Info_List.FirstOrDefault(x => x.unit_ID == unit_ID);
+
+                if (unit_ID >= 0x13880 && unit_ID <= 0x13a00)
+                {
+                    if (unit_Files != null && unit_Files.MBONAdded) // Bosses
+                    {
+                        // Sound Effects
+                        string BossFolder = allbossunitimagesfolder.FirstOrDefault(s => s.Contains(unit_ID.ToString()));
+
+                        string arcadeUnitSpriteFolder = Directory.GetDirectories(BossFolder, "*", SearchOption.TopDirectoryOnly).FirstOrDefault(s => Path.GetFileName(s).Contains("Arcade Sprite"));
+                        string arcadeUnitSprite = arcadeUnitSpriteFolder + @"\001-MBON\002.dds";
+
+                        string arcadePilotSpriteFolder = Directory.GetDirectories(BossFolder, "*", SearchOption.TopDirectoryOnly).FirstOrDefault(s => Path.GetFileName(s).Contains("Arcade Sprite"));
+                        string arcadePilotSprite = arcadePilotSpriteFolder + @"\001-MBON\002.dds";
+
+                        if (!File.Exists(arcadeUnitSprite))
+                            throw new Exception();
+
+                        string extractedExportArcadeFolder = unitFolder + @"\Extracted MBON\Arcade_Sprites - " + unit_Infos.arcade_selection_sprite_costume_1_hash;
+                        string extractedExportFreeBattleSelectionFolder = unitFolder + @"\Extracted MBON\Free_Battle_Selection_Sprite_Costume_1 - " + unit_Infos.free_battle_selection_sprite_costume_1_hash;
+                        string extractedExportInGameSortieFolder = unitFolder + @"\Extracted MBON\In_Game_Sortie_and_Awakening_Sprite_Costume_1 - " + unit_Files.sortie_and_awakening_sprites_PAC_hash;
+                        string extractedExportLoadingAllyFolder = unitFolder + @"\Extracted MBON\Loading_Ally_Sprite_Costume_1 - " + unit_Infos.loading_ally_sprite_costume_1_hash;
+                        string extractedExportLoadingEnemyFolder = unitFolder + @"\Extracted MBON\Loading_Enemy_Sprite_Costume_1 - " + unit_Infos.loading_enemy_sprite_costume_1_hash;
+                        string extractedExportLoadingEnemyTargetPilotFolder = unitFolder + @"\Extracted MBON\Loading_Enemy_Target_Pilot_Sprite_Costume_1 - " + unit_Infos.loading_enemy_target_pilot_sprite_costume_1_hash;
+                        string extractedExportLoadingEnemyTargetUnitFolder = unitFolder + @"\Extracted MBON\Loading_Enemy_Target_Unit_Sprite_Costume_1 - " + unit_Infos.loading_enemy_target_unit_sprite_costume_1_hash;
+                        string extractedExportFigurineSpriteFolder = unitFolder + @"\Extracted MBON\Figurine_Sprite - " + unit_Infos.figurine_sprite_hash;
+                        string extractedExportResultSmallSpriteFolder = unitFolder + @"\Extracted MBON\Result_Small_Sprite - " + unit_Infos.result_small_sprite_hash;
+                        string extractedExportTargetSmallSpriteFolder = unitFolder + @"\Extracted MBON\Target_Small_Sprite - " + unit_Infos.figurine_sprite_hash;
+
+                        Directory.CreateDirectory(extractedExportArcadeFolder);
+                        Directory.CreateDirectory(extractedExportFreeBattleSelectionFolder);
+                        Directory.CreateDirectory(extractedExportInGameSortieFolder);
+                        Directory.CreateDirectory(extractedExportLoadingAllyFolder);
+                        Directory.CreateDirectory(extractedExportLoadingEnemyFolder);
+                        Directory.CreateDirectory(extractedExportLoadingEnemyTargetPilotFolder);
+                        Directory.CreateDirectory(extractedExportLoadingEnemyTargetUnitFolder);
+                        Directory.CreateDirectory(extractedExportFigurineSpriteFolder);
+                        Directory.CreateDirectory(extractedExportResultSmallSpriteFolder);
+                        Directory.CreateDirectory(extractedExportTargetSmallSpriteFolder);
+
+                        resize_dds_precise(arcadeUnitSprite, extractedExportArcadeFolder + @"\arcade_unit.dds", 0, true, 1280, 720);
+                    }
+                }
+            }
         }
 
         public void extractNPCSounds()

@@ -39,6 +39,7 @@ namespace FBRepacker.Psarc
         public PACFileInfoUI(PACFileInfoV2 pacFileInfo, uint lastRelativePathIndex, uint totalFileCount, uint currentRelativePathIndex)
         {
             InitializeComponent();
+            pacFileInfo.fileFlags |= fileFlagsEnum.hasFileName;
             this.pacFileInfo = pacFileInfo;
             this.DataContext = this;
             this.totalFileCount = totalFileCount;

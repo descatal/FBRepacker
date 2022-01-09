@@ -1676,6 +1676,48 @@ namespace FBRepacker.PAC
             }
         }
 
+        /// <summary>
+        /// Precise resize of dds files using gimp
+        /// </summary>
+        /// <param name="inputpath">Path to the input DDS file</param>
+        /// <param name="outputpath">Output file path (with file name)</param>
+        /// <param name="compression_type">0 = Uncompressed, 1 = DXT1, 2 = DXT3, 3 = DXT5</param>
+        /// <param name="generate_mipmaps"></param>
+        /// <param name="width">target resolution in pixels</param>
+        /// <param name="height">target resolution in pixels</param>
+        public void resize_dds_precise(string inputpath, string outputpath, int compression_type, bool generate_mipmaps, int width, int height)
+        {
+            if (File.Exists(inputpath))
+                throw new Exception();
+
+            File.Copy(inputpath, Directory.GetCurrentDirectory() + @"\3rd Party\GIMP\input.dds", true);
+
+            ProcessStartInfo startInfo = new ProcessStartInfo();
+            startInfo.CreateNoWindow = false;
+            startInfo.UseShellExecute = false;
+            startInfo.RedirectStandardOutput = true;
+            startInfo.FileName = Directory.GetCurrentDirectory() + @"\3rd Party\GIMP\gimp.exe";
+            startInfo.WindowStyle = ProcessWindowStyle.Normal;
+            //startInfo.RedirectStandardOutput = true;
+            startInfo.Arguments = "gimp - idf--batch - interpreter python - fu - eval - b" + @"""" + "import sys;sys.path=['.']+sys.path;import resize;resize.scale_precise('input.dds', " + compression_type + ", " + generate_mipmaps + ", " + width + ", " + height + ")" + @"""" + "- b" + @"""" + "pdb.gimp_quit(1)" + @"""";
+
+            try
+            {
+                // Start the process with the info we specified.
+                // Call WaitForExit and then the using statement will close.
+                using (Process exeProcess = Process.Start(startInfo))
+                {
+                    Console.WriteLine(exeProcess.StandardOutput.ReadToEnd());
+                    exeProcess.WaitForExit();
+                }
+            }
+            catch
+            {
+                // Log error.
+                throw new Exception();
+            }
+        }
+
         FileStream WaitForFile(string fullPath, FileMode mode, FileAccess access, FileShare share)
         {
             for (int numTries = 0; numTries < 10; numTries++)
