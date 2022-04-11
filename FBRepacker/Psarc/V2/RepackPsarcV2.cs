@@ -469,6 +469,7 @@ namespace FBRepacker.Psarc.V2
             psarcSW.WriteLine(@"<?xml version=" + @"""" + "1.0" + @"""" + @"encoding=" + @"""" + "UTF - 8" + @"""" + @"?>");
             psarcSW.WriteLine(@"<psarc>");
             psarcSW.WriteLine(@"  <create overwrite = " + @"""" + "true" + @"""" + @"archive = " + @"""" + "Output.psarc" + @"""" + ">");
+            psarcSW.WriteLine(@"    <compression type=""zlib"" level=""9"" enabled=""true"" />");
 
             foreach (var s in files)
             {

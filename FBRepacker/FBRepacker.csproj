@@ -138,7 +138,11 @@
     <Compile Include="Data\DataTypes\CosmeticProperties.cs" />
     <Compile Include="Data\DataTypes\EFP.cs" />
     <Compile Include="Data\DataTypes\Hit.cs" />
+    <Compile Include="Data\DataTypes\Hitbox_Properties.cs" />
     <Compile Include="Data\DataTypes\LMB.cs" />
+    <Compile Include="Data\DataTypes\Map_List.cs" />
+    <Compile Include="Data\DataTypes\Model_Effects.cs" />
+    <Compile Include="Data\DataTypes\Model_List.cs" />
     <Compile Include="Data\DataTypes\NTXB.cs" />
     <Compile Include="Data\DataTypes\Projectile_Properties.cs" />
     <Compile Include="Data\DataTypes\Reload.cs" />
@@ -149,10 +153,15 @@
     <Compile Include="Data\FB_Parse\DataTypes\Series_Info_List.cs" />
     <Compile Include="Data\FB_Parse\DataTypes\Unit_Files_List.cs" />
     <Compile Include="Data\FB_Parse\DataTypes\Unit_Info_List.cs" />
+    <Compile Include="Data\FB_Parse\Parse_Hitbox_Properties.cs" />
+    <Compile Include="Data\FB_Parse\Parse_Map_List.cs" />
+    <Compile Include="Data\FB_Parse\Parse_Model_Effects.cs" />
+    <Compile Include="Data\FB_Parse\Parse_Model_List.cs" />
     <Compile Include="Data\FB_Parse\Parse_Series_Info.cs" />
     <Compile Include="Data\FB_Parse\Parse_Unit_Files_List.cs" />
     <Compile Include="Data\FB_Parse\Parse_Unit_Info_List.cs" />
     <Compile Include="Data\Generate_Script_B4AC.cs" />
+    <Compile Include="Data\MBON_Parse\GenerateSpritePACInfo.cs" />
     <Compile Include="Data\ModifyUnitScript.cs" />
     <Compile Include="Data\MBON_Parse\GenerateAudioPACInfo.cs" />
     <Compile Include="Data\MBON_Parse\MBON_Image_List.cs" />
@@ -167,7 +176,7 @@
     <Compile Include="Data\MBON_Parse\Parse_Reload.cs" />
     <Compile Include="Data\ParseEFP.cs" />
     <Compile Include="Data\Parse_NTXB.cs" />
-    <Compile Include="Data\Reverse32ByteEndian.cs" />
+    <Compile Include="Tools\Reverse32ByteEndian.cs" />
     <Compile Include="Data\UI\Hit\HitEdit.xaml.cs">
       <DependentUpon>HitEdit.xaml</DependentUpon>
     </Compile>
@@ -239,7 +248,7 @@
     <Compile Include="PAC\Extract\FileTypes\STREAM.cs" />
     <Compile Include="SimpleHelpers\FileEncoding.cs" />
     <Compile Include="SimpleHelpers\FileUtil.cs" />
-    <Compile Include="Tools\BlankTemplate.cs" />
+    <Compile Include="Tools\resizeMBONLMB.cs" />
     <Compile Include="Tools\MBONExport.cs" />
     <Compile Include="Tools\recompilescript.cs" />
     <Compile Include="Tools\ReimportAllMBON.cs" />

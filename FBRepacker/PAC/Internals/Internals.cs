@@ -1006,6 +1006,21 @@ namespace FBRepacker.PAC
         /// <param name="memStream">the memory stream to append</param>
         /// <param name="str">the string to append</param>
         /// <param name="encoding">specify the encoding used to encode the string (If unsure use Encoding.Default)</param>
+        /// <param name="endwithnull">true = pad a null character to the end of string</param>
+        protected void appendStringMemoryStream(MemoryStream memStream, string str, Encoding encoding, bool endwithnull)
+        {
+            byte[] tempBuffer = encoding.GetBytes(str);
+            memStream.Write(tempBuffer, 0, tempBuffer.Length);
+            if(endwithnull)
+                memStream.WriteByte(0);
+        }
+
+        /// <summary>
+        /// appending String to a memory stream
+        /// </summary>
+        /// <param name="memStream">the memory stream to append</param>
+        /// <param name="str">the string to append</param>
+        /// <param name="encoding">specify the encoding used to encode the string (If unsure use Encoding.Default)</param>
         /// <param name="size">byte array required size, will pad with 0 if short, and trunc if larger</param>
         protected void appendStringMemoryStream(MemoryStream memStream, string str, Encoding encoding, int size)
         {
@@ -1398,7 +1413,7 @@ namespace FBRepacker.PAC
             {
                 G7221Encoder.StartInfo.UseShellExecute = false;
                 G7221Encoder.StartInfo.FileName = G7221EncoderPath + "encode.exe";
-                G7221Encoder.StartInfo.CreateNoWindow = false;
+                G7221Encoder.StartInfo.CreateNoWindow = true;
                 G7221Encoder.StartInfo.WorkingDirectory = G7221EncoderPath;
                 G7221Encoder.StartInfo.RedirectStandardOutput = true;
                 G7221Encoder.StartInfo.Arguments = "0 input.wav output.bnsf " + sampleRate.ToString() + " " + bandwidth.ToString();
@@ -1624,7 +1639,7 @@ namespace FBRepacker.PAC
         public void compileMSC(string inputpath, string outputpath)
         {
             ProcessStartInfo startInfo = new ProcessStartInfo();
-            startInfo.CreateNoWindow = false;
+            startInfo.CreateNoWindow = true;
             startInfo.UseShellExecute = false;
             startInfo.RedirectStandardOutput = true;
             startInfo.FileName = Directory.GetCurrentDirectory() + @"\3rd Party\msclang\msclang.exe";
@@ -1685,21 +1700,21 @@ namespace FBRepacker.PAC
         /// <param name="generate_mipmaps"></param>
         /// <param name="width">target resolution in pixels</param>
         /// <param name="height">target resolution in pixels</param>
-        public void resize_dds_precise(string inputpath, string outputpath, int compression_type, bool generate_mipmaps, int width, int height)
+        public void scale_dds_precise(string inputpath, string outputpath, int compression_type, bool generate_mipmaps, int width, int height)
         {
-            if (File.Exists(inputpath))
+            if (!File.Exists(inputpath))
                 throw new Exception();
 
             File.Copy(inputpath, Directory.GetCurrentDirectory() + @"\3rd Party\GIMP\input.dds", true);
 
             ProcessStartInfo startInfo = new ProcessStartInfo();
-            startInfo.CreateNoWindow = false;
+            startInfo.CreateNoWindow = true;
             startInfo.UseShellExecute = false;
             startInfo.RedirectStandardOutput = true;
             startInfo.FileName = Directory.GetCurrentDirectory() + @"\3rd Party\GIMP\gimp.exe";
             startInfo.WindowStyle = ProcessWindowStyle.Normal;
             //startInfo.RedirectStandardOutput = true;
-            startInfo.Arguments = "gimp - idf--batch - interpreter python - fu - eval - b" + @"""" + "import sys;sys.path=['.']+sys.path;import resize;resize.scale_precise('input.dds', " + compression_type + ", " + generate_mipmaps + ", " + width + ", " + height + ")" + @"""" + "- b" + @"""" + "pdb.gimp_quit(1)" + @"""";
+            startInfo.Arguments = "-idf --batch-interpreter python-fu-eval -b " + @"""" + @"import sys;sys.path=[" + @"'" + (Directory.GetCurrentDirectory() + @"\3rd Party\GIMP\").Replace(@"\", @"\\") + @"'" + "]+sys.path;import resize;resize.scale_precise(" + @"'" + (Directory.GetCurrentDirectory() + @"\3rd Party\GIMP\input.dds").Replace(@"\", @"\\") + @"'" + ", " + compression_type + ", " + generate_mipmaps + ", " + width + ", " + height + ")" + @"""" + " -b " + @"""" + "pdb.gimp_quit(1)" + @"""";
 
             try
             {
@@ -1716,6 +1731,166 @@ namespace FBRepacker.PAC
                 // Log error.
                 throw new Exception();
             }
+
+            if (!File.Exists(Directory.GetCurrentDirectory() + @"\3rd Party\GIMP\input_export.dds"))
+                throw new Exception();
+
+            File.Copy(Directory.GetCurrentDirectory() + @"\3rd Party\GIMP\input_export.dds", outputpath, true);
+        }
+
+        public void resize_dds_canvas(string inputpath, string outputpath, int compression_type, bool generate_mipmaps, int width, int height, int offset_x, int offset_y)
+        {
+            if (!File.Exists(inputpath))
+                throw new Exception();
+
+            File.Copy(inputpath, Directory.GetCurrentDirectory() + @"\3rd Party\GIMP\input.dds", true);
+
+            ProcessStartInfo startInfo = new ProcessStartInfo();
+            startInfo.CreateNoWindow = true;
+            startInfo.UseShellExecute = false;
+            startInfo.RedirectStandardOutput = true;
+            startInfo.FileName = Directory.GetCurrentDirectory() + @"\3rd Party\GIMP\gimp.exe";
+            startInfo.WindowStyle = ProcessWindowStyle.Normal;
+            //startInfo.RedirectStandardOutput = true;
+            startInfo.Arguments = "gimp -idf --batch-interpreter python-fu-eval -b " + @"""" + "import sys;sys.path=[" + @"'" + (Directory.GetCurrentDirectory() + @"\3rd Party\GIMP\").Replace(@"\", @"\\") + @"'" + "]+sys.path;import resize;resize.resize_canvas(" + @"'" + (Directory.GetCurrentDirectory() + @"\3rd Party\GIMP\input.dds").Replace(@"\", @"\\") + @"'" +", " + compression_type + ", " + generate_mipmaps + ", " + width + ", " + height + ", " + offset_x + ", " + offset_y + ")" + @"""" + " -b " + @"""" + "pdb.gimp_quit(1)" + @"""";
+
+            try
+            {
+                // Start the process with the info we specified.
+                // Call WaitForExit and then the using statement will close.
+                using (Process exeProcess = Process.Start(startInfo))
+                {
+                    Console.WriteLine(exeProcess.StandardOutput.ReadToEnd());
+                    exeProcess.WaitForExit();
+                }
+            }
+            catch
+            {
+                // Log error.
+                throw new Exception();
+            }
+
+            if (!File.Exists(Directory.GetCurrentDirectory() + @"\3rd Party\GIMP\input_export.dds"))
+                throw new Exception();
+
+            File.Copy(Directory.GetCurrentDirectory() + @"\3rd Party\GIMP\input_export.dds", outputpath, true);
+        }
+
+        public void flip_dds(string inputpath, string outputpath, int compression_type, bool generate_mipmaps)
+        {
+            if (!File.Exists(inputpath))
+                throw new Exception();
+
+            File.Copy(inputpath, Directory.GetCurrentDirectory() + @"\3rd Party\GIMP\input.dds", true);
+
+            ProcessStartInfo startInfo = new ProcessStartInfo();
+            startInfo.CreateNoWindow = true;
+            startInfo.UseShellExecute = false;
+            startInfo.RedirectStandardOutput = true;
+            startInfo.FileName = Directory.GetCurrentDirectory() + @"\3rd Party\GIMP\gimp.exe";
+            startInfo.WindowStyle = ProcessWindowStyle.Normal;
+            //startInfo.RedirectStandardOutput = true;
+            startInfo.Arguments = "gimp -idf --batch-interpreter python-fu-eval -b " + @"""" + "import sys;sys.path=[" + @"'" + (Directory.GetCurrentDirectory() + @"\3rd Party\GIMP\").Replace(@"\", @"\\") + @"'" + "]+sys.path;import resize;resize.flip_image(" + @"'" + (Directory.GetCurrentDirectory() + @"\3rd Party\GIMP\input.dds").Replace(@"\", @"\\") + @"'" + ", " + compression_type + ", " + generate_mipmaps + ")" + @"""" + " -b " + @"""" + "pdb.gimp_quit(1)" + @"""";
+
+            try
+            {
+                // Start the process with the info we specified.
+                // Call WaitForExit and then the using statement will close.
+                using (Process exeProcess = Process.Start(startInfo))
+                {
+                    Console.WriteLine(exeProcess.StandardOutput.ReadToEnd());
+                    exeProcess.WaitForExit();
+                }
+            }
+            catch
+            {
+                // Log error.
+                throw new Exception();
+            }
+
+            if (!File.Exists(Directory.GetCurrentDirectory() + @"\3rd Party\GIMP\input_export.dds"))
+                throw new Exception();
+
+            File.Copy(Directory.GetCurrentDirectory() + @"\3rd Party\GIMP\input_export.dds", outputpath, true);
+        }
+
+        public void save_dds(string inputpath, string outputpath, int compression_type, bool generate_mipmaps)
+        {
+            if (!File.Exists(inputpath))
+                throw new Exception();
+
+            File.Copy(inputpath, Directory.GetCurrentDirectory() + @"\3rd Party\GIMP\input.dds", true);
+
+            ProcessStartInfo startInfo = new ProcessStartInfo();
+            startInfo.CreateNoWindow = true;
+            startInfo.UseShellExecute = false;
+            startInfo.RedirectStandardOutput = true;
+            startInfo.FileName = Directory.GetCurrentDirectory() + @"\3rd Party\GIMP\gimp.exe";
+            startInfo.WindowStyle = ProcessWindowStyle.Normal;
+            //startInfo.RedirectStandardOutput = true;
+            startInfo.Arguments = "gimp -idf --batch-interpreter python-fu-eval -b " + @"""" + "import sys;sys.path=[" + @"'" + (Directory.GetCurrentDirectory() + @"\3rd Party\GIMP\").Replace(@"\", @"\\") + @"'" + "]+sys.path;import resize;resize.save_dds(" + @"'" + (Directory.GetCurrentDirectory() + @"\3rd Party\GIMP\input.dds").Replace(@"\", @"\\") + @"'" + ", " + compression_type + ", " + generate_mipmaps + ")" + @"""" + " -b " + @"""" + "pdb.gimp_quit(1)" + @"""";
+
+            try
+            {
+                // Start the process with the info we specified.
+                // Call WaitForExit and then the using statement will close.
+                using (Process exeProcess = Process.Start(startInfo))
+                {
+                    Console.WriteLine(exeProcess.StandardOutput.ReadToEnd());
+                    exeProcess.WaitForExit();
+                }
+            }
+            catch
+            {
+                // Log error.
+                throw new Exception();
+            }
+
+            if (!File.Exists(Directory.GetCurrentDirectory() + @"\3rd Party\GIMP\input_export.dds"))
+                throw new Exception();
+
+            File.Copy(Directory.GetCurrentDirectory() + @"\3rd Party\GIMP\input_export.dds", outputpath, true);
+        }
+
+        public void selection_sprite_macro(string xcf_path, string copy_image, string outputpath, int compression_type, bool generate_mipmaps)
+        {
+            if (!File.Exists(xcf_path))
+                throw new Exception();
+
+            if (!File.Exists(copy_image))
+                throw new Exception();
+
+            File.Copy(copy_image, Directory.GetCurrentDirectory() + @"\3rd Party\GIMP\input.dds", true);
+
+            ProcessStartInfo startInfo = new ProcessStartInfo();
+            startInfo.CreateNoWindow = true;
+            startInfo.UseShellExecute = false;
+            startInfo.RedirectStandardOutput = true;
+            startInfo.FileName = Directory.GetCurrentDirectory() + @"\3rd Party\GIMP\gimp.exe";
+            startInfo.WindowStyle = ProcessWindowStyle.Normal;
+            //startInfo.RedirectStandardOutput = true;
+            startInfo.Arguments = "gimp -idf --batch-interpreter python-fu-eval -b " + @"""" + "import sys;sys.path=[" + @"'" + (Directory.GetCurrentDirectory() + @"\3rd Party\GIMP\").Replace(@"\", @"\\") + @"'" + "]+sys.path;import resize;resize.selection_sprite_macro(" + @"'" + xcf_path.Replace(@"\", @"\\") + @"', '" + (Directory.GetCurrentDirectory() + @"\3rd Party\GIMP\input.dds").Replace(@"\", @"\\") + @"', " + compression_type + ", " + generate_mipmaps + ")" + @"""" + " -b " + @"""" + "pdb.gimp_quit(1)" + @"""";
+
+            try
+            {
+                // Start the process with the info we specified.
+                // Call WaitForExit and then the using statement will close.
+                using (Process exeProcess = Process.Start(startInfo))
+                {
+                    Console.WriteLine(exeProcess.StandardOutput.ReadToEnd());
+                    exeProcess.WaitForExit();
+                }
+            }
+            catch
+            {
+                // Log error.
+                throw new Exception();
+            }
+
+            if (!File.Exists(Directory.GetCurrentDirectory() + @"\3rd Party\GIMP\input_export.dds"))
+                throw new Exception();
+
+            File.Copy(Directory.GetCurrentDirectory() + @"\3rd Party\GIMP\input_export.dds", outputpath, true);
         }
 
         FileStream WaitForFile(string fullPath, FileMode mode, FileAccess access, FileShare share)

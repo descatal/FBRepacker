@@ -39,11 +39,6 @@ namespace FBRepacker.Tools
                 string reimportFilestoRepack = XBReimportFolder + @"\" + unitFolderName + @"\" + "Files to Repack";
                 string reimportRepackedFiles = XBReimportFolder + @"\" + unitFolderName + @"\" + "Repacked Files";
 
-                Directory.CreateDirectory(reimportFolder);
-                Directory.CreateDirectory(reimportConvertedfromMBONFolder);
-                Directory.CreateDirectory(reimportFilestoRepack);
-                Directory.CreateDirectory(reimportRepackedFiles);
-
                 Match unitNoMatch = Regex.Match(unitFolder, @"([0-9]{1,100}). ");
                 string unitNoStr = unitNoMatch.Groups[0].Captures[0].Value;
                 uint.TryParse(unitNoStr, out uint unitNo);
@@ -56,8 +51,13 @@ namespace FBRepacker.Tools
                 uint unit_ID = Convert.ToUInt32(unit_ID_str);
                 Unit_Files_List unit_Files = unit_Files_List.FirstOrDefault(x => x.Unit_ID == unit_ID);
 
-                if (unit_ID < 59900 && unit_Files != null && !unit_Files.MBONAdded && unit_ID == 13921)
+                if (unit_ID < 59900 && unit_Files != null && unit_ID == 16111)
                 {
+                    Directory.CreateDirectory(reimportFolder);
+                    Directory.CreateDirectory(reimportConvertedfromMBONFolder);
+                    Directory.CreateDirectory(reimportFilestoRepack);
+                    Directory.CreateDirectory(reimportRepackedFiles);
+
                     List<string> script1Folder = Directory.GetDirectories(extractMBONFolder, "*", SearchOption.TopDirectoryOnly).ToList();
                     script1Folder = script1Folder.Where(x => x.Contains("Script 1")).ToList();
                     if (script1Folder.Count() == 0 || script1Folder.Count() > 0x1)
@@ -176,7 +176,16 @@ namespace FBRepacker.Tools
             vardataFS.Close();
 
             FileStream fs003 = File.Create(data_001FHM_path + @"\003.bin");
+            string customHitboxBinaryFS = reimportConvertedfromMBONFolder + @"\Hitbox_Properties\Hitbox_Properties.bin";
+
             FileStream MBON003FS = File.OpenRead(data + @"\001-FHM\003.bin");
+
+            if (File.Exists(customHitboxBinaryFS))
+            {
+                MBON003FS.Close();
+                MBON003FS = File.OpenRead(customHitboxBinaryFS);
+            }
+
             MBON003FS.Seek(0, SeekOrigin.Begin);
             MBON003FS.CopyTo(fs003);
             fs003.Close();
@@ -184,6 +193,15 @@ namespace FBRepacker.Tools
 
             FileStream fs005 = File.Create(data_001FHM_path + @"\005.bin");
             FileStream MBON005FS = File.OpenRead(data + @"\001-FHM\005.bin");
+
+            string customMobilityBinaryFS = reimportConvertedfromMBONFolder + @"\Mobility_Properties\Mobility_Properties.bin";
+
+            if (File.Exists(customMobilityBinaryFS))
+            {
+                MBON005FS.Close();
+                MBON005FS = File.OpenRead(customMobilityBinaryFS);
+            }
+
             MBON005FS.Seek(0, SeekOrigin.Begin);
             MBON005FS.CopyTo(fs005);
             fs005.Close();
@@ -209,12 +227,13 @@ namespace FBRepacker.Tools
             repackInstance.parseInfo();
             repackInstance.repackPAC();
 
-
+            /*
             // Get unit's english name
             UnitIDList unit_Infos = load_UnitID();
             string unitName = unit_Infos.Unit_ID.FirstOrDefault(s => s.id == unit_Files.Unit_ID).name_english.Replace(" ", "_");
             unitName = unitName.Replace(".", "_");
             unitName = unitName.Replace("∀", "Turn_A");
+            unitName = unitName.Replace("ä", "a");
 
             string basePsarcRepackFolder = XBCombinedPsarcFolder + @"\Units\FB_Units\" + unitName;
             string[] allRepackedPACs = Directory.GetFiles(reimportRepackedFiles, "*", SearchOption.TopDirectoryOnly);
@@ -233,6 +252,7 @@ namespace FBRepacker.Tools
             dataFS.Close();
 
             newDataFS.Close();
+            */
         }
     }
 }

@@ -354,6 +354,7 @@ namespace FBRepacker.Data.FB_Parse
 
                 InfoMS.WriteByte(unit_Info_List.unk_0x70);
                 InfoMS.WriteByte(unit_Info_List.figurine_sprite_index);
+
                 appendUShortMemoryStream(InfoMS, unit_Info_List.unk_0x72, true);
 
                 appendUIntMemoryStream(InfoMS, unit_Info_List.figurine_sprite_hash, true);

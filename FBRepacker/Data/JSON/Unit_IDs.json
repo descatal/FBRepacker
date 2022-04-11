@@ -176,7 +176,7 @@
     },
     {
       "id": 3131,
-      "name_english": "Qubeley Mk-II （Puru)",
+      "name_english": "Qubeley Mk-II (Puru)",
       "name_japanese": "キュベレイMk-Ⅱ(プル)",
       "name_chinese": "卡碧尼Mk-II (普露)"
     },
@@ -314,7 +314,7 @@
     },
     {
       "id": 12041,
-      "name_english": "Kämpfer",
+      "name_english": "Kampfer",
       "name_japanese": "ケンプファー",
       "name_chinese": "京宝梵"
     },
@@ -1598,27 +1598,27 @@
     },
     {
       "id": 80021,
+      "name_english": "Divinidad",
+      "name_japanese": "エクストリームTp",
+      "name_chinese": "迪比尼达德 (海盗 BOSS 马甲) "
+    },
+    {
+      "id": 80031,
       "name_english": "Extreme Gundam Carnage Phase",
       "name_japanese": "ディビニだド",
       "name_chinese": "极限高达屠杀形态"
     },
     {
-      "id": 80031,
+      "id": 80032,
       "name_english": "Extreme Gundam Ignith Phase",
       "name_japanese": "エクストリームCp",
       "name_chinese": "极限高达红莲形态  "
     },
     {
-      "id": 80032,
+      "id": 80033,
       "name_english": "Extreme Gundam Tachyon Phase",
       "name_japanese": "エクストリームIp",
       "name_chinese": "极限高达讯子形态"
-    },
-    {
-      "id": 80033,
-      "name_english": "Divinidad",
-      "name_japanese": "エクストリームTp",
-      "name_chinese": "迪比尼达德 (海盗 BOSS 马甲) "
     },
     {
       "id": 80041,
@@ -1754,9 +1754,9 @@
     },
     {
       "id": 80301,
-      "name_english": "Extreme Gundam Mk-Ⅱ AXE",
-      "name_japanese": "エクストリームMk-Ⅱ AXE",
-      "name_chinese": "极限高达MK-Ⅱ AXE"
+      "name_english": "Extreme Gundam Mk-II AXE",
+      "name_japanese": "エクストリームMk-II AXE",
+      "name_chinese": "极限高达MK-II AXE"
     },
     {
       "id": 80311,

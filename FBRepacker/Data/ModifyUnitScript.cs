@@ -425,7 +425,8 @@ void raging_Burst_Check()
         // global51 & 0x2 = Melee
         // global103 < 0x2 = Melee before slash
         // ragingMeleeFlag = 1 for func_459 melee template (so that moves like pin melee or special movement does not trigger SA)
-        if ((global19 & 0x3) != 0 && ((global51 & 0x1 && ragingShootFlag == 0) || (global51 & 0x2 && global103 <= 0x2 && ragingMeleeFlag == 0x1 && global218 != 0)))
+        // (global561 != 0x2 && global561 != 0x3 && global561 != 0x65) this is taken from approach melee global380 = 0x1, but added 0x65 as this is the identifier for side BC movment type 
+        if ((global19 & 0x3) != 0 && ((global51 & 0x1 && ragingShootFlag == 0) || (global51 & 0x2 && global103 <= 0x2 && ragingMeleeFlag == 0x1 && global218 != 0 && (global561 != 0x2 && global561 != 0x3 && global561 != 0x65))))
         {
             // global97 = the ultimate flag for filtering out moves that should have SA effect.
             // For cases where it has special movements, it will write 1 at init, and turn to 0.
@@ -456,7 +457,7 @@ void raging_Burst_Check()
     }
     if (ragingEffectFlag > 0)
     {
-        if ((global51 & 0x1 && ragingShootFlag == 0x1) || (global51 & 0x2 && global103 > 0x2) || global103 == 0 || global130 != 0 || global17 == 1)
+        if ((global51 & 0x1 && ragingShootFlag == 0x1) || (global51 & 0x2 && global103 > 0x2) || global103 == 0 || global130 != 0 || global17 == 1 || global67 != 0x2)
         {
             sys_35(0x3, 0xc, 0, 0x1);
             ragingEffectFlag = 0;
@@ -665,7 +666,7 @@ void write_Weapon_Type_Enum()
                 throw new Exception("Invalid B4AC Count!");
 
             // for new script
-            if (B4ACCount > 1)
+            if (B4ACCount > 3)
             {
                 // Search for sys_74(0x8, 0)'s second func
                 string inputFunc1 = Regex.Match(CS,
@@ -788,7 +789,24 @@ void assign_B4AC_Weapon_Inputs(int arg0)
     {
         var8 = 0x1 << var2 % 0x64; // Equivalent to old script's global81
     }
-    sys_74(0x1, arg0, var8, var5, assign_B4AC_Weapon_Inputs_Support(var2, var3, sys_2C(0x3, 0x11 + arg0 - 0x1, 0x9), sys_2C(0x3, 0x11 + arg0 - 0x1, 0xa)), var2 / 0x64 + 0x1, sys_2C(0x3, 0x11 + arg0 - 0x1, 0x1), sys_2C(0x3, 0x11 + arg0 - 0x1, 0x5), sys_2C(0x3, 0x11 + arg0 - 0x1, 0x6), var6, sys_2C(0x3, 0x11 + arg0 - 0x1, 0x7), sys_2C(0x3, 0x11 + arg0 - 0x1, 0x2e), var1 == 0x17, var4, var7);
+    sys_74(
+        0x1, 
+        arg0, 
+        var8, 
+        var5, 
+        assign_B4AC_Weapon_Inputs_Support(var2, var3, sys_2C(0x3, 0x11 + arg0 - 0x1, 0x9), sys_2C(0x3, 0x11 + arg0 - 0x1, 0xa)), 
+        var2 / 0x64 + 0x1, 
+        sys_2C(0x3, 0x11 + arg0 - 0x1, 0x1), 
+        sys_2C(0x3, 0x11 + arg0 - 0x1, 0x5), 
+        sys_2C(0x3, 0x11 + arg0 - 0x1, 0x6), 
+        var6, 
+        sys_2C(0x3, 0x11 + arg0 - 0x1, 0x7), 
+        sys_2C(0x3, 0x11 + arg0 - 0x1, 0x2e), 
+        var1 == 0x17, 
+        var4, 
+        var7,
+        sys_2C(0x3, 0x11 + arg0 - 0x1, 0x42)
+    );
 }
 
 /// <summary>
@@ -836,7 +854,7 @@ void input()
 
     // sys_74(0x3, global81 ...) -> return nth data set that uses this input.
     // For some reason this syscall ignores everything behind global81.
-    var7 = sys_74(0x3, global81, global25, global306, (global19 & 0x1000000) != 0, global139 != 0, (global19 & 0x3) != 0, global81 & 0x40, var6, global157, (global19 & 0x4000) != 0, func_246());
+    var7 = sys_74(0x3, global81, global25, global306, (global19 & 0x1000000) != 0, global139 != 0, (global19 & 0x3) != 0, global81 & 0x40, var6, global157, (global19 & 0x4000) != 0, func_246(), sys_0(0x30000));
 
     if (var7) // If data set index is not 0.
     {
@@ -1138,24 +1156,40 @@ int input_Supp_3(int arg0)
     // Note this func, add input_supp reset "
             );
 
-            // func_1 (to fix the blur bug):
+            // func_1 (that is related to blur bug):
             CS = CS.Replace(
 
-            @"sys_1(0xf0009, global12, global13, global14);",
+            @"sys_1(0xf0009, ",
 
             @"    
     // FB Change:
-    // This will cause to have weird camera effect on respawn after using S Burst shoot
-    // global14 stores the cancel route from S Burst, not sure why it is used here.
-    // if we make it 0 then it will not cause the bug.
-    // sys_1(0xf009 is not found in original FB
-    // sys_1(0xf0009, global12, global13, global14);
-    sys_1(0xf0009, global12, global13, 0);
-    "
+    // FB only has options up until 0xf0006
+    // sys_1(0xf0009, "
+            );
+
+            CS = CS.Replace(
+
+            @"sys_1(0xf0008, ",
+
+            @"    
+    // FB Change:
+    // FB only has options up until 0xf0006
+    // sys_1(0xf0008, "
+            );
+
+            // the blur bug
+            CS = CS.Replace(
+
+            @"sys_1(0x110001, ",
+
+            @"    
+        // FB Change:
+        // This will cause blur on death
+        // sys_1(0x110001, "
             );
 
             // inputs
-            if(isNewScript)
+            if (isNewScript)
             {
                 CS = Regex.Replace(CS, @"(\s+global81 = func_184[(]global22[)];(\r\n|\r|\n)+\s+global76 = 0;)(\r\n|\r|\n)+\s+(.*)",
             @"        
@@ -1346,6 +1380,26 @@ int input_Supp_3(int arg0)
             @"    // FB Change
     // sys_1(0xe0038, 0);"
             );
+
+            // func_226, responsible for making permanent shield with ammo count (e.g. Dynammes, Deathscythe hell EW)
+            CS = CS.Replace(
+
+            @"void func_226(int arg0, int arg1, int arg2, int arg3)
+{
+    sys_23(arg0, arg1, arg2, arg3);
+    global69 = 0x1;
+}",
+
+            @"void func_226(int arg0, int arg1)
+{
+    // arg0 = nth ammo index
+    sys_23(arg0, arg1); // FB only accepts 2 args
+    global69 = 0x1;
+}"
+            );
+
+            // change the function call itself
+            CS = Regex.Replace(CS, @"func_226[(](.+?(?=,))(.+?(?=,))(.+?(?=,))(.+?(?=[)]))[)];", @"func_226($1$2);");
 
             // EX Burst Gauge reduce cancel
             CS = CS.Replace(
@@ -1872,6 +1926,12 @@ void func_" + linkdandefuncplus3int + @"()
 
             // Melee use ammo
             CS = Regex.Replace(CS, @"sys_28[(](0x[a-fA-F0-9]{1,100}), 0, 0x1[)];",
+            @"  ");
+
+            CS = Regex.Replace(CS, @"sys_28[(](0x[a-fA-F0-9]{1,100}), 0, ([\S]{0,500})[)];",
+            @"sys_28($1, 0x1184a19f);");
+
+            CS = Regex.Replace(CS, @"sys_28[(]([\w]{0,500})[,] 0[,] ([\w]{0,500})[)];",
             @"sys_28($1, 0x1184a19f);");
 
             //----------------------------------------------------- Ammo --------------------------------------------------------
@@ -1907,3 +1967,62 @@ void func_" + linkdandefuncplus3int + @"()
         }
     }
 }
+
+
+/*
+ * 
+ * void raging_Burst_Check()
+{
+    // FB Change: 
+    // Add superarmor for Raging Burst
+    // global103 = to make sure it only works on startup
+    // global130 == 0. Taken from func_264. global130 will not be 1 for cases where hasei is done
+    // global17 == 1. If it is EX Burst Attack (if disable actions flag)
+    if (awakenType == 0x4 && (global139 == 1 || global139 == 2) && global103 > 0 && global130 == 0 && global17 != 1)
+    {
+        // global51 & 0x1 = Shooting
+        // ragingShootFlag is derived from func_266 and func_267 where it checks for cancel route of shooting weapons during burst
+        // once the projectile is shot, ragingShootFlag will be 1, thus ending the SA
+        // global51 & 0x2 = Melee
+        // global103 < 0x2 = Melee before slash
+        // ragingMeleeFlag = 1 for func_459 melee template (so that moves like pin melee or special movement does not trigger SA)
+        if ((global19 & 0x3) != 0 && ((global51 & 0x1 && ragingShootFlag == 0) || (global51 & 0x2 && global103 <= 0x2 && ragingMeleeFlag == 0x1 && global218 != 0)))
+        {
+            // global97 = the ultimate flag for filtering out moves that should have SA effect.
+            // For cases where it has special movements, it will write 1 at init, and turn to 0.
+            // Hence, we need to check if the 1 is still there, or it becomes 0.
+            // Normal melee approach that is raging burst SA worthy has flag of 1.
+            if (global97 == 1)
+            {
+                ragingMeleeContiniousFlag++; // Increment the flag
+            }
+            // If the weapon is shooting, just proceed.
+            // If the weapon is Melee, the increment flag must be > than 1.
+            if (global51 & 0x1 || ragingMeleeContiniousFlag >= 0x1)
+            {
+                global67 = 0x2;
+                if (ragingEffectFlag == 0)
+                {
+                    sys_6(0xD7732CE4, global212, 0x1, 0x3, 0xC);
+                    global241 = global212;
+                    ragingEffectFlag++;
+                }
+            }
+        }
+    }
+    // If it ever changes to 0, the flag is resetted to 0.
+    if (global97 == 0)
+    {
+        ragingMeleeContiniousFlag = 0;
+    }
+    if (ragingEffectFlag > 0)
+    {
+        if ((global51 & 0x1 && ragingShootFlag == 0x1) || (global51 & 0x2 && global103 > 0x2) || global103 == 0 || global130 != 0 || global17 == 1)
+        {
+            sys_35(0x3, 0xc, 0, 0x1);
+            ragingEffectFlag = 0;
+        }
+    }
+}
+ * 
+*/

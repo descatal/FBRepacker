@@ -12,7 +12,7 @@ namespace FBRepacker.Properties {
     
     
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
-    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.VisualStudio.Editors.SettingsDesigner.SettingsSingleFileGenerator", "17.0.3.0")]
+    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.VisualStudio.Editors.SettingsDesigner.SettingsSingleFileGenerator", "17.1.0.0")]
     internal sealed partial class Settings : global::System.Configuration.ApplicationSettingsBase {
         
         private static Settings defaultInstance = ((Settings)(global::System.Configuration.ApplicationSettingsBase.Synchronized(new Settings())));
@@ -1208,6 +1208,186 @@ namespace FBRepacker.Properties {
             }
             set {
                 this["allSeriesInfoListInputMBON"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool exportCustomUnitList {
+            get {
+                return ((bool)(this["exportCustomUnitList"]));
+            }
+            set {
+                this["exportCustomUnitList"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("C:\\")]
+        public string inputModelEffectsBinaryPath {
+            get {
+                return ((string)(this["inputModelEffectsBinaryPath"]));
+            }
+            set {
+                this["inputModelEffectsBinaryPath"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("C:\\")]
+        public string outputModelEffectsJSONPath {
+            get {
+                return ((string)(this["outputModelEffectsJSONPath"]));
+            }
+            set {
+                this["outputModelEffectsJSONPath"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("C:\\")]
+        public string inputModelEffectsJSONPath {
+            get {
+                return ((string)(this["inputModelEffectsJSONPath"]));
+            }
+            set {
+                this["inputModelEffectsJSONPath"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("C:\\")]
+        public string outputModelEffectsBinaryPath {
+            get {
+                return ((string)(this["outputModelEffectsBinaryPath"]));
+            }
+            set {
+                this["outputModelEffectsBinaryPath"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("C:\\")]
+        public string inputHitboxPropertiesBinaryPath {
+            get {
+                return ((string)(this["inputHitboxPropertiesBinaryPath"]));
+            }
+            set {
+                this["inputHitboxPropertiesBinaryPath"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("C:\\")]
+        public string outputHitboxPropertiesJSONPath {
+            get {
+                return ((string)(this["outputHitboxPropertiesJSONPath"]));
+            }
+            set {
+                this["outputHitboxPropertiesJSONPath"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("C:\\")]
+        public string inputHitboxPropertiesJSONPath {
+            get {
+                return ((string)(this["inputHitboxPropertiesJSONPath"]));
+            }
+            set {
+                this["inputHitboxPropertiesJSONPath"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("C:\\")]
+        public string outputHitboxPropertiesBinaryPath {
+            get {
+                return ((string)(this["outputHitboxPropertiesBinaryPath"]));
+            }
+            set {
+                this["outputHitboxPropertiesBinaryPath"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("C:\\")]
+        public string inputMapListBinaryPath {
+            get {
+                return ((string)(this["inputMapListBinaryPath"]));
+            }
+            set {
+                this["inputMapListBinaryPath"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("C:\\")]
+        public string outputMapListJSONPath {
+            get {
+                return ((string)(this["outputMapListJSONPath"]));
+            }
+            set {
+                this["outputMapListJSONPath"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("C:\\")]
+        public string inputMapListJSONPath {
+            get {
+                return ((string)(this["inputMapListJSONPath"]));
+            }
+            set {
+                this["inputMapListJSONPath"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("C:\\")]
+        public string outputMapListBinaryPath {
+            get {
+                return ((string)(this["outputMapListBinaryPath"]));
+            }
+            set {
+                this["outputMapListBinaryPath"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("C:\\")]
+        public string inputResizeLMBBinaryPath {
+            get {
+                return ((string)(this["inputResizeLMBBinaryPath"]));
+            }
+            set {
+                this["inputResizeLMBBinaryPath"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("C:\\")]
+        public string outputResizeLMBBinaryPath {
+            get {
+                return ((string)(this["outputResizeLMBBinaryPath"]));
+            }
+            set {
+                this["outputResizeLMBBinaryPath"] = value;
             }
         }
     }

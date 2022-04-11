@@ -22,12 +22,13 @@ namespace FBRepacker.Tools
     internal class ReimportAllMBON : Internals
     {
         //new Parse_Unit_Data().readVariables();
-        string totalMBONExportFolder = @"D:\Games\PS3\EXVSFB JPN\Pkg research\FB Repacker\Repack\PAC\Input\MBON Reimport Project\Total MBON Export";
-        string totalMBONScriptFolder = @"D:\Games\PS3\EXVSFB JPN\Pkg research\FB Repacker\Repack\PAC\Input\MBON Reimport Project\Total MBON Script";
-        string totalMBONReimportFolder = @"D:\Games\PS3\EXVSFB JPN\Pkg research\FB Repacker\Repack\PAC\Input\MBON Reimport Project\Total MBON Units";
-        string totalMBONCommonReimportFolder = @"D:\Games\PS3\EXVSFB JPN\Pkg research\FB Repacker\Repack\PAC\Input\MBON Reimport Project\Total MBON Common";
-        string totalMBONCombinedPsarcFolder = @"D:\Games\PS3\EXVSFB JPN\Pkg research\FB Repacker\Repack\PAC\Input\MBON Reimport Project\Total MBON Combined Psarc";
-        string repackTemplates = @"D:\Games\PS3\EXVSFB JPN\Pkg research\FB Repacker\Repack\PAC\Input\MBON Reimport Project\Repack Templates";
+        string MBONReimportFolder = @"\\?\" + @"D:\Games\PS3\EXVSFB JPN\Pkg research\FB Repacker\Repack\PAC\Input\MBON Reimport Project";
+        string totalMBONExportFolder = @"\\?\" + @"D:\Games\PS3\EXVSFB JPN\Pkg research\FB Repacker\Repack\PAC\Input\MBON Reimport Project\Total MBON Export";
+        string totalMBONScriptFolder = @"\\?\" + @"D:\Games\PS3\EXVSFB JPN\Pkg research\FB Repacker\Repack\PAC\Input\MBON Reimport Project\Total MBON Script";
+        string totalMBONReimportFolder = @"\\?\" + @"D:\Games\PS3\EXVSFB JPN\Pkg research\FB Repacker\Repack\PAC\Input\MBON Reimport Project\Total MBON Units";
+        string totalMBONCommonReimportFolder = @"\\?\" + @"D:\Games\PS3\EXVSFB JPN\Pkg research\FB Repacker\Repack\PAC\Input\MBON Reimport Project\Total MBON Common";
+        string totalMBONCombinedPsarcFolder = @"\\?\" + @"D:\Games\PS3\EXVSFB JPN\Pkg research\FB Repacker\Repack\PAC\Input\MBON Reimport Project\Total MBON Combined Psarc";
+        string repackTemplates = @"\\?\" + @"D:\Games\PS3\EXVSFB JPN\Pkg research\FB Repacker\Repack\PAC\Input\MBON Reimport Project\Repack Templates";
 
         public ReimportAllMBON() 
         {
@@ -47,9 +48,9 @@ namespace FBRepacker.Tools
 
             new RepackPsarcV2().exportToc(tocFileInfo);
             */
-
-            //reimportAllFB();
-            reimportImages();
+            //reimportAll_Projectile_Hit_Reload();
+            reimportAllFB();
+            //reimportImages();
         }
 
         public TOCFileInfo addNullSPRXTBL(TOCFileInfo tocFileInfo, string patch_06_00_OriginalJson)
@@ -155,7 +156,7 @@ namespace FBRepacker.Tools
                 Unit_Info_List unit_Infos = unit_Info_List.FirstOrDefault(x => x.unit_ID == unit_ID);
                 Unit_Files_List unit_Files = unit_Files_List.FirstOrDefault(x => x.Unit_ID == unit_ID);
 
-                if (unit_ID < 59900 && unit_Files != null && !already_repacked.Contains(unit_ID))
+                if (unit_Files != null && (unit_ID < 59900 || (unit_Files.MBONAdded && unit_ID > 59900)) && unit_ID == 0x46b)
                 {
                     string unitName = unit_Names.Unit_ID.FirstOrDefault(s => s.id == unit_Files.Unit_ID).name_english.Replace(" ", "_");
 
@@ -195,8 +196,6 @@ namespace FBRepacker.Tools
                     string unitImageFolder = allUnitImageFolder.FirstOrDefault(s => s.Contains(unit_ID.ToString()));
                     string pilotImageFolder = allUnitImageFolder.FirstOrDefault(s => s.Contains(unit_ID.ToString()));
 
-
-                    
                     if (unit_Files.MBONAdded)
                     {
                         MBONlog.AppendLine(@"//----------------------- " + unitName + @"-----------------------//");
@@ -214,15 +213,15 @@ namespace FBRepacker.Tools
                         uint loading_enemy_sprite_costume_1_hash = crc32.Get(Encoding.UTF8.GetBytes(loading_enemy_sprite_costume_1_str.ToLower()));
                         MBONlog.AppendLine(loading_enemy_sprite_costume_1_str + " - 0x" + loading_enemy_sprite_costume_1_hash.ToString("X8"));
 
-                        string free_battle_selection_sprite_costume_1_str = unitName + "_arcade_selection_sprite_costume_1";
+                        string free_battle_selection_sprite_costume_1_str = unitName + "_free_battle_selection_sprite_costume_1";
                         uint free_battle_selection_sprite_costume_1_hash = crc32.Get(Encoding.UTF8.GetBytes(free_battle_selection_sprite_costume_1_str.ToLower()));
                         MBONlog.AppendLine(free_battle_selection_sprite_costume_1_str + " - 0x" + free_battle_selection_sprite_costume_1_hash.ToString("X8"));
 
-                        string loading_enemy_target_unit_sprite_costume_1_str = unitName + "_arcade_selection_sprite_costume_1";
+                        string loading_enemy_target_unit_sprite_costume_1_str = unitName + "_loading_enemy_target_unit_sprite_costume_1";
                         uint loading_enemy_target_unit_sprite_costume_1_hash = crc32.Get(Encoding.UTF8.GetBytes(loading_enemy_target_unit_sprite_costume_1_str.ToLower()));
                         MBONlog.AppendLine(loading_enemy_target_unit_sprite_costume_1_str + " - 0x" + loading_enemy_target_unit_sprite_costume_1_hash.ToString("X8"));
 
-                        string loading_enemy_target_pilot_sprite_costume_1_str = unitName + "_arcade_selection_sprite_costume_1";
+                        string loading_enemy_target_pilot_sprite_costume_1_str = unitName + "_loading_enemy_target_pilot_sprite_costume_1";
                         uint loading_enemy_target_pilot_sprite_costume_1_hash = crc32.Get(Encoding.UTF8.GetBytes(loading_enemy_target_pilot_sprite_costume_1_str.ToLower()));
                         MBONlog.AppendLine(loading_enemy_target_pilot_sprite_costume_1_str + " - 0x" + loading_enemy_target_pilot_sprite_costume_1_hash.ToString("X8"));
 
@@ -258,7 +257,7 @@ namespace FBRepacker.Tools
                         new_Unit_Files.arcade_small_sprite_index = (byte)last_arcade_small_sprite_index;
                         new_Unit_Files.arcade_unit_name_sprite = (byte)last_arcade_unit_name_sprite;
                         new_Unit_Files.arcade_selection_sprite_costume_1_hash = arcade_selection_hash;
-                        new_Unit_Files.loading_ally_sprite_costume_1_hash = arcade_selection_hash;
+                        new_Unit_Files.loading_ally_sprite_costume_1_hash = loading_ally_sprite_costume_1_hash;
                         new_Unit_Files.loading_enemy_sprite_costume_1_hash = loading_enemy_sprite_costume_1_hash;
                         new_Unit_Files.free_battle_selection_sprite_costume_1_hash = free_battle_selection_sprite_costume_1_hash;
                         new_Unit_Files.loading_enemy_target_unit_sprite_costume_1_hash = loading_enemy_target_unit_sprite_costume_1_hash;
@@ -306,7 +305,7 @@ namespace FBRepacker.Tools
                 Unit_Info_List unit_Infos = unit_Info_List.FirstOrDefault(x => x.unit_ID == unit_ID);
                 Unit_Files_List unit_Files = unit_Files_List.FirstOrDefault(x => x.Unit_ID == unit_ID);
 
-                if (unit_ID > 59900 && unit_Files != null && !already_repacked.Contains(unit_ID))
+                if ((unit_ID >= 0x1388b) && unit_Files != null) // (unit_ID > 59900 && unit_ID < 0x1117b) || 
                 {
                     string unitName = unit_Names.Unit_ID.FirstOrDefault(s => s.id == unit_Files.Unit_ID).name_english.Replace(" ", "_");
 
@@ -321,6 +320,7 @@ namespace FBRepacker.Tools
                     string figurine_sprite_folder = unitFolder + @"\Extracted MBON\Figurine_Sprite";
                     string target_small_sprite_folder = unitFolder + @"\Extracted MBON\Target_Small_Sprite";
 
+                    /*
                     Directory.CreateDirectory(arcade_selection_sprite_costume_1_folder);
                     Directory.CreateDirectory(loading_ally_sprite_costume_1_folder);
                     Directory.CreateDirectory(loading_enemy_sprite_costume_1_folder);
@@ -331,6 +331,7 @@ namespace FBRepacker.Tools
                     Directory.CreateDirectory(result_small_sprite_folder);
                     Directory.CreateDirectory(figurine_sprite_folder);
                     Directory.CreateDirectory(target_small_sprite_folder);
+                    */
 
                     string reimportFolder = totalMBONReimportFolder + @"\" + unitFolderName;
                     string reimportConvertedfromMBONFolder = totalMBONReimportFolder + @"\" + unitFolderName + @"\" + "Converted from MBON";
@@ -345,94 +346,97 @@ namespace FBRepacker.Tools
                     string unitImageFolder = allUnitImageFolder.FirstOrDefault(s => s.Contains(unit_ID.ToString()));
                     string pilotImageFolder = allUnitImageFolder.FirstOrDefault(s => s.Contains(unit_ID.ToString()));
 
-                    if (unit_Files.MBONAdded)
+                    MBONlog.AppendLine(@"//----------------------- " + unitName + @"-----------------------//");
+                    // Manually add own made hashes to newly added MBON units
+                    Crc32 crc32 = new Crc32();
+                    string arcade_selection_str = unitName + "_arcade_selection_sprite_costume_1";
+                    uint arcade_selection_hash = crc32.Get(Encoding.UTF8.GetBytes(arcade_selection_str.ToLower()));
+                    MBONlog.AppendLine(arcade_selection_str + " - 0x" + arcade_selection_hash.ToString("X8"));
+
+                    string loading_ally_sprite_costume_1_str = unitName + "_loading_ally_sprite_costume_1";
+                    uint loading_ally_sprite_costume_1_hash = crc32.Get(Encoding.UTF8.GetBytes(loading_ally_sprite_costume_1_str.ToLower()));
+                    MBONlog.AppendLine(loading_ally_sprite_costume_1_str + " - 0x" + loading_ally_sprite_costume_1_hash.ToString("X8"));
+
+                    string loading_enemy_sprite_costume_1_str = unitName + "_loading_enemy_sprite_costume_1";
+                    uint loading_enemy_sprite_costume_1_hash = crc32.Get(Encoding.UTF8.GetBytes(loading_enemy_sprite_costume_1_str.ToLower()));
+                    MBONlog.AppendLine(loading_enemy_sprite_costume_1_str + " - 0x" + loading_enemy_sprite_costume_1_hash.ToString("X8"));
+
+                    string free_battle_selection_sprite_costume_1_str = unitName + "_free_battle_selection_sprite_costume_1";
+                    uint free_battle_selection_sprite_costume_1_hash = crc32.Get(Encoding.UTF8.GetBytes(free_battle_selection_sprite_costume_1_str.ToLower()));
+                    MBONlog.AppendLine(free_battle_selection_sprite_costume_1_str + " - 0x" + free_battle_selection_sprite_costume_1_hash.ToString("X8"));
+
+                    string loading_enemy_target_unit_sprite_costume_1_str = unitName + "_loading_enemy_target_unit_sprite_costume_1";
+                    uint loading_enemy_target_unit_sprite_costume_1_hash = crc32.Get(Encoding.UTF8.GetBytes(loading_enemy_target_unit_sprite_costume_1_str.ToLower()));
+                    MBONlog.AppendLine(loading_enemy_target_unit_sprite_costume_1_str + " - 0x" + loading_enemy_target_unit_sprite_costume_1_hash.ToString("X8"));
+
+                    string loading_enemy_target_pilot_sprite_costume_1_str = unitName + "_loading_enemy_target_pilot_sprite_costume_1";
+                    uint loading_enemy_target_pilot_sprite_costume_1_hash = crc32.Get(Encoding.UTF8.GetBytes(loading_enemy_target_pilot_sprite_costume_1_str.ToLower()));
+                    MBONlog.AppendLine(loading_enemy_target_pilot_sprite_costume_1_str + " - 0x" + loading_enemy_target_pilot_sprite_costume_1_hash.ToString("X8"));
+
+                    uint in_game_sortie_and_awakening_sprite_costume_1_hash = unit_Files.sortie_and_awakening_sprites_PAC_hash;
+                    if (unit_Files.sortie_and_awakening_sprites_PAC_hash == 0)
                     {
-                        MBONlog.AppendLine(@"//----------------------- " + unitName + @"-----------------------//");
-                        // Manually add own made hashes to newly added MBON units
-                        Crc32 crc32 = new Crc32();
-                        string arcade_selection_str = unitName + "_arcade_selection_sprite_costume_1";
-                        uint arcade_selection_hash = crc32.Get(Encoding.UTF8.GetBytes(arcade_selection_str.ToLower()));
-                        MBONlog.AppendLine(arcade_selection_str + " - 0x" + arcade_selection_hash.ToString("X8"));
-
-                        string loading_ally_sprite_costume_1_str = unitName + "_loading_ally_sprite_costume_1";
-                        uint loading_ally_sprite_costume_1_hash = crc32.Get(Encoding.UTF8.GetBytes(loading_ally_sprite_costume_1_str.ToLower()));
-                        MBONlog.AppendLine(loading_ally_sprite_costume_1_str + " - 0x" + loading_ally_sprite_costume_1_hash.ToString("X8"));
-
-                        string loading_enemy_sprite_costume_1_str = unitName + "_loading_enemy_sprite_costume_1";
-                        uint loading_enemy_sprite_costume_1_hash = crc32.Get(Encoding.UTF8.GetBytes(loading_enemy_sprite_costume_1_str.ToLower()));
-                        MBONlog.AppendLine(loading_enemy_sprite_costume_1_str + " - 0x" + loading_enemy_sprite_costume_1_hash.ToString("X8"));
-
-                        string free_battle_selection_sprite_costume_1_str = unitName + "_arcade_selection_sprite_costume_1";
-                        uint free_battle_selection_sprite_costume_1_hash = crc32.Get(Encoding.UTF8.GetBytes(free_battle_selection_sprite_costume_1_str.ToLower()));
-                        MBONlog.AppendLine(free_battle_selection_sprite_costume_1_str + " - 0x" + free_battle_selection_sprite_costume_1_hash.ToString("X8"));
-
-                        string loading_enemy_target_unit_sprite_costume_1_str = unitName + "_arcade_selection_sprite_costume_1";
-                        uint loading_enemy_target_unit_sprite_costume_1_hash = crc32.Get(Encoding.UTF8.GetBytes(loading_enemy_target_unit_sprite_costume_1_str.ToLower()));
-                        MBONlog.AppendLine(loading_enemy_target_unit_sprite_costume_1_str + " - 0x" + loading_enemy_target_unit_sprite_costume_1_hash.ToString("X8"));
-
-                        string loading_enemy_target_pilot_sprite_costume_1_str = unitName + "_arcade_selection_sprite_costume_1";
-                        uint loading_enemy_target_pilot_sprite_costume_1_hash = crc32.Get(Encoding.UTF8.GetBytes(loading_enemy_target_pilot_sprite_costume_1_str.ToLower()));
-                        MBONlog.AppendLine(loading_enemy_target_pilot_sprite_costume_1_str + " - 0x" + loading_enemy_target_pilot_sprite_costume_1_hash.ToString("X8"));
-
-                        uint in_game_sortie_and_awakening_sprite_costume_1_hash = unit_Files.sortie_and_awakening_sprites_PAC_hash;
-
-                        uint KPKP_hash = unit_Files.sortie_mouth_anim_enum_KPKP_PAC_hash;
-
-                        string result_small_sprite_str = unitName + "_result_small_sprite";
-                        uint result_small_sprite_hash = crc32.Get(Encoding.UTF8.GetBytes(result_small_sprite_str.ToLower()));
-                        MBONlog.AppendLine(result_small_sprite_str + " - 0x" + result_small_sprite_hash.ToString("X8"));
-
-                        string figurine_sprite_str = unitName + "_figurine_sprite";
-                        uint figurine_sprite_hash = crc32.Get(Encoding.UTF8.GetBytes(figurine_sprite_str.ToLower()));
-                        MBONlog.AppendLine(figurine_sprite_str + " - 0x" + figurine_sprite_hash.ToString("X8"));
-
-                        string target_small_sprite_str = unitName + "_target_small_sprite";
-                        uint target_small_sprite_hash = crc32.Get(Encoding.UTF8.GetBytes(target_small_sprite_str.ToLower()));
-                        MBONlog.AppendLine(target_small_sprite_str + " - 0x" + target_small_sprite_hash.ToString("X8"));
-
-                        Unit_Info_List new_Unit_Files = new Unit_Info_List();
-
-                        new_Unit_Files.unit_index = (byte)last_unit_index;
-                        new_Unit_Files.series_index = (byte)(last_series_index + 1);
-                        new_Unit_Files.unit_ID = unit_ID;
-                        new_Unit_Files.release_string = "リリース";
-                        new_Unit_Files.F_string = "F" + unit_ID;
-                        new_Unit_Files.F_out_string = "F_OUT_" + unit_ID;
-                        new_Unit_Files.P_string = "P" + unit_ID;
-
-                        List<Unit_Info_List> units_In_Series = unit_Info_List.Where(x => x.series_index == (last_series_index + 1)).ToList();
-                        new_Unit_Files.internal_index = (byte)units_In_Series.Count();
-
-                        new_Unit_Files.arcade_small_sprite_index = (byte)last_arcade_small_sprite_index;
-                        new_Unit_Files.arcade_unit_name_sprite = (byte)last_arcade_unit_name_sprite;
-                        new_Unit_Files.arcade_selection_sprite_costume_1_hash = arcade_selection_hash;
-                        new_Unit_Files.loading_ally_sprite_costume_1_hash = arcade_selection_hash;
-                        new_Unit_Files.loading_enemy_sprite_costume_1_hash = loading_enemy_sprite_costume_1_hash;
-                        new_Unit_Files.free_battle_selection_sprite_costume_1_hash = free_battle_selection_sprite_costume_1_hash;
-                        new_Unit_Files.loading_enemy_target_unit_sprite_costume_1_hash = loading_enemy_target_unit_sprite_costume_1_hash;
-                        new_Unit_Files.loading_enemy_target_pilot_sprite_costume_1_hash = loading_enemy_target_pilot_sprite_costume_1_hash;
-                        new_Unit_Files.in_game_sortie_and_awakening_sprite_costume_1_hash = in_game_sortie_and_awakening_sprite_costume_1_hash;
-                        new_Unit_Files.KPKP_hash = KPKP_hash;
-                        new_Unit_Files.result_small_sprite_hash = result_small_sprite_hash;
-                        new_Unit_Files.figurine_sprite_index = (byte)last_figurine_sprite_index;
-                        new_Unit_Files.figurine_sprite_hash = figurine_sprite_hash;
-                        new_Unit_Files.target_small_sprite_hash = target_small_sprite_hash;
-                        new_Unit_Files.unk_0x7C = last_unk_0x7C;
-                        new_Unit_Files.unk_0x80 = last_unk_0x80;
-                        new_Unit_Files.IS_Costume_costume_2_string = "0.0";
-                        new_Unit_Files.IS_Costume_T_costume_2_string = "0.0";
-                        new_Unit_Files.IS_Costume_costume_3_string = "0.0";
-                        new_Unit_Files.IS_Costume_T_costume_3_string = "0.0";
-
-                        last_unit_index++;
-                        last_arcade_small_sprite_index++;
-                        last_arcade_unit_name_sprite++;
-                        last_figurine_sprite_index++;
-                        last_unk_0x7C++;
-                        last_unk_0x80++;
-
-                        unit_Info_List.Add(new_Unit_Files);
+                        string sortie_and_awakening_sprites_costume_1_str = unitName + "_sortie_and_awakening_sprites_costume_1";
+                        in_game_sortie_and_awakening_sprite_costume_1_hash = crc32.Get(Encoding.UTF8.GetBytes(sortie_and_awakening_sprites_costume_1_str.ToLower()));
+                        MBONlog.AppendLine(sortie_and_awakening_sprites_costume_1_str + " - 0x" + in_game_sortie_and_awakening_sprite_costume_1_hash.ToString("X8"));
                     }
+
+                    uint KPKP_hash = unit_Files.sortie_mouth_anim_enum_KPKP_PAC_hash;
+
+                    string result_small_sprite_str = unitName + "_result_small_sprite";
+                    uint result_small_sprite_hash = crc32.Get(Encoding.UTF8.GetBytes(result_small_sprite_str.ToLower()));
+                    MBONlog.AppendLine(result_small_sprite_str + " - 0x" + result_small_sprite_hash.ToString("X8"));
+
+                    string figurine_sprite_str = unitName + "_figurine_sprite";
+                    uint figurine_sprite_hash = crc32.Get(Encoding.UTF8.GetBytes(figurine_sprite_str.ToLower()));
+                    MBONlog.AppendLine(figurine_sprite_str + " - 0x" + figurine_sprite_hash.ToString("X8"));
+
+                    string target_small_sprite_str = unitName + "_target_small_sprite";
+                    uint target_small_sprite_hash = crc32.Get(Encoding.UTF8.GetBytes(target_small_sprite_str.ToLower()));
+                    MBONlog.AppendLine(target_small_sprite_str + " - 0x" + target_small_sprite_hash.ToString("X8"));
+
+                    Unit_Info_List new_Unit_Files = new Unit_Info_List();
+
+                    new_Unit_Files.unit_index = (byte)last_unit_index;
+                    new_Unit_Files.series_index = (byte)(last_series_index + 1);
+                    new_Unit_Files.unit_ID = unit_ID;
+                    new_Unit_Files.release_string = "リリース";
+                    new_Unit_Files.F_string = "F" + unit_ID;
+                    new_Unit_Files.F_out_string = "F_OUT_" + unit_ID;
+                    new_Unit_Files.P_string = "P" + unit_ID;
+
+                    List<Unit_Info_List> units_In_Series = unit_Info_List.Where(x => x.series_index == (last_series_index + 1)).ToList();
+                    new_Unit_Files.internal_index = (byte)units_In_Series.Count();
+
+                    new_Unit_Files.arcade_small_sprite_index = (byte)last_arcade_small_sprite_index;
+                    new_Unit_Files.arcade_unit_name_sprite = (byte)last_arcade_unit_name_sprite;
+                    new_Unit_Files.arcade_selection_sprite_costume_1_hash = arcade_selection_hash;
+                    new_Unit_Files.loading_ally_sprite_costume_1_hash = loading_ally_sprite_costume_1_hash;
+                    new_Unit_Files.loading_enemy_sprite_costume_1_hash = loading_enemy_sprite_costume_1_hash;
+                    new_Unit_Files.free_battle_selection_sprite_costume_1_hash = free_battle_selection_sprite_costume_1_hash;
+                    new_Unit_Files.loading_enemy_target_unit_sprite_costume_1_hash = loading_enemy_target_unit_sprite_costume_1_hash;
+                    new_Unit_Files.loading_enemy_target_pilot_sprite_costume_1_hash = loading_enemy_target_pilot_sprite_costume_1_hash;
+                    new_Unit_Files.in_game_sortie_and_awakening_sprite_costume_1_hash = in_game_sortie_and_awakening_sprite_costume_1_hash;
+                    new_Unit_Files.KPKP_hash = KPKP_hash;
+                    new_Unit_Files.result_small_sprite_hash = result_small_sprite_hash;
+                    new_Unit_Files.figurine_sprite_index = (byte)last_figurine_sprite_index;
+                    new_Unit_Files.figurine_sprite_hash = figurine_sprite_hash;
+                    new_Unit_Files.target_small_sprite_hash = target_small_sprite_hash;
+                    new_Unit_Files.unk_0x7C = last_unk_0x7C;
+                    new_Unit_Files.unk_0x80 = last_unk_0x80;
+                    new_Unit_Files.IS_Costume_costume_2_string = "0.0";
+                    new_Unit_Files.IS_Costume_T_costume_2_string = "0.0";
+                    new_Unit_Files.IS_Costume_costume_3_string = "0.0";
+                    new_Unit_Files.IS_Costume_T_costume_3_string = "0.0";
+
+                    last_unit_index++;
+                    last_arcade_small_sprite_index++;
+                    last_arcade_unit_name_sprite++;
+                    last_figurine_sprite_index++;
+                    last_unk_0x7C++;
+                    last_unk_0x80++;
+
+                    unit_Info_List.Add(new_Unit_Files);
                 }
             }
 
@@ -446,7 +450,121 @@ namespace FBRepacker.Tools
 
             streamWriter.Close();
         }
-        
+
+        /*
+        public void reimportAll_Common_Sprites()
+        {
+            List<string> allUnitFolders = Directory.GetDirectories(totalMBONExportFolder, "*", SearchOption.TopDirectoryOnly).ToList();
+
+            StreamReader alreadyPackedSR = File.OpenText(@"D:\Games\PS3\EXVSFB JPN\Pkg research\FB Repacker\Repack\PAC\Input\MBON Reimport Project\temp_unit_list.json");
+            string alreadyPackedJSON = alreadyPackedSR.ReadToEnd();
+            alreadyPackedSR.Close();
+            List<uint> already_repacked = JsonConvert.DeserializeObject<List<uint>>(alreadyPackedJSON);
+
+            string json = File.OpenText(@"D:\Games\PS3\EXVSFB JPN\Pkg research\FB Repacker\Repack\PAC\Input\MBON Reimport Project\AllUnitsPACHashes.json").ReadToEnd();
+            List<Unit_Files_List> unit_Files_List = JsonConvert.DeserializeObject<List<Unit_Files_List>>(json);
+
+            string commonArcadeSmallSpritesReimportFolder = totalMBONCommonReimportFolder + @"\Arcade Select Small Sprite Combined - PATCH511A264D";
+            string commonFigurineSpritesReimportFolder = totalMBONCommonReimportFolder + @"\All Figurine Sprites Combined - PATCHDC38B066";
+
+            Directory.CreateDirectory(commonArcadeSmallSpritesReimportFolder);
+            Directory.CreateDirectory(commonFigurineSpritesReimportFolder);
+
+            // Template
+            string repack_Template_Hit = repackTemplates + @"\Hit_Properties";
+            //DirectoryCopy(repack_Template_Hit, commonHitReimportFolder, true);
+
+            string repack_Template_Projectiles = repackTemplates + @"\Projectile_Properties";
+            //DirectoryCopy(repack_Template_Projectiles, commonProjectileReimportFolder, true);
+
+
+            uint commonHitFileCount = 2;
+            uint commonProjectileFileCount = 2;
+
+            StringBuilder hitPACSB = new StringBuilder();
+            StringBuilder projectilePACSB = new StringBuilder();
+
+            allUnitFolders = allUnitFolders.OrderBy(x => uint.Parse(Path.GetFileNameWithoutExtension(x.Split('.')[0]))).ToList();
+
+            foreach (string unitFolder in allUnitFolders)
+            {
+                Match unitNoMatch = Regex.Match(unitFolder, @"([0-9]{1,100}). ");
+                string unitNoStr = unitNoMatch.Groups[0].Captures[0].Value;
+                uint.TryParse(unitNoStr, out uint unitNo);
+
+                string unitFolderName = Path.GetFileName(unitFolder.TrimEnd(Path.DirectorySeparatorChar));
+
+                int unit_ID_str_index = unitFolderName.IndexOf("- ");
+                string unit_ID_str = string.Empty;
+                if (unit_ID_str_index >= 0)
+                    unit_ID_str = unitFolderName.Substring(unit_ID_str_index + 2, unitFolderName.Length - unit_ID_str_index - 2);
+
+                uint unit_ID = Convert.ToUInt32(unit_ID_str);
+                Unit_Files_List unit_Files = unit_Files_List.FirstOrDefault(x => x.Unit_ID == unit_ID);
+
+                if (unit_Files != null)
+                {
+
+                }
+            }
+
+            // -------------------------------------------- PAC Info --------------------------------------------
+            /// Hit_Properties
+            StreamWriter Hit_PAC_Info = File.CreateText(commonHitReimportFolder + @"\PAC.info");
+            Hit_PAC_Info.WriteLine("--1--");
+            Hit_PAC_Info.WriteLine("FHMOffset: 0");
+            Hit_PAC_Info.WriteLine("Header: fhm");
+            Hit_PAC_Info.WriteLine("--FHM--");
+            Hit_PAC_Info.WriteLine("Total file size: 0");
+            Hit_PAC_Info.WriteLine("Number of files: " + (commonHitFileCount - 2).ToString());
+            Hit_PAC_Info.WriteLine("FHM chunk size: 2656");
+            Hit_PAC_Info.WriteLine("fileName: 001.fhm");
+            Hit_PAC_Info.WriteLine("Additional info flag: 0");
+            Hit_PAC_Info.WriteLine();
+            Hit_PAC_Info.WriteLine();
+            Hit_PAC_Info.WriteLine("//");
+
+            Hit_PAC_Info.Write(hitPACSB.ToString());
+
+            Hit_PAC_Info.WriteLine("--" + (commonHitFileCount).ToString() + "--");
+            Hit_PAC_Info.WriteLine("Header: endfile");
+            Hit_PAC_Info.WriteLine("End File Offset: 767844");
+            Hit_PAC_Info.WriteLine("End File Size: 0");
+            Hit_PAC_Info.WriteLine("fileName: endfile.endfile");
+            Hit_PAC_Info.WriteLine();
+            Hit_PAC_Info.WriteLine("//");
+
+            Hit_PAC_Info.Close();
+
+
+            StreamWriter Projectile_PAC_Info = File.CreateText(commonProjectileReimportFolder + @"\PAC.info");
+            Projectile_PAC_Info.WriteLine("--1--");
+            Projectile_PAC_Info.WriteLine("FHMOffset: 0");
+            Projectile_PAC_Info.WriteLine("Header: fhm");
+            Projectile_PAC_Info.WriteLine("--FHM--");
+            Projectile_PAC_Info.WriteLine("Total file size: 0");
+            Projectile_PAC_Info.WriteLine("Number of files: " + (commonProjectileFileCount - 2).ToString());
+            Projectile_PAC_Info.WriteLine("FHM chunk size: 2656");
+            Projectile_PAC_Info.WriteLine("fileName: 001.fhm");
+            Projectile_PAC_Info.WriteLine("Additional info flag: 0");
+            Projectile_PAC_Info.WriteLine();
+            Projectile_PAC_Info.WriteLine();
+            Projectile_PAC_Info.WriteLine("//");
+
+            Projectile_PAC_Info.Write(projectilePACSB.ToString());
+
+            Projectile_PAC_Info.WriteLine("--" + (commonProjectileFileCount).ToString() + "--");
+            Projectile_PAC_Info.WriteLine("Header: endfile");
+            Projectile_PAC_Info.WriteLine("End File Offset: 767844");
+            Projectile_PAC_Info.WriteLine("End File Size: 0");
+            Projectile_PAC_Info.WriteLine("fileName: endfile.endfile");
+            Projectile_PAC_Info.WriteLine();
+            Projectile_PAC_Info.WriteLine("//");
+
+            Projectile_PAC_Info.Close();
+        }
+        */
+
         public void reimportAll_Projectile_Hit_Reload()
         {
             List<string> allUnitFolders = Directory.GetDirectories(totalMBONExportFolder, "*", SearchOption.TopDirectoryOnly).ToList();
@@ -580,13 +698,14 @@ namespace FBRepacker.Tools
                         commonHitFileCount++;
                     }
                     
+                    
                     /*
                     // -------------------------------------------- Projectile Properties Parse --------------------------------------------
                     /// Generate JSON from Binary
                     Properties.Settings.Default.ProjecitleBinaryFilePath = data + @"\001-FHM\009.bin";
                     Properties.Settings.Default.outputProjectileJSONFolderPath = reimportConvertedfromMBONFolder + @"\Projectile_Properties";
                     Properties.Settings.Default.convertMBONProjecitle = true;
-                    Properties.Settings.Default.truncateProjectileType = true;
+                    Properties.Settings.Default.truncateProjectileType = false;
 
                     if (unit_Files.MBONAdded
                         // DLC units does not need to have projectile types truncated
@@ -657,8 +776,8 @@ namespace FBRepacker.Tools
                     projectilePACSB.AppendLine("//");
 
                     commonProjectileFileCount++;
-                    */
 
+                    */
                     /*
                     // -------------------------------------------- Reload Properties Parse --------------------------------------------
                     Properties.Settings.Default.ReloadBinaryInputGameVer = 1;
@@ -763,7 +882,7 @@ namespace FBRepacker.Tools
 
             Hit_PAC_Info.Close();
 
-
+            /*
             StreamWriter Projectile_PAC_Info = File.CreateText(commonProjectileReimportFolder + @"\PAC.info");
             Projectile_PAC_Info.WriteLine("--1--");
             Projectile_PAC_Info.WriteLine("FHMOffset: 0");
@@ -789,6 +908,7 @@ namespace FBRepacker.Tools
             Projectile_PAC_Info.WriteLine("//");
 
             Projectile_PAC_Info.Close();
+            */
         }
 
         public void reimportAllFB()
@@ -802,6 +922,9 @@ namespace FBRepacker.Tools
 
             string json = File.OpenText(@"D:\Games\PS3\EXVSFB JPN\Pkg research\FB Repacker\Repack\PAC\Input\MBON Reimport Project\AllUnitsPACHashes.json").ReadToEnd();
             List<Unit_Files_List> unit_Files_List = JsonConvert.DeserializeObject<List<Unit_Files_List>>(json);
+
+            json = File.OpenText(@"D:\Games\PS3\EXVSFB JPN\Pkg research\FB Repacker\Repack\PAC\Input\MBON Reimport Project\Unit List MBON.json").ReadToEnd();
+            List<Unit_Info_List> unit_Info_List = JsonConvert.DeserializeObject<List<Unit_Info_List>>(json);
 
             StreamReader PATCHjsonSR = File.OpenText(totalMBONCombinedPsarcFolder + @"\PATCH.json");
             string patch_06_00_OriginalJson = PATCHjsonSR.ReadToEnd();
@@ -823,14 +946,15 @@ namespace FBRepacker.Tools
 
                 uint unit_ID = Convert.ToUInt32(unit_ID_str);
                 Unit_Files_List unit_Files = unit_Files_List.FirstOrDefault(x => x.Unit_ID == unit_ID);
+                Unit_Info_List unit_Sprite_Hashes = unit_Info_List.FirstOrDefault(x => x.unit_ID == unit_ID);
 
-                if (unit_ID >= 0x13921 && unit_ID <= 0x139fd && unit_ID != 0x13949 && unit_Files != null && unit_Files.MBONAdded && !already_repacked.Contains(unit_ID)) 
+                if (unit_Files != null && (unit_ID < 59900 || (unit_Files.MBONAdded && unit_ID > 0x1388b)) && unit_ID == 0x3ab7)
                 {
                     string reimportFolder = totalMBONReimportFolder + @"\" + unitFolderName;
                     string reimportConvertedfromMBONFolder = totalMBONReimportFolder + @"\" + unitFolderName + @"\" + "Converted from MBON";
                     string reimportFilestoRepack = totalMBONReimportFolder + @"\" + unitFolderName + @"\" + "Files to Repack";
                     string reimportRepackedFiles = totalMBONReimportFolder + @"\" + unitFolderName + @"\" + "Repacked Files";
-
+                    
                     Directory.CreateDirectory(reimportFolder);
                     Directory.CreateDirectory(reimportConvertedfromMBONFolder);
                     Directory.CreateDirectory(reimportFilestoRepack);
@@ -863,6 +987,7 @@ namespace FBRepacker.Tools
                     if (DNSOFolder.Count() == 0 || DNSOFolder.Count() > 0x1)
                         throw new Exception();
 
+
                     string script1 = script1Folder[0];
 
                     string data = dataFolder[0];
@@ -873,6 +998,35 @@ namespace FBRepacker.Tools
 
                     string DNSO = DNSOFolder[0];
 
+                    string GlobalPilotVoices = string.Empty;
+
+                    string LocalPilotVoices = string.Empty;
+
+                    if (unit_Files.MBONAdded)
+                    {
+                        List<string> GlobalPilotVoicesFolder = Directory.GetDirectories(extractMBONFolder, "*", SearchOption.TopDirectoryOnly).ToList();
+                        GlobalPilotVoicesFolder = GlobalPilotVoicesFolder.Where(x => x.Contains("Global Voice Files")).ToList();
+                        if (GlobalPilotVoicesFolder.Count() == 0 || GlobalPilotVoicesFolder.Count() > 0x1)
+                            throw new Exception();
+
+                        List<string> LocalPilotVoicesFolder = Directory.GetDirectories(extractMBONFolder, "*", SearchOption.TopDirectoryOnly).ToList();
+                        LocalPilotVoicesFolder = LocalPilotVoicesFolder.Where(x => x.Contains("Local Voice Files")).ToList();
+                        if (LocalPilotVoicesFolder.Count() == 0 || LocalPilotVoicesFolder.Count() > 0x1)
+                            throw new Exception();
+
+                        GlobalPilotVoices = GlobalPilotVoicesFolder[0];
+
+                        LocalPilotVoices = LocalPilotVoicesFolder[0];
+                    }
+
+                    List<string> ModelandTextureFolder = Directory.GetDirectories(extractMBONFolder, "*", SearchOption.TopDirectoryOnly).ToList();
+                    ModelandTextureFolder = ModelandTextureFolder.Where(x => x.Contains("Model and Texture")).ToList();
+                    if (ModelandTextureFolder.Count() == 0 || ModelandTextureFolder.Count() > 0x1)
+                        throw new Exception();
+
+                    List<string> spriteFolders = Directory.GetDirectories(extractMBONFolder + @"\Sprites", "*", SearchOption.TopDirectoryOnly).ToList();
+
+                    /*
                     // -------------------------------------------- Unit Data Parse --------------------------------------------
                     /// Variables
                     Properties.Settings.Default.inputUnitDataBinary = data + @"\001-FHM\002.bin";
@@ -900,8 +1054,9 @@ namespace FBRepacker.Tools
                     Properties.Settings.Default.inputMeleeVarBinaryPath = data + @"\001-FHM\007.bin";
 
                     new Parse_Melee_Variables();
+                    */
 
-
+                    
                     // -------------------------------------------- Script Refactor --------------------------------------------
                     Properties.Settings.Default.BABBFilePath = script1 + @"\001-FHM\002.bin";
                     Properties.Settings.Default.outputScriptFolderPath = totalMBONScriptFolder + @"\Refactored Script";
@@ -919,6 +1074,7 @@ namespace FBRepacker.Tools
                     compileMSCwithFix(unitFolderName);
 
                     
+                    /*
                     // -------------------------------------------- Audio Files -----------------------------------------------------
 
                     /// Logic 
@@ -957,10 +1113,76 @@ namespace FBRepacker.Tools
                     new GenerateAudioPACInfo((audioFormatEnum)Properties.Settings.Default.audioPACInfoNus3SoundHashFormat);
 
 
+                    // Global Pilot Voices
+                    Directory.CreateDirectory(reimportConvertedfromMBONFolder + @"\Global Voice Files");
+
+                    Properties.Settings.Default.Nus3SoundHashFormat = (int)audioFormatEnum.IS14;
+                    Properties.Settings.Default.soundHashMainTitle = ""; // ignore for now, test if there's anything wrong
+
+                    Properties.Settings.Default.inputNus3File = extractMBONFolder + @"\Global Voice Files.nus3audio";
+                    Properties.Settings.Default.outputNameandHashFolder = reimportConvertedfromMBONFolder + @"\Global Voice Files";
+
+                    // For the soundhashes
+                    new nus3AudioNameHash((audioFormatEnum)Properties.Settings.Default.Nus3SoundHashFormat, Properties.Settings.Default.soundHashMainTitle);
+
+                    // Generate file Infos
+                    Properties.Settings.Default.inputAudioPACInfoFolder = extractMBONFolder + @"\Global Voice Files";
+                    Properties.Settings.Default.audioPACInfoSTREAMName = "003.STREAM";
+                    Properties.Settings.Default.outputAudioPACInfoFolder = reimportConvertedfromMBONFolder + @"\Global Voice Files";
+
+                    Properties.Settings.Default.audioPACInfoNus3SoundHashFormat = (int)audioFormatEnum.IS14;
+
+                    new GenerateAudioPACInfo((audioFormatEnum)Properties.Settings.Default.audioPACInfoNus3SoundHashFormat);
+
+
+                    // Local Pilot Voices
+                    Directory.CreateDirectory(reimportConvertedfromMBONFolder + @"\Local Voice Files");
+
+                    Properties.Settings.Default.Nus3SoundHashFormat = (int)audioFormatEnum.IS14;
+                    Properties.Settings.Default.soundHashMainTitle = ""; // ignore for now, test if there's anything wrong
+
+                    List<string> localVoiceFiles = Directory.GetFiles(extractMBONFolder, "*", SearchOption.TopDirectoryOnly).ToList();
+                    string localVoiceFile = localVoiceFiles.FirstOrDefault(s => s.Contains("Local Voice Files"));
+
+                    if (localVoiceFile == null)
+                        throw new Exception();
+
+                    Properties.Settings.Default.inputNus3File = localVoiceFile;
+                    Properties.Settings.Default.outputNameandHashFolder = reimportConvertedfromMBONFolder + @"\Local Voice Files";
+
+                    // For the soundhashes
+                    new nus3AudioNameHash((audioFormatEnum)Properties.Settings.Default.Nus3SoundHashFormat, Properties.Settings.Default.soundHashMainTitle);
+
+                    // Generate file Infos
+                    Properties.Settings.Default.inputAudioPACInfoFolder = extractMBONFolder + @"\Local Voice Files";
+                    Properties.Settings.Default.audioPACInfoSTREAMName = "001.STREAM";
+                    Properties.Settings.Default.outputAudioPACInfoFolder = reimportConvertedfromMBONFolder + @"\Local Voice Files";
+
+                    Properties.Settings.Default.audioPACInfoNus3SoundHashFormat = (int)audioFormatEnum.AT3;
+
+                    new GenerateAudioPACInfo((audioFormatEnum)Properties.Settings.Default.audioPACInfoNus3SoundHashFormat);
+
+
                     // -------------------------------------------- Image Files -----------------------------------------------------
 
+                    // Converting and resizing LMB files for sortie and awakening
+                    Directory.CreateDirectory(reimportConvertedfromMBONFolder + @"\Sprites");
 
+                    string sortieandAwakeningSpriteFolder = Directory.GetDirectories(extractMBONFolder + @"\Sprites", "*", SearchOption.TopDirectoryOnly).FirstOrDefault(s => Path.GetFileName(s).Contains("In_Game_Sortie_and_Awakening_Sprite_Costume_1"));
+                   
+                    // awakening LMB
+                    Properties.Settings.Default.inputLMBFilePath = sortieandAwakeningSpriteFolder + @"\awakening\awakening.LMB";
+                    Properties.Settings.Default.outputLMBFolderPath = reimportConvertedfromMBONFolder + @"\Sprites";
+                    new Parse_MBON_LMB();
 
+                    new BlankTemplate().resizeLMB(reimportConvertedfromMBONFolder + @"\Sprites\awakening - converted.LMB", reimportConvertedfromMBONFolder + @"\Sprites\awakening - resized.LMB", (float)0.6667);
+
+                    // sortie LMB
+                    Properties.Settings.Default.inputLMBFilePath = sortieandAwakeningSpriteFolder + @"\sortie\sortie.LMB";
+                    Properties.Settings.Default.outputLMBFolderPath = reimportConvertedfromMBONFolder + @"\Sprites";
+                    new Parse_MBON_LMB();
+
+                    new BlankTemplate().resizeLMB(reimportConvertedfromMBONFolder + @"\Sprites\sortie - converted.LMB", reimportConvertedfromMBONFolder + @"\Sprites\sortie - resized.LMB", (float)0.6667);
 
                     // -------------------------------------------- EIDX ------------------------------------------------------------
 
@@ -982,11 +1204,11 @@ namespace FBRepacker.Tools
 
                     // This will cause crash
                     if (ammoCount > 12)
-                        throw new Exception(); 
+                        //throw new Exception(); 
 
                     dnsoFS.Close();
                     
-
+                    */
                     // -------------------------------------------- Prepare Repack Files --------------------------------------------
 
                     repackFiles(
@@ -997,7 +1219,11 @@ namespace FBRepacker.Tools
                         reimportConvertedfromMBONFolder,
                         EIDX,
                         SE,
-                        unit_Files
+                        GlobalPilotVoices,
+                        LocalPilotVoices,
+                        spriteFolders,
+                        unit_Files,
+                        unit_Sprite_Hashes
                         );
 
                     // Get unit's english name
@@ -1005,11 +1231,12 @@ namespace FBRepacker.Tools
                     string unitName = unit_Infos.Unit_ID.FirstOrDefault(s => s.id == unit_Files.Unit_ID).name_english.Replace(" ", "_");
                     unitName = unitName.Replace(".", "_");
                     unitName = unitName.Replace("∀", "Turn_A");
+                    unitName = unitName.Replace("ä", "a");
 
                     string basePsarcRepackFolder = totalMBONCombinedPsarcFolder + @"\Units\FB_Units\" + unitName;
                     string[] allRepackedPACs = Directory.GetFiles(reimportRepackedFiles, "*", SearchOption.TopDirectoryOnly);
 
-
+                    /*
                     string Data_Path = basePsarcRepackFolder + @"\Data\PATCH" + unit_Files.data_and_script_PAC_hash.ToString("X8") + ".PAC";
 
                     FileStream dataFS = File.OpenRead(allRepackedPACs.FirstOrDefault(s => s.Contains("Data")));
@@ -1038,10 +1265,11 @@ namespace FBRepacker.Tools
                     EIDXFS.Close();
 
                     newEIDXFS.Close();
+                    */
                     
 
                     // Write new PATCH.TBL
-                    tocFileInfo = rewritePsarcTBL(tocFileInfo, reimportRepackedFiles, originalMBONFolder, unit_Files);
+                    tocFileInfo = rewritePsarcTBL(tocFileInfo, reimportRepackedFiles, originalMBONFolder, unit_Files, unit_Sprite_Hashes);
 
                     Properties.Settings.Default.inputPsarcJSON = totalMBONCombinedPsarcFolder + @"\PATCH.json";
                     Properties.Settings.Default.outputPsarcTBLBinaryNameasPatch = true;
@@ -1058,7 +1286,7 @@ namespace FBRepacker.Tools
             }
         }
 
-        public TOCFileInfo rewritePsarcTBL(TOCFileInfo tocFileInfo, string reimportRepackedFiles, string originalMBONFolder, Unit_Files_List unit_Files)
+        public TOCFileInfo rewritePsarcTBL(TOCFileInfo tocFileInfo, string reimportRepackedFiles, string originalMBONFolder, Unit_Files_List unit_Files, Unit_Info_List unit_Sprite_Hashes)
         {
             List<PACFileInfoV2> fileInfos = tocFileInfo.allFiles;
 
@@ -1067,9 +1295,21 @@ namespace FBRepacker.Tools
             string unitName = unit_Infos.Unit_ID.FirstOrDefault(s => s.id == unit_Files.Unit_ID).name_english.Replace(" ", "_");
             unitName = unitName.Replace(".", "_");
             unitName = unitName.Replace("∀", "Turn_A");
+            unitName = unitName.Replace("Ⅱ", "II");
 
-            Directory.CreateDirectory(totalMBONCombinedPsarcFolder + @"\Units\");
-            string basePsarcRepackFolder = totalMBONCombinedPsarcFolder + @"\Units\" + unitName;
+            string gameVerRelativeFolder = string.Empty;
+            if (unit_Files.MBONAdded)
+            {
+                gameVerRelativeFolder = @"MBON_Units\";
+            }
+            else
+            {
+                gameVerRelativeFolder = @"FB_Units\";
+            }
+
+            Directory.CreateDirectory(totalMBONCombinedPsarcFolder + @"\Units\" + gameVerRelativeFolder);
+            string basePsarcRepackFolder = totalMBONCombinedPsarcFolder + @"\Units\" + gameVerRelativeFolder + unitName;
+
             Directory.CreateDirectory(basePsarcRepackFolder);
 
             Directory.CreateDirectory(basePsarcRepackFolder + @"\Data");
@@ -1102,6 +1342,20 @@ namespace FBRepacker.Tools
             string Data_Path = basePsarcRepackFolder + @"\Data\PATCH" + unit_Files.data_and_script_PAC_hash.ToString("X8") + ".PAC";
             string EIDX_Path = basePsarcRepackFolder + @"\EIDX\PATCH" + unit_Files.effects_EIDX_PAC_hash.ToString("X8") + ".PAC";
             string SE_Path = basePsarcRepackFolder + @"\Sound_Effects\PATCH" + unit_Files.sound_effect_PAC_hash.ToString("X8") + ".PAC";
+            string Global_Pilot_Voices_Path = basePsarcRepackFolder + @"\Global_Pilot_Voices\PATCH" + unit_Files.global_pilot_voices_PAC_hash.ToString("X8") + ".PAC";
+            string Local_Pilot_Voices_Path = basePsarcRepackFolder + @"\Local_Pilot_Voices\STREAM" + unit_Files.local_pilot_voices_STREAM_PAC_hash.ToString("X8") + ".PAC";
+            string Voice_File_List_Path = basePsarcRepackFolder + @"\Voice_File_List\PATCH" + unit_Files.voice_file_list_PAC_hash.ToString("X8") + ".PAC";
+
+            // Sprites
+            string arcade_sprites_Path = basePsarcRepackFolder + @"\Sprites" + @"\Arcade_Sprites\PATCH" + unit_Sprite_Hashes.arcade_selection_sprite_costume_1_hash.ToString("X8") + ".PAC";
+            string free_battle_sprites_Path = basePsarcRepackFolder + @"\Sprites" + @"\Free_Battle_Sprites\PATCH" + unit_Sprite_Hashes.free_battle_selection_sprite_costume_1_hash.ToString("X8") + ".PAC";
+            string loading_ally_sprites_Path = basePsarcRepackFolder + @"\Sprites" + @"\Loading_Ally_Sprite\PATCH" + unit_Sprite_Hashes.loading_ally_sprite_costume_1_hash.ToString("X8") + ".PAC";
+            string loading_enemy_sprites_Path = basePsarcRepackFolder + @"\Sprites" + @"\Loading_Enemy_Sprite\PATCH" + unit_Sprite_Hashes.loading_enemy_sprite_costume_1_hash.ToString("X8") + ".PAC";
+            string loading_enemy_target_pilot_sprites_Path = basePsarcRepackFolder + @"\Sprites" + @"\Loading_Enemy_Target_Pilot_Sprite\PATCH" + unit_Sprite_Hashes.loading_enemy_target_pilot_sprite_costume_1_hash.ToString("X8") + ".PAC";
+            string loading_enemy_target_unit_sprites_Path = basePsarcRepackFolder + @"\Sprites" + @"\Loading_Enemy_Target_Unit_Sprite\PATCH" + unit_Sprite_Hashes.loading_enemy_target_unit_sprite_costume_1_hash.ToString("X8") + ".PAC";
+            string result_small_sprites_Path = basePsarcRepackFolder + @"\Sprites" + @"\Result_Small_Sprite\PATCH" + unit_Sprite_Hashes.result_small_sprite_hash.ToString("X8") + ".PAC";
+            string sortie_and_awakening_sprites_Path = basePsarcRepackFolder + @"\Sprites" + @"\Sortie_and_Awakening_Sprites\PATCH" + unit_Sprite_Hashes.in_game_sortie_and_awakening_sprite_costume_1_hash.ToString("X8") + ".PAC";
+            string target_small_sprites_Path = basePsarcRepackFolder + @"\Sprites" + @"\Target_Small_Sprite\PATCH" + unit_Sprite_Hashes.target_small_sprite_hash.ToString("X8") + ".PAC";
 
             newPACs.Add(unit_Files.weapon_image_DNSO_PAC_hash);
             newPACs.Add(unit_Files.sortie_mouth_anim_enum_KPKP_PAC_hash);
@@ -1110,12 +1364,47 @@ namespace FBRepacker.Tools
             newPACs.Add(unit_Files.data_and_script_PAC_hash);
             newPACs.Add(unit_Files.effects_EIDX_PAC_hash);
             newPACs.Add(unit_Files.sound_effect_PAC_hash);
+            
+            if(unit_Files.MBONAdded)
+            {
+                newPACs.Add(unit_Files.global_pilot_voices_PAC_hash);
+                newPACs.Add(unit_Files.local_pilot_voices_STREAM_PAC_hash);
+                newPACs.Add(unit_Files.voice_file_list_PAC_hash);
+
+                newPACs.Add(unit_Sprite_Hashes.arcade_selection_sprite_costume_1_hash);
+                newPACs.Add(unit_Sprite_Hashes.free_battle_selection_sprite_costume_1_hash);
+                newPACs.Add(unit_Sprite_Hashes.loading_ally_sprite_costume_1_hash);
+                newPACs.Add(unit_Sprite_Hashes.loading_enemy_sprite_costume_1_hash);
+                newPACs.Add(unit_Sprite_Hashes.loading_enemy_target_pilot_sprite_costume_1_hash);
+                newPACs.Add(unit_Sprite_Hashes.loading_enemy_target_unit_sprite_costume_1_hash);
+                newPACs.Add(unit_Sprite_Hashes.result_small_sprite_hash);
+                newPACs.Add(unit_Sprite_Hashes.in_game_sortie_and_awakening_sprite_costume_1_hash);
+                newPACs.Add(unit_Sprite_Hashes.target_small_sprite_hash);
+            }
 
             string[] allOriginalPACs = Directory.GetFiles(originalMBONFolder, "*", SearchOption.TopDirectoryOnly);
+            string[] allRepackedPACs = Directory.GetFiles(reimportRepackedFiles, "*", SearchOption.TopDirectoryOnly);
 
             FileStream DNSOFS = File.OpenRead(allOriginalPACs.FirstOrDefault(s => s.Contains("DNSO")));
+
+            if(unit_Files.Unit_ID == 0x1393 || unit_Files.Unit_ID == 0xA41B)
+            {
+                // For special case of V2 and G Self needing the modified DNSO so that the ammo image > 12 won't crash it
+                DNSOFS = File.OpenRead(allRepackedPACs.FirstOrDefault(s => s.Contains("DNSO")));
+            }
+
             FileStream KPKPFS = File.OpenRead(allOriginalPACs.FirstOrDefault(s => s.Contains("KPKP")));
+
             FileStream Model_and_Texture_FS = File.OpenRead(allOriginalPACs.FirstOrDefault(s => s.Contains("Model and Texture")));
+
+            if (unit_Files.Unit_ID == 0x2f09 || unit_Files.Unit_ID == 0xcb2b || 
+                unit_Files.Unit_ID == 14091 || unit_Files.Unit_ID == 23041 || unit_Files.Unit_ID == 14141 || unit_Files.Unit_ID == 33041 || 
+                unit_Files.Unit_ID == 21151 || unit_Files.Unit_ID == 15031 || unit_Files.Unit_ID == 17041 || unit_Files.Unit_ID == 42041)
+            {
+                // Kampfer and Hot scramble has a special fix to allow them to load (too much effects on models)
+                Model_and_Texture_FS = File.OpenRead(allRepackedPACs.FirstOrDefault(s => s.Contains("Model")));
+            }
+
             FileStream OMOFS = File.OpenRead(allOriginalPACs.FirstOrDefault(s => s.Contains("OMO")));
 
             DNSOFS.Seek(0, SeekOrigin.Begin);
@@ -1145,66 +1434,118 @@ namespace FBRepacker.Tools
             newModel_and_Texture_FS.Close();
             newOMOFS.Close();
 
-            string[] allRepackedPACs = Directory.GetFiles(reimportRepackedFiles, "*", SearchOption.TopDirectoryOnly);
-
             FileStream dataFS = File.OpenRead(allRepackedPACs.FirstOrDefault(s => s.Contains("Data")));
+            /*
             FileStream EIDXFS = File.OpenRead(allRepackedPACs.FirstOrDefault(s => s.Contains("EIDX")));
             FileStream SEFS = File.OpenRead(allRepackedPACs.FirstOrDefault(s => s.Contains("Sound Effects")));
+            */
 
             dataFS.Seek(0, SeekOrigin.Begin);
+            /*
             EIDXFS.Seek(0, SeekOrigin.Begin);
             SEFS.Seek(0, SeekOrigin.Begin);
+            */
 
             FileStream newDataFS = File.Create(Data_Path);
+            /*
             FileStream newEIDXFS = File.Create(EIDX_Path);
             FileStream newSEFS = File.Create(SE_Path);
+            */
 
             dataFS.CopyTo(newDataFS);
+            /*
             EIDXFS.CopyTo(newEIDXFS);
             SEFS.CopyTo(newSEFS);
+            */
 
             dataFS.Close();
+            /*
             EIDXFS.Close();
             SEFS.Close();
+            */
 
             newDataFS.Close();
+            /*
             newEIDXFS.Close();
             newSEFS.Close();
+            */
 
+            /*
+            // Use file copy is easier?
+            File.Copy(allRepackedPACs.FirstOrDefault(s => s.Contains("Arcade_Selection_Sprite_Costume_1")), arcade_sprites_Path, true);
+            File.Copy(allRepackedPACs.FirstOrDefault(s => s.Contains("Free_Battle_Selection_Sprite_Costume_1")), free_battle_sprites_Path, true);
+            File.Copy(allRepackedPACs.FirstOrDefault(s => s.Contains("Loading_Ally_Sprite_Costume_1")), loading_ally_sprites_Path, true);
+            File.Copy(allRepackedPACs.FirstOrDefault(s => s.Contains("Loading_Enemy_Sprite_Costume_1")), loading_enemy_sprites_Path, true);
+            File.Copy(allRepackedPACs.FirstOrDefault(s => s.Contains("Loading_Enemy_Target_Pilot_Sprite_Costume_1")), loading_enemy_target_pilot_sprites_Path, true);
+            File.Copy(allRepackedPACs.FirstOrDefault(s => s.Contains("Loading_Enemy_Target_Unit_Sprite_Costume_1")), loading_enemy_target_unit_sprites_Path, true);
+            File.Copy(allRepackedPACs.FirstOrDefault(s => s.Contains("Result_Small_Sprite")), result_small_sprites_Path, true);
+            File.Copy(allRepackedPACs.FirstOrDefault(s => s.Contains("In_Game_Sortie_and_Awakening_Sprite")), sortie_and_awakening_sprites_Path, true);
+            File.Copy(allRepackedPACs.FirstOrDefault(s => s.Contains("Target_Small_Sprite")), target_small_sprites_Path, true);
+
+            File.Copy(allRepackedPACs.FirstOrDefault(s => s.Contains("Global Pilot Voices")), Global_Pilot_Voices_Path, true);
+            File.Copy(allRepackedPACs.FirstOrDefault(s => s.Contains("Local Pilot Voices")), Local_Pilot_Voices_Path, true);
+
+            File.Copy(allRepackedPACs.FirstOrDefault(s => s.Contains("Voice File List")), Voice_File_List_Path, true);
+            */
             string[] allPsarcRepackPACFiles = Directory.GetFiles(basePsarcRepackFolder, "*.PAC", SearchOption.AllDirectories);
 
             foreach(var file in newPACs)
             {
-                PACFileInfoV2 data_file_info = new PACFileInfoV2();
-
-                string relativePathPACFolder = fetchRelativePathFolderName(unit_Files, file);
-                string absoluteFilePath = allPsarcRepackPACFiles.FirstOrDefault(s => Path.GetFileNameWithoutExtension(s) == "PATCH" + file.ToString("X8"));
-
-                int index = searchPACHash(file);
-                if(index != -1)
+                PACFileInfoV2 ifPACFileAlreadyExist = fileInfos.FirstOrDefault(s => s.nameHash == file);
+                if (ifPACFileAlreadyExist == null)
                 {
+                    PACFileInfoV2 data_file_info = new PACFileInfoV2();
+
+                    string patchorstreamrelativePath = string.Empty;
+
+                    if (file == unit_Files.local_pilot_voices_STREAM_PAC_hash)
+                    {
+                        data_file_info.namePrefix = PACFileInfoV2.prefixEnum.STREAM;
+                        patchorstreamrelativePath = "STREAM";
+                    }
+                    else
+                    {
+                        data_file_info.namePrefix = PACFileInfoV2.prefixEnum.PATCH;
+                        patchorstreamrelativePath = "PATCH";
+                    }
+
+                    string relativePathPACFolder = fetchRelativePathFolderName(unit_Files, unit_Sprite_Hashes, file);
+                    string absoluteFilePath = allPsarcRepackPACFiles.FirstOrDefault(s => Path.GetFileNameWithoutExtension(s) == patchorstreamrelativePath + file.ToString("X8"));
+
+                    uint totalFileEntries = tocFileInfo.totalFileEntries;
+
                     data_file_info.fileFlags = PACFileInfoV2.fileFlagsEnum.hasFilePath | PACFileInfoV2.fileFlagsEnum.hasFileName | PACFileInfoV2.fileFlagsEnum.hasFileInfo;
-                    data_file_info.patchNo = PACFileInfoV2.patchNoEnum.PATCH_6;
-                    data_file_info.namePrefix = PACFileInfoV2.prefixEnum.PATCH;
+                    data_file_info.patchNo = PACFileInfoV2.patchNoEnum.PATCH_5;
                     data_file_info.unk04 = 262144;
                     data_file_info.Size1 = 0;
                     data_file_info.Size2 = 0;
                     data_file_info.Size3 = 0;
                     data_file_info.unk00 = 0;
                     data_file_info.nameHash = file;
-                    data_file_info.relativePatchPath = "patch_06_00/Units/" + unitName + @"/" + relativePathPACFolder + @"/PATCH" + file.ToString("X8") + ".PAC";
+                    data_file_info.relativePatchPath = "patch_05_00/Units/" + gameVerRelativeFolder.Replace(@"\", @"/") + unitName + @"/" + relativePathPACFolder + @"/" + patchorstreamrelativePath + file.ToString("X8") + ".PAC";
                     data_file_info.hasRelativePatchSubPath = true;
                     data_file_info.filePath = absoluteFilePath;
-                    data_file_info.fileInfoIndex = index;
-                }
 
-                fileInfos.Add(data_file_info);
+                    int index = searchPACHash(file);
+                    if (index != -1)
+                    {
+                        data_file_info.fileInfoIndex = index;
+                    }
+                    else
+                    {
+                        data_file_info.fileInfoIndex = (int)(totalFileEntries + 1);
+
+                        tocFileInfo.totalFileEntries = tocFileInfo.totalFileEntries + 1;
+                    }
+
+                    fileInfos.Add(data_file_info);
+                }
             }
 
             return tocFileInfo;
         }
 
-        public string fetchRelativePathFolderName(Unit_Files_List unit_Files, uint target)
+        public string fetchRelativePathFolderName(Unit_Files_List unit_Files, Unit_Info_List unit_Sprite_Hashes, uint target)
         {
             if(target == unit_Files.data_and_script_PAC_hash)
                 return "Data";
@@ -1230,7 +1571,7 @@ namespace FBRepacker.Tools
             /*
             if (target == unit_Files.sortie_and_awakening_sprites_PAC_hash)
                 return "asd";
-            */ 
+            */
 
             if (target == unit_Files.sortie_mouth_anim_enum_KPKP_PAC_hash)
                 return "KPKP";
@@ -1240,6 +1581,34 @@ namespace FBRepacker.Tools
 
             if (target == unit_Files.local_pilot_voices_STREAM_PAC_hash)
                 return "Local_Pilot_Voices";
+
+            // Sprites
+            if (target == unit_Sprite_Hashes.arcade_selection_sprite_costume_1_hash)
+                return @"Sprites/Arcade_Sprites";
+
+            if (target == unit_Sprite_Hashes.free_battle_selection_sprite_costume_1_hash)
+                return @"Sprites/Free_Battle_Sprites";
+
+            if (target == unit_Sprite_Hashes.loading_ally_sprite_costume_1_hash)
+                return @"Sprites/Loading_Ally_Sprite";
+
+            if (target == unit_Sprite_Hashes.loading_enemy_sprite_costume_1_hash)
+                return @"Sprites/Loading_Enemy_Sprite";
+
+            if (target == unit_Sprite_Hashes.loading_enemy_target_pilot_sprite_costume_1_hash)
+                return @"Sprites/Loading_Enemy_Target_Pilot_Sprite";
+
+            if (target == unit_Sprite_Hashes.loading_enemy_target_unit_sprite_costume_1_hash)
+                return @"Sprites/Loading_Enemy_Target_Unit_Sprite";
+
+            if (target == unit_Sprite_Hashes.result_small_sprite_hash)
+                return @"Sprites/Result_Small_Sprite";
+
+            if (target == unit_Sprite_Hashes.in_game_sortie_and_awakening_sprite_costume_1_hash)
+                return @"Sprites/Sortie_and_Awakening_Sprites";
+
+            if (target == unit_Sprite_Hashes.target_small_sprite_hash)
+                return @"Sprites/Target_Small_Sprite";
 
             return string.Empty;
         }
@@ -1301,14 +1670,18 @@ namespace FBRepacker.Tools
         }
 
         public void repackFiles(
-            string reimportRepackedFiles, 
-            string reimportFilestoRepack, 
-            string unitFolderName, 
-            string data, 
-            string reimportConvertedfromMBONFolder, 
+            string reimportRepackedFiles,
+            string reimportFilestoRepack,
+            string unitFolderName,
+            string data,
+            string reimportConvertedfromMBONFolder,
             string ExtractedMBONEIDXFolder,
             string ExtractedMBONSoundEffectsFolder,
-            Unit_Files_List unit_Files
+            string ExtractedMBONGlobalPilotVoicesFolder,
+            string ExtractedMBONLocalPilotVoicesFolder,
+            List<string> spriteFolders,
+            Unit_Files_List unit_Files,
+            Unit_Info_List unit_Infos
             )
         {
             RepackPAC repackInstance = new RepackPAC(Properties.Settings.Default.OutputRepackPAC);
@@ -1321,6 +1694,18 @@ namespace FBRepacker.Tools
             string voice_file_list_folder_path = reimportFilestoRepack + @"\Voice File List - " + unit_Files.voice_file_list_PAC_hash.ToString("X8");
             string local_pilot_voices_folder_path = reimportFilestoRepack + @"\Local Pilot Voices - " + unit_Files.local_pilot_voices_STREAM_PAC_hash.ToString("X8");
 
+            // sprites
+            string spriteArcadeFolder = reimportFilestoRepack + @"\Sprites\Arcade_Selection_Sprite_Costume_1 - " + unit_Infos.arcade_selection_sprite_costume_1_hash.ToString("X8");
+            string spriteFreeBattleSelectionFolder = reimportFilestoRepack + @"\Sprites\Free_Battle_Selection_Sprite_Costume_1 - " + unit_Infos.free_battle_selection_sprite_costume_1_hash.ToString("X8");
+            string spriteInGameSortieandAwakeningFolder = reimportFilestoRepack + @"\Sprites\In_Game_Sortie_and_Awakening_Sprite_Costume_1 - " + unit_Infos.in_game_sortie_and_awakening_sprite_costume_1_hash.ToString("X8");
+            string spriteLoadingAllyFolder = reimportFilestoRepack + @"\Sprites\Loading_Ally_Sprite_Costume_1 - " + unit_Infos.loading_ally_sprite_costume_1_hash.ToString("X8");
+            string spriteLoadingEnemyFolder = reimportFilestoRepack + @"\Sprites\Loading_Enemy_Sprite_Costume_1 - " + unit_Infos.loading_enemy_sprite_costume_1_hash.ToString("X8");
+            string spriteLoadingEnemyTargetPilotFolder = reimportFilestoRepack + @"\Sprites\Loading_Enemy_Target_Pilot_Sprite_Costume_1 - " + unit_Infos.loading_enemy_target_pilot_sprite_costume_1_hash.ToString("X8");
+            string spriteLoadingEnemyTargetUnitFolder = reimportFilestoRepack + @"\Sprites\Loading_Enemy_Target_Unit_Sprite_Costume_1 - " + unit_Infos.loading_enemy_target_unit_sprite_costume_1_hash.ToString("X8");
+            string spriteFigurineSpriteFolder = reimportFilestoRepack + @"\Sprites\Figurine_Sprite - " + unit_Infos.figurine_sprite_hash.ToString("X8");
+            string spriteResultSmallSpriteFolder = reimportFilestoRepack + @"\Sprites\Result_Small_Sprite - " + unit_Infos.result_small_sprite_hash.ToString("X8");
+            string spriteTargetSmallSpriteFolder = reimportFilestoRepack + @"\Sprites\Target_Small_Sprite - " + unit_Infos.figurine_sprite_hash.ToString("X8");
+
             Directory.CreateDirectory(data_folder_path);
             Directory.CreateDirectory(EIDX_folder_path);
             Directory.CreateDirectory(SE_folder_path);
@@ -1328,11 +1713,21 @@ namespace FBRepacker.Tools
             Directory.CreateDirectory(voice_file_list_folder_path);
             Directory.CreateDirectory(local_pilot_voices_folder_path);
 
-            
-            /// Repack Data Folder
+            Directory.CreateDirectory(spriteArcadeFolder);
+            Directory.CreateDirectory(spriteFreeBattleSelectionFolder);
+            Directory.CreateDirectory(spriteInGameSortieandAwakeningFolder);
+            Directory.CreateDirectory(spriteLoadingAllyFolder);
+            Directory.CreateDirectory(spriteLoadingEnemyFolder);
+            Directory.CreateDirectory(spriteLoadingEnemyTargetPilotFolder);
+            Directory.CreateDirectory(spriteLoadingEnemyTargetUnitFolder);
+            Directory.CreateDirectory(spriteFigurineSpriteFolder);
+            Directory.CreateDirectory(spriteResultSmallSpriteFolder);
+            Directory.CreateDirectory(spriteTargetSmallSpriteFolder);
+
+            /// ------------------------------------------------------ Repack Data Folder ------------------------------------------------------
             DirectoryCopy(repackTemplates + @"\Data", data_folder_path, true);
 
-            string data_001FHM_path = data_folder_path + @"\001-FHM\";
+            string data_001FHM_path = data_folder_path + @"\001-FHM";
 
             FileStream fs002 = File.Create(data_001FHM_path + @"\002.bin");
             FileStream dataFS = File.OpenRead(reimportConvertedfromMBONFolder + @"\Unit Variables\UnitData.bin");
@@ -1374,10 +1769,9 @@ namespace FBRepacker.Tools
             repackInstance.initializePACInfoFileRepack();
             repackInstance.parseInfo();
             repackInstance.repackPAC();
-            
 
-            
-            // EIDX folder
+            /*
+            // ------------------------------------------------------ EIDX folder ------------------------------------------------------
             DirectoryCopy(ExtractedMBONEIDXFolder, EIDX_folder_path, true);
 
             DirectoryCopy(reimportConvertedfromMBONFolder + @"\EIDX", EIDX_folder_path + @"\001-FHM\002-FHM\", true);
@@ -1388,10 +1782,8 @@ namespace FBRepacker.Tools
             repackInstance.initializePACInfoFileRepack();
             repackInstance.parseInfo();
             repackInstance.repackPAC();
-            
 
-            
-            // Sound Effect folder
+            // ------------------------------------------------------ Sound Effect folder ------------------------------------------------------
             DirectoryCopy(repackTemplates + @"\Sound Effects", SE_folder_path, true);
 
             DirectoryCopy(ExtractedMBONSoundEffectsFolder, SE_folder_path + @"\001-FHM\002-FHM\", true);
@@ -1421,7 +1813,7 @@ namespace FBRepacker.Tools
             oriSESoundHash.CopyTo(tarSESoundHash);
             oriSESoundHash.Close();
             tarSESoundHash.Close();
-            
+
             //File.Move(reimportConvertedfromMBONFolder + @"\Sound Effects\Sound Effects.soundhash", SE_folder_path + @"\001-FHM\002-FHM\004.soundhashes");
 
             Properties.Settings.Default.OpenRepackPath = SE_folder_path;
@@ -1430,7 +1822,406 @@ namespace FBRepacker.Tools
             repackInstance.initializePACInfoFileRepack();
             repackInstance.parseInfo();
             repackInstance.repackPAC();
-            
+
+            // ------------------------------------------------------ Local Voice Lines ------------------------------------------------------
+
+            DirectoryCopy(repackTemplates + @"\Local Pilot Voices", local_pilot_voices_folder_path, true);
+
+            DirectoryCopy(ExtractedMBONLocalPilotVoicesFolder, local_pilot_voices_folder_path + @"\001-STREAM\", true);
+
+            // - Edit PAC Info File
+            StreamReader LPVPACInfoSR = File.OpenText(reimportConvertedfromMBONFolder + @"\Local Voice Files\Local Voice Lines PACInfo.txt");
+            string LPVPACInfo = LPVPACInfoSR.ReadToEnd();
+            LPVPACInfoSR.Close();
+
+            StreamReader RepackLPVPACInfoSR = File.OpenText(local_pilot_voices_folder_path + @"\PAC.info");
+            string RepackLPVPPACInfo = RepackLPVPACInfoSR.ReadToEnd();
+            RepackLPVPACInfoSR.Close();
+
+            StreamWriter RepackLPVPACInfoSW = File.CreateText(local_pilot_voices_folder_path + @"\PAC.info");
+
+            string modifiedLPVPACInfo = Regex.Replace(RepackLPVPPACInfo,
+                @"(Number of audio files: [0-9]{1,100}(\r\n|\r|\n)+fileName: 001.STREAM(\r\n|\r|\n)+#Sound: [\s\S]*?(?=[/][/]))",
+                LPVPACInfo);
+
+            RepackLPVPACInfoSW.Write(modifiedLPVPACInfo);
+            RepackLPVPACInfoSW.Close();
+
+            Properties.Settings.Default.OpenRepackPath = local_pilot_voices_folder_path;
+
+            repackInstance = new RepackPAC(Properties.Settings.Default.OutputRepackPAC);
+            repackInstance.initializePACInfoFileRepack();
+            repackInstance.parseInfo();
+            repackInstance.repackPAC();
+
+            // ------------------------------------------------------ Global Voice Lines ------------------------------------------------------
+            DirectoryCopy(repackTemplates + @"\Global Pilot Voices (BNSF)", global_pilot_voices_folder_path, true);
+
+            DirectoryCopy(ExtractedMBONGlobalPilotVoicesFolder, global_pilot_voices_folder_path + @"\001-FHM\002-FHM\", true);
+
+            File.Copy(reimportConvertedfromMBONFolder + @"\Global Voice Files\Global Voice Files.soundhash", global_pilot_voices_folder_path + @"\001-FHM\002-FHM\004.soundhashes", true);
+
+            string localSoundHash = Directory.GetFiles(reimportConvertedfromMBONFolder + @"\Local Voice Files\", "*.soundhash", SearchOption.TopDirectoryOnly)[0];
+
+            File.Copy(localSoundHash, global_pilot_voices_folder_path + @"\001-FHM\002-FHM\005.soundhashes", true);
+
+            // - Edit PAC Info File
+            StreamReader GPVPACInfoSR = File.OpenText(reimportConvertedfromMBONFolder + @"\Global Voice Files\Global Voice Lines PACInfo.txt");
+            string GPVPACInfo = GPVPACInfoSR.ReadToEnd();
+            GPVPACInfoSR.Close();
+
+            StreamReader RepackGVPPACInfoSR = File.OpenText(global_pilot_voices_folder_path + @"\PAC.info");
+            string RepackGVPPPACInfo = RepackGVPPACInfoSR.ReadToEnd();
+            RepackGVPPACInfoSR.Close();
+
+            StreamWriter RepackGVPPACInfoSW = File.CreateText(global_pilot_voices_folder_path + @"\PAC.info");
+
+            string modifiedGVPPACInfo = Regex.Replace(RepackGVPPPACInfo,
+                @"(Number of audio files: [0-9]{1,100}(\r\n|\r|\n)+fileName: 003.STREAM(\r\n|\r|\n)+#Sound: [\s\S]*?(?=[/][/]))",
+                GPVPACInfo);
+
+            RepackGVPPACInfoSW.Write(modifiedGVPPACInfo);
+            RepackGVPPACInfoSW.Close();
+
+            Properties.Settings.Default.OpenRepackPath = global_pilot_voices_folder_path;
+
+            repackInstance = new RepackPAC(Properties.Settings.Default.OutputRepackPAC);
+            repackInstance.initializePACInfoFileRepack();
+            repackInstance.parseInfo();
+            repackInstance.repackPAC();
+
+            // ------------------------------------------------------ Voice File List ------------------------------------------------------
+            DirectoryCopy(repackTemplates + @"\Voice File List", voice_file_list_folder_path, true);
+
+            File.Copy(localSoundHash, voice_file_list_folder_path + @"\001-FHM\002.soundhashes", true);
+
+            Properties.Settings.Default.OpenRepackPath = voice_file_list_folder_path;
+
+            repackInstance = new RepackPAC(Properties.Settings.Default.OutputRepackPAC);
+            repackInstance.initializePACInfoFileRepack();
+            repackInstance.parseInfo();
+            repackInstance.repackPAC();
+
+            // ------------------------------------------------------ Sprites ------------------------------------------------------
+            string arcade_select_sprite_folder = spriteFolders.FirstOrDefault(s => s.Contains("Arcade_Selection_Sprite"));
+
+            if (arcade_select_sprite_folder == null)
+                throw new Exception();
+
+            string figurine_sprite_folder = spriteFolders.FirstOrDefault(s => s.Contains("Figurine_Sprite"));
+
+            if (figurine_sprite_folder == null)
+                throw new Exception();
+
+            string free_battle_selection_sprite_folder = spriteFolders.FirstOrDefault(s => s.Contains("Free_Battle_Selection_Sprite"));
+
+            if (free_battle_selection_sprite_folder == null)
+                throw new Exception();
+
+            string in_game_sortie_and_awakening_sprite_folder = spriteFolders.FirstOrDefault(s => s.Contains("In_Game_Sortie_and_Awakening_Sprite"));
+
+            if (in_game_sortie_and_awakening_sprite_folder == null)
+                throw new Exception();
+
+            string loading_ally_sprite_folder = spriteFolders.FirstOrDefault(s => s.Contains("Loading_Ally_Sprite"));
+
+            if (loading_ally_sprite_folder == null)
+                throw new Exception();
+
+            string loading_enemy_sprite_folder = spriteFolders.FirstOrDefault(s => s.Contains("Loading_Enemy_Sprite"));
+
+            if (loading_enemy_sprite_folder == null)
+                throw new Exception();
+
+            string loading_enemy_target_pilot_sprite_folder = spriteFolders.FirstOrDefault(s => s.Contains("Loading_Enemy_Target_Pilot_Sprite"));
+
+            if (loading_enemy_target_pilot_sprite_folder == null)
+                throw new Exception();
+
+            string loading_enemy_target_unit_sprite_folder = spriteFolders.FirstOrDefault(s => s.Contains("Loading_Enemy_Target_Unit_Sprite"));
+
+            if (loading_enemy_target_unit_sprite_folder == null)
+                throw new Exception();
+
+            string result_small_sprite_folder = spriteFolders.FirstOrDefault(s => s.Contains("Result_Small_Sprite"));
+
+            if (result_small_sprite_folder == null)
+                throw new Exception();
+
+            string target_small_sprite_folder = spriteFolders.FirstOrDefault(s => s.Contains("Target_Small_Sprite"));
+
+            if (target_small_sprite_folder == null)
+                throw new Exception();
+
+            // Arcade Select Sprite
+            DirectoryCopy(repackTemplates + @"\Sprites\Arcade_Selection_Sprite", spriteArcadeFolder, true);
+
+            string arcade_unit_sprite = arcade_select_sprite_folder + @"\arcade_unit.dds";
+            string arcade_pilot_sprite = arcade_select_sprite_folder + @"\arcade_pilot.dds";
+
+            File.Copy(arcade_unit_sprite, spriteArcadeFolder + @"\001-FHM\002.dds", true);
+            File.Copy(arcade_pilot_sprite, spriteArcadeFolder + @"\001-FHM\003.dds", true);
+
+            Properties.Settings.Default.OpenRepackPath = spriteArcadeFolder;
+
+            repackInstance = new RepackPAC(Properties.Settings.Default.OutputRepackPAC);
+            repackInstance.initializePACInfoFileRepack();
+            repackInstance.parseInfo();
+            repackInstance.repackPAC();
+
+            // Free Battle Selection Sprite
+            DirectoryCopy(repackTemplates + @"\Sprites\Free_Battle_Selection_Sprite", spriteFreeBattleSelectionFolder, true);
+
+            string free_battle_unit_sprite = free_battle_selection_sprite_folder + @"\free_battle_unit.dds";
+            string free_battle_pilot_sprite = free_battle_selection_sprite_folder + @"\free_battle_pilot.dds";
+
+            File.Copy(free_battle_unit_sprite, spriteFreeBattleSelectionFolder + @"\001-FHM\002.dds", true);
+            File.Copy(free_battle_pilot_sprite, spriteFreeBattleSelectionFolder + @"\001-FHM\003.dds", true);
+
+            Properties.Settings.Default.OpenRepackPath = spriteFreeBattleSelectionFolder;
+
+            repackInstance = new RepackPAC(Properties.Settings.Default.OutputRepackPAC);
+            repackInstance.initializePACInfoFileRepack();
+            repackInstance.parseInfo();
+            repackInstance.repackPAC();
+
+            // Loading Ally Sprite
+            DirectoryCopy(repackTemplates + @"\Sprites\Loading_Ally_Sprite", spriteLoadingAllyFolder, true);
+
+            string loading_ally_unit_sprite = loading_ally_sprite_folder + @"\loading_ally_unit.dds";
+            string loading_ally_pilot_sprite = loading_ally_sprite_folder + @"\loading_ally_pilot.dds";
+
+            File.Copy(loading_ally_unit_sprite, spriteLoadingAllyFolder + @"\001-FHM\002.dds", true);
+            File.Copy(loading_ally_pilot_sprite, spriteLoadingAllyFolder + @"\001-FHM\003.dds", true);
+
+            Properties.Settings.Default.OpenRepackPath = spriteLoadingAllyFolder;
+
+            repackInstance = new RepackPAC(Properties.Settings.Default.OutputRepackPAC);
+            repackInstance.initializePACInfoFileRepack();
+            repackInstance.parseInfo();
+            repackInstance.repackPAC();
+
+            // Loading Enemy Sprite
+            DirectoryCopy(repackTemplates + @"\Sprites\Loading_Enemy_Sprite", spriteLoadingEnemyFolder, true);
+
+            string loading_enemy_unit_sprite = loading_enemy_sprite_folder + @"\loading_enemy_unit.dds";
+            string loading_enemy_pilot_sprite = loading_enemy_sprite_folder + @"\loading_enemy_pilot.dds";
+
+            File.Copy(loading_enemy_unit_sprite, spriteLoadingEnemyFolder + @"\001-FHM\002.dds", true);
+            File.Copy(loading_enemy_pilot_sprite, spriteLoadingEnemyFolder + @"\001-FHM\003.dds", true);
+
+            Properties.Settings.Default.OpenRepackPath = spriteLoadingEnemyFolder;
+
+            repackInstance = new RepackPAC(Properties.Settings.Default.OutputRepackPAC);
+            repackInstance.initializePACInfoFileRepack();
+            repackInstance.parseInfo();
+            repackInstance.repackPAC();
+
+            // Loading Enemy Target Pilot Sprite
+            DirectoryCopy(repackTemplates + @"\Sprites\Loading_Enemy_Target_Pilot_Sprite", spriteLoadingEnemyTargetPilotFolder, true);
+
+            string loading_enemy_target_pilot_sprite = loading_enemy_target_pilot_sprite_folder + @"\loading_enemy_target_pilot.dds";
+
+            File.Copy(loading_enemy_target_pilot_sprite, spriteLoadingEnemyTargetPilotFolder + @"\001-FHM\002.dds", true);
+
+            Properties.Settings.Default.OpenRepackPath = spriteLoadingEnemyTargetPilotFolder;
+
+            repackInstance = new RepackPAC(Properties.Settings.Default.OutputRepackPAC);
+            repackInstance.initializePACInfoFileRepack();
+            repackInstance.parseInfo();
+            repackInstance.repackPAC();
+
+            // Loading Enemy Target Unit Sprite
+            DirectoryCopy(repackTemplates + @"\Sprites\Loading_Enemy_Target_Unit_Sprite", spriteLoadingEnemyTargetUnitFolder, true);
+
+            string loading_enemy_target_unit_sprite = loading_enemy_target_unit_sprite_folder + @"\loading_enemy_target_unit.dds";
+
+            File.Copy(loading_enemy_target_unit_sprite, spriteLoadingEnemyTargetUnitFolder + @"\001-FHM\002.dds", true);
+
+            Properties.Settings.Default.OpenRepackPath = spriteLoadingEnemyTargetUnitFolder;
+
+            repackInstance = new RepackPAC(Properties.Settings.Default.OutputRepackPAC);
+            repackInstance.initializePACInfoFileRepack();
+            repackInstance.parseInfo();
+            repackInstance.repackPAC();
+
+            // Result Small Sprite
+            DirectoryCopy(repackTemplates + @"\Sprites\Result_Small_Sprite", spriteResultSmallSpriteFolder, true);
+
+            string result_small_sprite = result_small_sprite_folder + @"\free_selection_sprite.dds";
+
+            File.Copy(result_small_sprite, spriteResultSmallSpriteFolder + @"\001-FHM\002.dds", true);
+
+            Properties.Settings.Default.OpenRepackPath = spriteResultSmallSpriteFolder;
+
+            repackInstance = new RepackPAC(Properties.Settings.Default.OutputRepackPAC);
+            repackInstance.initializePACInfoFileRepack();
+            repackInstance.parseInfo();
+            repackInstance.repackPAC();
+
+            // Target Small Sprite
+            DirectoryCopy(repackTemplates + @"\Sprites\Target_Small_Sprite", spriteTargetSmallSpriteFolder, true);
+
+            string target_small_sprite = target_small_sprite_folder + @"\target_small_sprite.dds";
+
+            File.Copy(target_small_sprite, spriteTargetSmallSpriteFolder + @"\001-FHM\002.dds", true);
+
+            Properties.Settings.Default.OpenRepackPath = spriteTargetSmallSpriteFolder;
+
+            repackInstance = new RepackPAC(Properties.Settings.Default.OutputRepackPAC);
+            repackInstance.initializePACInfoFileRepack();
+            repackInstance.parseInfo();
+            repackInstance.repackPAC();
+
+            // In game sortie and awakening sprites
+            DirectoryCopy(repackTemplates + @"\Sprites\In_Game_Sortie_and_Awakening_Sprite", spriteInGameSortieandAwakeningFolder, true);
+
+            string awakeningLMB = reimportConvertedfromMBONFolder + @"\Sprites\awakening - resized.LMB";
+            string sortieLMB = reimportConvertedfromMBONFolder + @"\Sprites\sortie - resized.LMB";
+
+            string sortieSpritesFolder = in_game_sortie_and_awakening_sprite_folder + @"\sortie";
+            string awakeningSpritesFolder = in_game_sortie_and_awakening_sprite_folder + @"\awakening";
+            string eyeSpriteFolder = in_game_sortie_and_awakening_sprite_folder + @"\eye";
+
+            File.Copy(sortieLMB, spriteInGameSortieandAwakeningFolder + @"\001-FHM\002-FHM\003-FHM\sortie.LMB", true);
+            File.Copy(sortieSpritesFolder + @"\sortie_sprite_0.dds", spriteInGameSortieandAwakeningFolder + @"\001-FHM\002-FHM\003-FHM\sortie_sprite_0.dds", true);
+            File.Copy(sortieSpritesFolder + @"\sortie_sprite_1.dds", spriteInGameSortieandAwakeningFolder + @"\001-FHM\002-FHM\003-FHM\sortie_sprite_1.dds", true);
+            File.Copy(sortieSpritesFolder + @"\sortie_sprite_2.dds", spriteInGameSortieandAwakeningFolder + @"\001-FHM\002-FHM\003-FHM\sortie_sprite_2.dds", true);
+            File.Copy(sortieSpritesFolder + @"\sortie_sprite_3.dds", spriteInGameSortieandAwakeningFolder + @"\001-FHM\002-FHM\003-FHM\sortie_sprite_3.dds", true);
+            List<string> sortieSprites = Directory.GetFiles(sortieSpritesFolder, "*", SearchOption.AllDirectories).ToList();
+            sortieSprites = sortieSprites.Where(x => Path.GetExtension(x).Equals(".dds")).ToList();
+            for (int i = 0; i < sortieSprites.Count; i++)
+            {
+                File.Copy(sortieSprites[i], spriteInGameSortieandAwakeningFolder + @"\001-FHM\002-FHM\003-FHM\" + Path.GetFileName(sortieSprites[i]), true);
+            }
+
+            File.Copy(awakeningLMB, spriteInGameSortieandAwakeningFolder + @"\001-FHM\002-FHM\009-FHM\awakening.LMB", true);
+            List<string> awakeningSprites = Directory.GetFiles(awakeningSpritesFolder, "*", SearchOption.AllDirectories).ToList();
+            awakeningSprites = awakeningSprites.Where(x => Path.GetExtension(x).Equals(".dds")).ToList();
+            for(int i = 0; i < awakeningSprites.Count; i++)
+            {
+                File.Copy(awakeningSprites[i], spriteInGameSortieandAwakeningFolder + @"\001-FHM\002-FHM\009-FHM\" + Path.GetFileName(awakeningSprites[i]), true);
+            }
+
+            File.Copy(eyeSpriteFolder + @"\pilot_eye.dds", spriteInGameSortieandAwakeningFolder + @"\001-FHM\002-FHM\pilot_eye.dds", true);
+
+            // Building PAC Infos
+            StringBuilder sb = new StringBuilder();
+
+            StreamReader ingamesortieandawakeningSpritesPACInfo = File.OpenText(spriteInGameSortieandAwakeningFolder + @"\PAC.Info");
+            sb.Append(ingamesortieandawakeningSpritesPACInfo.ReadToEnd());
+            ingamesortieandawakeningSpritesPACInfo.Close();
+
+            // append fhm info 
+            // theoretically, it is 3th file
+            sb.AppendLine("--3--");
+            sb.AppendLine("FHMOffset: 0");
+            sb.AppendLine("Size: 0");
+            sb.AppendLine("FHMAssetLoadEnum: 3");
+            sb.AppendLine("FHMunkEnum: 0");
+            sb.AppendLine("FHMFileNo: 2");
+            sb.AppendLine("Header: fhm");
+            sb.AppendLine("--FHM--");
+            sb.AppendLine("Total file size: 0");
+            sb.AppendLine("Number of files: " + (sortieSprites.Count() + 1));
+            sb.AppendLine("FHM chunk size: 0");
+            sb.AppendLine("fileName: 009.fhm");
+            sb.AppendLine("Additional info flag: 0");
+            sb.AppendLine("");
+            sb.AppendLine("");
+            sb.AppendLine(@"//");
+
+            // append lmb info 
+            // theoretically, it is 4th file
+            sb.AppendLine("--4--");
+            sb.AppendLine("FHMOffset: 0");
+            sb.AppendLine("Size: 0");
+            sb.AppendLine("FHMAssetLoadEnum: 0");
+            sb.AppendLine("FHMunkEnum: 0");
+            sb.AppendLine("FHMFileNo: 3");
+            sb.AppendLine("Header: LMB");
+            sb.AppendLine("fileName: sortie.LMB");
+            sb.AppendLine("");
+            sb.AppendLine("");
+            sb.AppendLine(@"//");
+
+            GenerateSpritePACInfo generateSpritePACInfo = new GenerateSpritePACInfo();
+
+            string sortiePACInfo = generateSpritePACInfo.writeSpritePACInfo(sortieSpritesFolder, 5, 3);
+            sb.Append(sortiePACInfo);
+
+            uint awakeningFHMFileNo = (uint)5 + (uint)sortieSprites.Count();
+
+
+
+            if(spriteInGameSortieandAwakeningFolder + @"\001-FHM\002-FHM\" + awakeningFHMFileNo.ToString("000") + @"-FHM\" != spriteInGameSortieandAwakeningFolder + @"\001-FHM\002-FHM\009-FHM\")
+            {
+                if (Directory.Exists(spriteInGameSortieandAwakeningFolder + @"\001-FHM\002-FHM\" + awakeningFHMFileNo.ToString("000") + @"-FHM"))
+                    Directory.Delete(spriteInGameSortieandAwakeningFolder + @"\001-FHM\002-FHM\" + awakeningFHMFileNo.ToString("000") + @"-FHM", true);
+
+                Directory.Move(spriteInGameSortieandAwakeningFolder + @"\001-FHM\002-FHM\009-FHM\", spriteInGameSortieandAwakeningFolder + @"\001-FHM\002-FHM\" + awakeningFHMFileNo.ToString("000") + @"-FHM\");
+            }
+            // append fhm info 
+            sb.AppendLine("--" + awakeningFHMFileNo + "--");
+            sb.AppendLine("FHMOffset: 0");
+            sb.AppendLine("Size: 0");
+            sb.AppendLine("FHMAssetLoadEnum: 3");
+            sb.AppendLine("FHMunkEnum: 0");
+            sb.AppendLine("FHMFileNo: 2");
+            sb.AppendLine("Header: fhm");
+            sb.AppendLine("--FHM--");
+            sb.AppendLine("Total file size: 0");
+            sb.AppendLine("Number of files: " + (awakeningSprites.Count() + 1));
+            sb.AppendLine("FHM chunk size: 0");
+            sb.AppendLine("fileName: 009.fhm");
+            sb.AppendLine("Additional info flag: 0");
+            sb.AppendLine("");
+            sb.AppendLine("");
+            sb.AppendLine(@"//");
+
+            // append lmb info 
+            sb.AppendLine("--" + (awakeningFHMFileNo + 1) + "--");
+            sb.AppendLine("FHMOffset: 0");
+            sb.AppendLine("Size: 0");
+            sb.AppendLine("FHMAssetLoadEnum: 0");
+            sb.AppendLine("FHMunkEnum: 0");
+            sb.AppendLine("FHMFileNo: " + awakeningFHMFileNo);
+            sb.AppendLine("Header: LMB");
+            sb.AppendLine("fileName: awakening.LMB");
+            sb.AppendLine("");
+            sb.AppendLine("");
+            sb.AppendLine(@"//");
+
+            // awakening sprite, FHM file no is the 9th file
+            string awakeningPACInfo = generateSpritePACInfo.writeSpritePACInfo(awakeningSpritesFolder, (int)(awakeningFHMFileNo + 2), (int)awakeningFHMFileNo);
+            sb.Append(awakeningPACInfo);
+
+            // eye sprite, FHM file no is the root FHM (2nd file)
+            int eyeFileNo = (int)awakeningFHMFileNo + 1 + awakeningSprites.Count() + 1; // number of awakening sprites + 1 (eye)
+            string eyePACInfo = generateSpritePACInfo.writeSpritePACInfo(eyeSpriteFolder, eyeFileNo, 2);
+            sb.Append(eyePACInfo);
+
+            // append end file
+            sb.AppendLine("--" + (eyeFileNo + 1) + "--");
+            sb.AppendLine("Header: endfile");
+            sb.AppendLine("End File Offset: 0");
+            sb.AppendLine("End File Size: 0");
+            sb.AppendLine("fileName: endfile.endfile");
+            sb.AppendLine("");
+            sb.AppendLine("");
+            sb.AppendLine(@"//");
+
+            StreamWriter ingamesortieandawakeningSpritesPACInfoWrite = File.CreateText(spriteInGameSortieandAwakeningFolder + @"\PAC.Info");
+            ingamesortieandawakeningSpritesPACInfoWrite.Write(sb.ToString());
+            ingamesortieandawakeningSpritesPACInfoWrite.Close();
+
+            Properties.Settings.Default.OpenRepackPath = spriteInGameSortieandAwakeningFolder;
+
+            repackInstance = new RepackPAC(Properties.Settings.Default.OutputRepackPAC);
+            repackInstance.initializePACInfoFileRepack();
+            repackInstance.parseInfo();
+            repackInstance.repackPAC();
+            */
         }
 
         public void fixsys_2badref()
@@ -1571,14 +2362,23 @@ namespace FBRepacker.Tools
 
                 oms.Seek(fix_Position + 14, SeekOrigin.Begin);
 
+                int fix_Position_1 = Search(oms, new byte[] { 0x2E }, (int)oms.Position);
+                if (fix_Position_1 == -1)
+                    throw new Exception();
+
                 for (int i = 0; i < reset_0x2E_Count; i++)
                 {
-                    int fix_Position_1 = Search(oms, new byte[] { 0x2E }, (int)oms.Position);
-                    if (fix_Position_1 == -1)
+                    oms.Seek(fix_Position_1, SeekOrigin.Begin);
+
+                    int checkif0x2e = oms.ReadByte();
+
+                    if(checkif0x2e != 0x2e)
                         throw new Exception();
 
                     oms.Seek(fix_Position_1, SeekOrigin.Begin);
                     oms.Write(new byte[] { 0xAE }, 0, 1);
+
+                    fix_Position_1 += 0x32;
                 }
 
                 oms.Seek(0, SeekOrigin.Begin);

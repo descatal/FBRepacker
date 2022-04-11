@@ -47,7 +47,7 @@ namespace FBRepacker.Data.FB_Parse
 
                         MBONlog.AppendLine(sound_effect_str + " - 0x" + sound_effect_hash);
 
-                        uint.TryParse(sound_effect_hash, out uint result);
+                        uint result = Convert.ToUInt32(sound_effect_hash, 16);
                         MBON.sound_effect_PAC_hash = result;
 
 
@@ -56,7 +56,7 @@ namespace FBRepacker.Data.FB_Parse
 
                         MBONlog.AppendLine(global_pilot_voices_str + " - 0x" + global_pilot_voices_hash);
 
-                        uint.TryParse(global_pilot_voices_hash, out result);
+                        result = Convert.ToUInt32(global_pilot_voices_hash, 16);
                         MBON.global_pilot_voices_PAC_hash = result;
 
 
@@ -65,7 +65,7 @@ namespace FBRepacker.Data.FB_Parse
 
                         MBONlog.AppendLine(sortie_and_awakening_sprites_costume_1_str + " - 0x" + sortie_and_awakening_sprites_costume_1_hash);
 
-                        uint.TryParse(sortie_and_awakening_sprites_costume_1_hash, out result);
+                        result = Convert.ToUInt32(sortie_and_awakening_sprites_costume_1_hash, 16);
                         MBON.sortie_and_awakening_sprites_PAC_hash = result;
 
 
@@ -74,16 +74,16 @@ namespace FBRepacker.Data.FB_Parse
 
                         MBONlog.AppendLine(global_pilot_voice_file_list_str + " - 0x" + global_pilot_voice_file_list_hash);
 
-                        uint.TryParse(global_pilot_voice_file_list_hash, out result);
+                        result = Convert.ToUInt32(global_pilot_voice_file_list_hash, 16);
                         MBON.voice_file_list_PAC_hash = result;
 
 
-                        string local_pilot_voices_str = unit.name_english + "_global_pilot_voices";
+                        string local_pilot_voices_str = unit.name_english + "_local_pilot_voices";
                         string local_pilot_voices_hash = crc32.Get(Encoding.UTF8.GetBytes(local_pilot_voices_str.ToLower())).ToString("X8");
 
                         MBONlog.AppendLine(local_pilot_voices_str + " - 0x" + local_pilot_voices_hash);
 
-                        uint.TryParse(local_pilot_voices_hash, out result);
+                        result = Convert.ToUInt32(local_pilot_voices_hash, 16);
                         MBON.local_pilot_voices_STREAM_PAC_hash = result;
 
                         MBON.MBONAdded = true;

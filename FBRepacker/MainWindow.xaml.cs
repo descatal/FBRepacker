@@ -27,6 +27,7 @@ using System.Globalization;
 using FBRepacker.Data.UI;
 using static FBRepacker.Data.MBON_Parse.nus3AudioNameHash;
 using FBRepacker.Psarc.V2;
+using FBRepacker.Tools;
 
 namespace FBRepacker
 {
@@ -559,6 +560,32 @@ namespace FBRepacker
             Properties.Settings.Default.Save();
         }
 
+        private void OpenModelEffectsBinary_Click(object sender, RoutedEventArgs e)
+        {
+            OpenFileDialog openFileDialog = new OpenFileDialog();
+            string inputModelEffectsBinaryFilePath = System.IO.Path.GetDirectoryName(Properties.Settings.Default.inputModelEffectsBinaryPath);
+            openFileDialog.InitialDirectory = inputModelEffectsBinaryFilePath;
+            openFileDialog.RestoreDirectory = true;
+            openFileDialog.ShowDialog();
+
+            inputModelEffectsBinaryFilePath = openFileDialog.FileName;
+            Properties.Settings.Default.inputModelEffectsBinaryPath = File.Exists(inputModelEffectsBinaryFilePath) ? inputModelEffectsBinaryFilePath : Properties.Settings.Default.inputModelEffectsBinaryPath;
+            Properties.Settings.Default.Save();
+        }
+
+        private void OpenHitboxPropertiesBinary_Click(object sender, RoutedEventArgs e)
+        {
+            OpenFileDialog openFileDialog = new OpenFileDialog();
+            string inputHitboxPropertiesBinaryFilePath = System.IO.Path.GetDirectoryName(Properties.Settings.Default.inputHitboxPropertiesBinaryPath);
+            openFileDialog.InitialDirectory = inputHitboxPropertiesBinaryFilePath;
+            openFileDialog.RestoreDirectory = true;
+            openFileDialog.ShowDialog();
+
+            inputHitboxPropertiesBinaryFilePath = openFileDialog.FileName;
+            Properties.Settings.Default.inputHitboxPropertiesBinaryPath = File.Exists(inputHitboxPropertiesBinaryFilePath) ? inputHitboxPropertiesBinaryFilePath : Properties.Settings.Default.inputHitboxPropertiesBinaryPath;
+            Properties.Settings.Default.Save();
+        }
+
         private void OpenFBSeriesInfoListBinary_Click(object sender, RoutedEventArgs e)
         {
             OpenFileDialog openFileDialog = new OpenFileDialog();
@@ -652,6 +679,26 @@ namespace FBRepacker
             }
         }
 
+        private void change_ModelEffects_JSON_Output_Path_Click(object sender, RoutedEventArgs e)
+        {
+            string outputModelEffectsJSONFolderPath = openFolderDialog(Properties.Settings.Default.outputModelEffectsJSONPath);
+            if (outputModelEffectsJSONFolderPath != string.Empty)
+            {
+                Properties.Settings.Default.outputModelEffectsJSONPath = outputModelEffectsJSONFolderPath;
+                Properties.Settings.Default.Save();
+            }
+        }
+
+        private void change_HitboxProperties_JSON_Output_Path_Click(object sender, RoutedEventArgs e)
+        {
+            string outputHitboxPropertiesJSONFolderPath = openFolderDialog(Properties.Settings.Default.outputHitboxPropertiesJSONPath);
+            if (outputHitboxPropertiesJSONFolderPath != string.Empty)
+            {
+                Properties.Settings.Default.outputHitboxPropertiesJSONPath = outputHitboxPropertiesJSONFolderPath;
+                Properties.Settings.Default.Save();
+            }
+        }
+
         private void change_FB_Series_Info_List_JSON_Output_Path_Click(object sender, RoutedEventArgs e)
         {
             string outputFBSeriesInfoListJSONFolderPath = openFolderDialog(Properties.Settings.Default.outputFBSeriesInfoListJSONFolder);
@@ -737,6 +784,32 @@ namespace FBRepacker
             Properties.Settings.Default.Save();
         }
 
+        private void OpenModelEffectsJSON_Click(object sender, RoutedEventArgs e)
+        {
+            OpenFileDialog openFileDialog = new OpenFileDialog();
+            string ModelEffectsJSONFilePath = System.IO.Path.GetDirectoryName(Properties.Settings.Default.inputModelEffectsJSONPath);
+            openFileDialog.InitialDirectory = ModelEffectsJSONFilePath;
+            openFileDialog.RestoreDirectory = true;
+            openFileDialog.ShowDialog();
+
+            ModelEffectsJSONFilePath = openFileDialog.FileName;
+            Properties.Settings.Default.inputModelEffectsJSONPath = File.Exists(ModelEffectsJSONFilePath) ? ModelEffectsJSONFilePath : Properties.Settings.Default.inputModelEffectsJSONPath;
+            Properties.Settings.Default.Save();
+        }
+
+        private void OpenHitboxPropertiesJSON_Click(object sender, RoutedEventArgs e)
+        {
+            OpenFileDialog openFileDialog = new OpenFileDialog();
+            string HitboxPropertiesJSONFilePath = System.IO.Path.GetDirectoryName(Properties.Settings.Default.inputHitboxPropertiesJSONPath);
+            openFileDialog.InitialDirectory = HitboxPropertiesJSONFilePath;
+            openFileDialog.RestoreDirectory = true;
+            openFileDialog.ShowDialog();
+
+            HitboxPropertiesJSONFilePath = openFileDialog.FileName;
+            Properties.Settings.Default.inputHitboxPropertiesJSONPath = File.Exists(HitboxPropertiesJSONFilePath) ? HitboxPropertiesJSONFilePath : Properties.Settings.Default.inputHitboxPropertiesJSONPath;
+            Properties.Settings.Default.Save();
+        }
+
         private void OpenFBSeriesInfoListJSON_Click(object sender, RoutedEventArgs e)
         {
             OpenFileDialog openFileDialog = new OpenFileDialog();
@@ -747,6 +820,32 @@ namespace FBRepacker
 
             FBSeriesInfoListJSONFilePath = openFileDialog.FileName;
             Properties.Settings.Default.inputFBSeriesInfoListJSON = File.Exists(FBSeriesInfoListJSONFilePath) ? FBSeriesInfoListJSONFilePath : Properties.Settings.Default.inputFBSeriesInfoListJSON;
+            Properties.Settings.Default.Save();
+        }
+
+        private void OpenMapListBinary_Click(object sender, RoutedEventArgs e)
+        {
+            OpenFileDialog openFileDialog = new OpenFileDialog();
+            string MapListBinaryFilePath = System.IO.Path.GetDirectoryName(Properties.Settings.Default.inputMapListBinaryPath);
+            openFileDialog.InitialDirectory = MapListBinaryFilePath;
+            openFileDialog.RestoreDirectory = true;
+            openFileDialog.ShowDialog();
+
+            MapListBinaryFilePath = openFileDialog.FileName;
+            Properties.Settings.Default.inputMapListBinaryPath = File.Exists(MapListBinaryFilePath) ? MapListBinaryFilePath : Properties.Settings.Default.inputMapListBinaryPath;
+            Properties.Settings.Default.Save();
+        }
+
+        private void OpenMapListJSON_Click(object sender, RoutedEventArgs e)
+        {
+            OpenFileDialog openFileDialog = new OpenFileDialog();
+            string MapListJSONFilePath = System.IO.Path.GetDirectoryName(Properties.Settings.Default.inputMapListJSONPath);
+            openFileDialog.InitialDirectory = MapListJSONFilePath;
+            openFileDialog.RestoreDirectory = true;
+            openFileDialog.ShowDialog();
+
+            MapListJSONFilePath = openFileDialog.FileName;
+            Properties.Settings.Default.inputMapListJSONPath = File.Exists(MapListJSONFilePath) ? MapListJSONFilePath : Properties.Settings.Default.inputMapListJSONPath;
             Properties.Settings.Default.Save();
         }
 
@@ -773,6 +872,19 @@ namespace FBRepacker
 
             LMBFilePath = openFileDialog.FileName;
             Properties.Settings.Default.inputLMBFilePath = File.Exists(LMBFilePath) ? LMBFilePath : Properties.Settings.Default.inputLMBFilePath;
+            Properties.Settings.Default.Save();
+        }
+
+        private void OpenResizeLMBFile_Click(object sender, RoutedEventArgs e)
+        {
+            OpenFileDialog openFileDialog = new OpenFileDialog();
+            string resizeLMBFilePath = System.IO.Path.GetDirectoryName(Properties.Settings.Default.inputResizeLMBBinaryPath);
+            openFileDialog.InitialDirectory = resizeLMBFilePath;
+            openFileDialog.RestoreDirectory = true;
+            openFileDialog.ShowDialog();
+
+            resizeLMBFilePath = openFileDialog.FileName;
+            Properties.Settings.Default.inputResizeLMBBinaryPath = File.Exists(resizeLMBFilePath) ? resizeLMBFilePath : Properties.Settings.Default.inputResizeLMBBinaryPath;
             Properties.Settings.Default.Save();
         }
 
@@ -895,6 +1007,16 @@ namespace FBRepacker
             }
         }
 
+        private void change_resize_LMB_Output_Path_Click(object sender, RoutedEventArgs e)
+        {
+            string outputResizeLMBFolderPath = openFolderDialog(Properties.Settings.Default.outputResizeLMBBinaryPath);
+            if (outputResizeLMBFolderPath != string.Empty)
+            {
+                Properties.Settings.Default.outputResizeLMBBinaryPath = outputResizeLMBFolderPath;
+                Properties.Settings.Default.Save();
+            }
+        }
+
         private void change_Projecitle_Binary_Output_Path_Click(object sender, RoutedEventArgs e)
         {
             string outputProjectileBinFolderPath = openFolderDialog(Properties.Settings.Default.outputProjectileBinFolderPath);
@@ -945,12 +1067,52 @@ namespace FBRepacker
             }
         }
 
+        private void change_ModelEffects_Binary_Output_Path_Click(object sender, RoutedEventArgs e)
+        {
+            string outputModelEffectsFolderPath = openFolderDialog(Properties.Settings.Default.outputModelEffectsBinaryPath);
+            if (outputModelEffectsFolderPath != string.Empty)
+            {
+                Properties.Settings.Default.outputModelEffectsBinaryPath = outputModelEffectsFolderPath;
+                Properties.Settings.Default.Save();
+            }
+        }
+
+        private void change_HitboxProperties_Binary_Output_Path_Click(object sender, RoutedEventArgs e)
+        {
+            string outputHitboxPropertiesFolderPath = openFolderDialog(Properties.Settings.Default.outputHitboxPropertiesBinaryPath);
+            if (outputHitboxPropertiesFolderPath != string.Empty)
+            {
+                Properties.Settings.Default.outputHitboxPropertiesBinaryPath = outputHitboxPropertiesFolderPath;
+                Properties.Settings.Default.Save();
+            }
+        }
+
         private void change_FB_Series_Info_List_Binary_Output_Path_Click(object sender, RoutedEventArgs e)
         {
             string outputFBSeriesInfoListFolderPath = openFolderDialog(Properties.Settings.Default.outputFBSeriesInfoListBinaryFolder);
             if (outputFBSeriesInfoListFolderPath != string.Empty)
             {
                 Properties.Settings.Default.outputFBSeriesInfoListBinaryFolder = outputFBSeriesInfoListFolderPath;
+                Properties.Settings.Default.Save();
+            }
+        }
+
+        private void change_Map_List_JSON_Output_Path_Click(object sender, RoutedEventArgs e)
+        {
+            string outputMapListJSONFolderPath = openFolderDialog(Properties.Settings.Default.outputMapListJSONPath);
+            if (outputMapListJSONFolderPath != string.Empty)
+            {
+                Properties.Settings.Default.outputMapListJSONPath = outputMapListJSONFolderPath;
+                Properties.Settings.Default.Save();
+            }
+        }
+
+        private void change_Map_List_Binary_Output_Path_Click(object sender, RoutedEventArgs e)
+        {
+            string outputMapListBinaryFolderPath = openFolderDialog(Properties.Settings.Default.outputMapListBinaryPath);
+            if (outputMapListBinaryFolderPath != string.Empty)
+            {
+                Properties.Settings.Default.outputMapListBinaryPath = outputMapListBinaryFolderPath;
                 Properties.Settings.Default.Save();
             }
         }
@@ -1209,6 +1371,44 @@ namespace FBRepacker
             debugMessageBox.AppendText("NTXB JSON Export Complete!");
         }
 
+        private void Model_Effects_Export_JSON_Click(object sender, RoutedEventArgs e)
+        {
+            debugMessageBox.AppendText(Environment.NewLine);
+            debugMessageBox.AppendText("Starting Model Effects JSON Export");
+
+            try
+            {
+                new Parse_Model_Effects().deserialize_Model_Effects_Data();
+            }
+            catch (Exception exp)
+            {
+                debugMessageBox.AppendText(Environment.NewLine);
+                debugMessageBox.AppendText("Error: " + exp + "." + @"\n Please restart the application.");
+            }
+            debugMessageBox.AppendText(Environment.NewLine);
+            debugMessageBox.AppendText("Model Effects JSON Export Complete!");
+        }
+
+        private void Hitbox_Properties_Export_JSON_Click(object sender, RoutedEventArgs e)
+        {
+            debugMessageBox.AppendText(Environment.NewLine);
+            debugMessageBox.AppendText("Starting Hitbox Properties JSON Export");
+
+            new Parse_Hitbox_Properties().deserialize_Hitbox_Properties();
+
+            try
+            {
+                
+            }
+            catch (Exception exp)
+            {
+                debugMessageBox.AppendText(Environment.NewLine);
+                debugMessageBox.AppendText("Error: " + exp + "." + @"\n Please restart the application.");
+            }
+            debugMessageBox.AppendText(Environment.NewLine);
+            debugMessageBox.AppendText("Hitbox Properties JSON Export Complete!");
+        }
+
         private void FB_Series_Info_List_Export_JSON_Click(object sender, RoutedEventArgs e)
         {
             debugMessageBox.AppendText(Environment.NewLine);
@@ -1306,6 +1506,44 @@ namespace FBRepacker
             debugMessageBox.AppendText(Environment.NewLine);
         }
 
+        private void ModelEffects_Export_Binary_Click(object sender, RoutedEventArgs e)
+        {
+            debugMessageBox.AppendText(Environment.NewLine);
+            debugMessageBox.AppendText("Starting ModelEffects Binary Export");
+            new Parse_Model_Effects().serialize_Model_Effects_Data();
+            try
+            {
+
+                debugMessageBox.AppendText(Environment.NewLine);
+                debugMessageBox.AppendText("ModelEffects Binary Export Complete!");
+            }
+            catch (Exception exp)
+            {
+                debugMessageBox.AppendText(Environment.NewLine);
+                debugMessageBox.AppendText("Error: " + exp + "." + @"\n Please restart the application.");
+            }
+            debugMessageBox.AppendText(Environment.NewLine);
+        }
+
+        private void HitboxProperties_Export_Binary_Click(object sender, RoutedEventArgs e)
+        {
+            debugMessageBox.AppendText(Environment.NewLine);
+            debugMessageBox.AppendText("Starting Hitbox Properties Binary Export");
+            new Parse_Hitbox_Properties().serialize_Hitbox_Properties();
+            try
+            {
+
+                debugMessageBox.AppendText(Environment.NewLine);
+                debugMessageBox.AppendText("Hitbox Properties Binary Export Complete!");
+            }
+            catch (Exception exp)
+            {
+                debugMessageBox.AppendText(Environment.NewLine);
+                debugMessageBox.AppendText("Error: " + exp + "." + @"\n Please restart the application.");
+            }
+            debugMessageBox.AppendText(Environment.NewLine);
+        }
+
         private void FB_Unit_Series_List_Export_Binary_Click(object sender, RoutedEventArgs e)
         {
             debugMessageBox.AppendText(Environment.NewLine);
@@ -1315,6 +1553,44 @@ namespace FBRepacker
                 new Parse_Series_Info().writeFBSeriesInfoList();
                 debugMessageBox.AppendText(Environment.NewLine);
                 debugMessageBox.AppendText("FB Series Info List Binary Export Complete!");
+            }
+            catch (Exception exp)
+            {
+                debugMessageBox.AppendText(Environment.NewLine);
+                debugMessageBox.AppendText("Error: " + exp + "." + @"\n Please restart the application.");
+            }
+            debugMessageBox.AppendText(Environment.NewLine);
+        }
+
+        private void Map_List_Export_JSON_Click(object sender, RoutedEventArgs e)
+        {
+            debugMessageBox.AppendText(Environment.NewLine);
+            debugMessageBox.AppendText("Starting Map List JSON Export");
+            new Parse_Map_List().deserialize_map_list();
+            try
+            {
+                
+                debugMessageBox.AppendText(Environment.NewLine);
+                debugMessageBox.AppendText("Map List JSON Export Complete!");
+            }
+            catch (Exception exp)
+            {
+                debugMessageBox.AppendText(Environment.NewLine);
+                debugMessageBox.AppendText("Error: " + exp + "." + @"\n Please restart the application.");
+            }
+            debugMessageBox.AppendText(Environment.NewLine);
+        }
+
+        private void Map_List_Export_Binary_Click(object sender, RoutedEventArgs e)
+        {
+            debugMessageBox.AppendText(Environment.NewLine);
+            debugMessageBox.AppendText("Starting Map List Binary Export");
+            new Parse_Map_List().serialize_map_list();
+            try
+            {
+
+                debugMessageBox.AppendText(Environment.NewLine);
+                debugMessageBox.AppendText("Map List Binary Export Complete!");
             }
             catch (Exception exp)
             {
@@ -1376,6 +1652,24 @@ namespace FBRepacker
             }
             debugMessageBox.AppendText(Environment.NewLine);
             debugMessageBox.AppendText("LMB conversion complete");
+        }
+
+        private void resize_LMB_Convert_Click(object sender, RoutedEventArgs e)
+        {
+            debugMessageBox.AppendText(Environment.NewLine);
+            debugMessageBox.AppendText("Starting LMB resizing");
+            new resizeMBONLMB().resizeLMB(Properties.Settings.Default.inputResizeLMBBinaryPath, Properties.Settings.Default.outputResizeLMBBinaryPath + @"\resized.LMB", (float)0.6667);
+            try
+            {
+
+            }
+            catch (Exception exp)
+            {
+                debugMessageBox.AppendText(Environment.NewLine);
+                debugMessageBox.AppendText("Error: " + exp + "." + @"\n Please restart the application.");
+            }
+            debugMessageBox.AppendText(Environment.NewLine);
+            debugMessageBox.AppendText("LMB resizing complete");
         }
 
         private void extractPAC_Click(object sender, RoutedEventArgs e)
@@ -1659,7 +1953,9 @@ namespace FBRepacker
             //new ParseEFP();
             //new Parse_Unit_Data().combineDataHashSchema();
 
-            new Tools.ReimportAllMBON();
+            new Tools.recompilescript();
+            // new Tools.Reverse32ByteEndian();
+            //new Tools.ReimportAllMBON();
             //new Tools.MBONExport();
             // new Tools.BlankTemplate();
 

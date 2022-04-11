@@ -806,7 +806,7 @@
                             </Style>
                         </StackPanel.Resources>
 
-                        <TextBlock Text="Convert MBON LMB to FB format (not working)" FontWeight="Bold" Margin="10,0,10,0" TextAlignment="Center"/>
+                        <TextBlock Text="Convert MBON LMB to FB format" FontWeight="Bold" Margin="10,0,10,0" TextAlignment="Center"/>
 
                         <DockPanel>
                             <TextBlock Text="MBON LMB File: " Width="150" Margin="10,0,10,0" TextAlignment="Right"/>
@@ -824,10 +824,32 @@
                             <Button Content="Convert LMB" Click="LMB_Convert_Click" Width="150"/>
                         </DockPanel>
 
+                        <DockPanel>
+                            <Separator/>
+                        </DockPanel>
+
+                        <TextBlock Text="Resize LMB" FontWeight="Bold" Margin="10,0,10,0" TextAlignment="Center"/>
+
+                        <DockPanel>
+                            <TextBlock Text="LMB File: " Width="150" Margin="10,0,10,0" TextAlignment="Right"/>
+                            <TextBlock Text="{Binding inputResizeLMBBinaryPath, Mode=TwoWay, Source={x:Static pro:Settings.Default}, UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Stretch" Margin="10,0,10,0" TextAlignment="Right"/>
+                            <Button Content="Open" Click="OpenResizeLMBFile_Click" HorizontalAlignment="Right" Width="100"/>
+                        </DockPanel>
+
+                        <DockPanel>
+                            <TextBlock Text="Output Folder:" Width="150" Margin="10,0,10,0" TextAlignment="Right"/>
+                            <TextBlock Text="{Binding outputResizeLMBBinaryPath, Mode=TwoWay, Source={x:Static pro:Settings.Default}, UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Stretch" Margin="10,0,10,0" TextAlignment="Right"/>
+                            <Button Content="Change" Click="change_resize_LMB_Output_Path_Click" HorizontalAlignment="Right" Width="100"/>
+                        </DockPanel>
+
+                        <DockPanel>
+                            <Button Content="Resize LMB" Click="resize_LMB_Convert_Click" Width="150"/>
+                        </DockPanel>
+
                     </StackPanel>
                 </TabItem>
 
-                <TabItem Header="Unit / Series List (FB)">
+                <TabItem Header="Unit / Series / Map List (FB)">
                     <StackPanel Orientation="Vertical" Margin="0,10,0,10">
                         <StackPanel.Resources>
                             <Style TargetType="{x:Type DockPanel}">
@@ -840,8 +862,6 @@
                         <DockPanel>
                             <Separator/>
                         </DockPanel>
-
-                        <TextBlock Text="Parse FB Unit Info List (.bin to JSON)" FontWeight="Bold" Margin="10,0,10,0" TextAlignment="Center"/>
 
                         <DockPanel>
                             <TextBlock Text="FB Unit Info List Binary: " Width="200" Margin="10,0,10,0" TextAlignment="Right"/>
@@ -929,6 +949,50 @@
                             <Button Content="Export binary" Click="FB_Unit_Series_List_Export_Binary_Click" Width="150"/>
                         </DockPanel>
 
+                        <DockPanel>
+                            <Separator/>
+                        </DockPanel>
+
+                        <TextBlock Text="Parse FB Map Info List JSON (.bin to JSON)" FontWeight="Bold" Margin="10,20,10,0" TextAlignment="Center"/>
+
+                        <DockPanel>
+                            <TextBlock Text="FB Map Info List Binary: " Width="200" Margin="10,0,10,0" TextAlignment="Right"/>
+                            <TextBlock Text="{Binding inputMapListBinaryPath, Mode=TwoWay, Source={x:Static pro:Settings.Default}, UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Stretch" Margin="10,0,10,0" TextAlignment="Right"/>
+                            <Button Content="Open" Click="OpenMapListBinary_Click" HorizontalAlignment="Right" Width="100"/>
+                        </DockPanel>
+
+                        <DockPanel>
+                            <TextBlock Text="Output Folder:" Width="200" Margin="10,0,10,0" TextAlignment="Right"/>
+                            <TextBlock Text="{Binding outputMapListJSONPath, Mode=TwoWay, Source={x:Static pro:Settings.Default}, UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Stretch" Margin="10,0,10,0" TextAlignment="Right"/>
+                            <Button Content="Change" Click="change_Map_List_JSON_Output_Path_Click" HorizontalAlignment="Right" Width="100"/>
+                        </DockPanel>
+
+                        <DockPanel>
+                            <Button Content="Export JSON" Click="Map_List_Export_JSON_Click" Width="150"/>
+                        </DockPanel>
+
+                        <DockPanel>
+                            <Separator/>
+                        </DockPanel>
+
+                        <TextBlock Text="Serailize FB Map Info List binary (.JSON to .bin)" FontWeight="Bold" Margin="10,20,10,0" TextAlignment="Center"/>
+
+                        <DockPanel>
+                            <TextBlock Text="FB Map Info List JSON: " Width="200" Margin="10,0,10,0" TextAlignment="Right"/>
+                            <TextBlock Text="{Binding inputMapListJSONPath, Mode=TwoWay, Source={x:Static pro:Settings.Default}, UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Stretch" Margin="10,0,10,0" TextAlignment="Right"/>
+                            <Button Content="Open" Click="OpenMapListJSON_Click" HorizontalAlignment="Right" Width="100"/>
+                        </DockPanel>
+
+                        <DockPanel>
+                            <TextBlock Text="Output Folder:" Width="200" Margin="10,0,10,0" TextAlignment="Right"/>
+                            <TextBlock Text="{Binding outputMapListBinaryPath, Mode=TwoWay, Source={x:Static pro:Settings.Default}, UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Stretch" Margin="10,0,10,0" TextAlignment="Right"/>
+                            <Button Content="Change" Click="change_Map_List_Binary_Output_Path_Click" HorizontalAlignment="Right" Width="100"/>
+                        </DockPanel>
+
+                        <DockPanel>
+                            <Button Content="Export binary" Click="Map_List_Export_Binary_Click" Width="150"/>
+                        </DockPanel>
+
                     </StackPanel>
                 </TabItem>
 
@@ -978,6 +1042,108 @@
 
                         <DockPanel>
                             <Button Content="Save JSON and Export Binary" Click="NTXB_Export_Binary_Click" Width="150"/>
+                        </DockPanel>
+
+                    </StackPanel>
+                </TabItem>
+
+                <TabItem Header="Model Effects">
+                    <StackPanel Orientation="Vertical" Margin="0,10,0,10">
+                        <StackPanel.Resources>
+                            <Style TargetType="{x:Type DockPanel}">
+                                <Setter Property="Margin" Value="0,10,0,0"/>
+                            </Style>
+                        </StackPanel.Resources>
+
+                        <TextBlock Text="Parse Model Effects (.bin to JSON)" FontWeight="Bold" Margin="10,0,10,0" TextAlignment="Center"/>
+
+                        <DockPanel>
+                            <TextBlock Text="Model Effects Binary: " Width="200" Margin="10,0,10,0" TextAlignment="Right"/>
+                            <TextBlock Text="{Binding inputModelEffectsBinaryPath, Mode=TwoWay, Source={x:Static pro:Settings.Default}, UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Stretch" Margin="10,0,10,0" TextAlignment="Right"/>
+                            <Button Content="Open" Click="OpenModelEffectsBinary_Click" HorizontalAlignment="Right" Width="100"/>
+                        </DockPanel>
+
+                        <DockPanel>
+                            <TextBlock Text="Output Folder:" Width="200" Margin="10,0,10,0" TextAlignment="Right"/>
+                            <TextBlock Text="{Binding outputModelEffectsJSONPath, Mode=TwoWay, Source={x:Static pro:Settings.Default}, UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Stretch" Margin="10,0,10,0" TextAlignment="Right"/>
+                            <Button Content="Change" Click="change_ModelEffects_JSON_Output_Path_Click" HorizontalAlignment="Right" Width="100"/>
+                        </DockPanel>
+
+                        <DockPanel>
+                            <Button Content="Export JSON" Click="Model_Effects_Export_JSON_Click" Width="150"/>
+                        </DockPanel>
+
+                        <DockPanel>
+                            <Separator/>
+                        </DockPanel>
+
+                        <TextBlock Text="Serailize Model Effects JSON (JSON to .bin)" FontWeight="Bold" Margin="10,20,10,0" TextAlignment="Center"/>
+
+                        <DockPanel>
+                            <TextBlock Text="Model Effects JSON: " Width="200" Margin="10,0,10,0" TextAlignment="Right"/>
+                            <TextBlock Text="{Binding inputModelEffectsJSONPath, Mode=TwoWay, Source={x:Static pro:Settings.Default}, UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Stretch" Margin="10,0,10,0" TextAlignment="Right"/>
+                            <Button Content="Open" Click="OpenModelEffectsJSON_Click" HorizontalAlignment="Right" Width="100"/>
+                        </DockPanel>
+
+                        <DockPanel>
+                            <TextBlock Text="Output Folder:" Width="200" Margin="10,0,10,0" TextAlignment="Right"/>
+                            <TextBlock Text="{Binding outputModelEffectsBinaryPath, Mode=TwoWay, Source={x:Static pro:Settings.Default}, UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Stretch" Margin="10,0,10,0" TextAlignment="Right"/>
+                            <Button Content="Change" Click="change_ModelEffects_Binary_Output_Path_Click" HorizontalAlignment="Right" Width="100"/>
+                        </DockPanel>
+
+                        <DockPanel>
+                            <Button Content="Save JSON and Export Binary" Click="ModelEffects_Export_Binary_Click" Width="150"/>
+                        </DockPanel>
+
+                    </StackPanel>
+                </TabItem>
+
+                <TabItem Header="Hitbox Properties">
+                    <StackPanel Orientation="Vertical" Margin="0,10,0,10">
+                        <StackPanel.Resources>
+                            <Style TargetType="{x:Type DockPanel}">
+                                <Setter Property="Margin" Value="0,10,0,0"/>
+                            </Style>
+                        </StackPanel.Resources>
+
+                        <TextBlock Text="Parse Hitbox Properties (.bin to JSON)" FontWeight="Bold" Margin="10,0,10,0" TextAlignment="Center"/>
+
+                        <DockPanel>
+                            <TextBlock Text="Hitbox Properties Binary: " Width="200" Margin="10,0,10,0" TextAlignment="Right"/>
+                            <TextBlock Text="{Binding inputHitboxPropertiesBinaryPath, Mode=TwoWay, Source={x:Static pro:Settings.Default}, UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Stretch" Margin="10,0,10,0" TextAlignment="Right"/>
+                            <Button Content="Open" Click="OpenHitboxPropertiesBinary_Click" HorizontalAlignment="Right" Width="100"/>
+                        </DockPanel>
+
+                        <DockPanel>
+                            <TextBlock Text="Output Folder:" Width="200" Margin="10,0,10,0" TextAlignment="Right"/>
+                            <TextBlock Text="{Binding outputHitboxPropertiesJSONPath, Mode=TwoWay, Source={x:Static pro:Settings.Default}, UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Stretch" Margin="10,0,10,0" TextAlignment="Right"/>
+                            <Button Content="Change" Click="change_HitboxProperties_JSON_Output_Path_Click" HorizontalAlignment="Right" Width="100"/>
+                        </DockPanel>
+
+                        <DockPanel>
+                            <Button Content="Export JSON" Click="Hitbox_Properties_Export_JSON_Click" Width="150"/>
+                        </DockPanel>
+
+                        <DockPanel>
+                            <Separator/>
+                        </DockPanel>
+
+                        <TextBlock Text="Serailize Hitbox Properties JSON (JSON to .bin)" FontWeight="Bold" Margin="10,20,10,0" TextAlignment="Center"/>
+
+                        <DockPanel>
+                            <TextBlock Text="Hitbox Properties JSON: " Width="200" Margin="10,0,10,0" TextAlignment="Right"/>
+                            <TextBlock Text="{Binding inputHitboxPropertiesJSONPath, Mode=TwoWay, Source={x:Static pro:Settings.Default}, UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Stretch" Margin="10,0,10,0" TextAlignment="Right"/>
+                            <Button Content="Open" Click="OpenHitboxPropertiesJSON_Click" HorizontalAlignment="Right" Width="100"/>
+                        </DockPanel>
+
+                        <DockPanel>
+                            <TextBlock Text="Output Folder:" Width="200" Margin="10,0,10,0" TextAlignment="Right"/>
+                            <TextBlock Text="{Binding outputHitboxPropertiesBinaryPath, Mode=TwoWay, Source={x:Static pro:Settings.Default}, UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Stretch" Margin="10,0,10,0" TextAlignment="Right"/>
+                            <Button Content="Change" Click="change_HitboxProperties_Binary_Output_Path_Click" HorizontalAlignment="Right" Width="100"/>
+                        </DockPanel>
+
+                        <DockPanel>
+                            <Button Content="Save JSON and Export Binary" Click="HitboxProperties_Export_Binary_Click" Width="200"/>
                         </DockPanel>
 
                     </StackPanel>

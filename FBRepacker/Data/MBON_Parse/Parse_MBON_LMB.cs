@@ -255,12 +255,12 @@ namespace FBRepacker.Data.MBON_Parse
 
                             uint unk_0x58 = readUIntSmallEndian(fs);
 
-                            if (unk_0x58 != 0x00030002)
+                            if (unk_0x58 != 0x00030002 && unk_0x58 != 0x00000002)
                                 throw new Exception("here");
 
                             uint unk_0x5C = readUIntSmallEndian(fs);
 
-                            if (unk_0x5C != 0x00020000)
+                            if (unk_0x5C != 0x00020000 && unk_0x5C != 0x00030002)
                                 throw new Exception("here");
 
                             data_list.Add(Layer_order);
