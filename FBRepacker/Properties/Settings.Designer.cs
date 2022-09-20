@@ -1390,5 +1390,17 @@ namespace FBRepacker.Properties {
                 this["outputResizeLMBBinaryPath"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool outputSimpleNUD {
+            get {
+                return ((bool)(this["outputSimpleNUD"]));
+            }
+            set {
+                this["outputSimpleNUD"] = value;
+            }
+        }
     }
 }

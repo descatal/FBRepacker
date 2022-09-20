@@ -28,6 +28,7 @@ using FBRepacker.Data.UI;
 using static FBRepacker.Data.MBON_Parse.nus3AudioNameHash;
 using FBRepacker.Psarc.V2;
 using FBRepacker.Tools;
+using FBRepacker.V2;
 
 namespace FBRepacker
 {
@@ -1158,9 +1159,10 @@ namespace FBRepacker
         {
             debugMessageBox.AppendText(Environment.NewLine);
             debugMessageBox.AppendText("Starting DAE to NUD conversion");
+            new ModelConverter().fromDAEtoNUD();
             try
             {
-                new ModelConverter().fromDAEtoNUD();
+                
             }
             catch (Exception exp)
             {
@@ -1944,7 +1946,7 @@ namespace FBRepacker
 
         private void Debug_Click_2(object sender, RoutedEventArgs e)
         {
-            new Tools.recompilescript();
+            new OMOSearch().getAllOMOMap();
         }
 
         private void Debug_Click(object sender, RoutedEventArgs e)

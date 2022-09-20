@@ -1227,7 +1227,7 @@ namespace FBRepacker.NUD
         private void parseVisualSceneNodes(XElement[] allNodes, List<string> instanceControllerList, Dictionary<string, string> DAEjointHierarchy, Dictionary<string, Matrix4> DAEjointPositionDic)
         {
             // We only care about if the nodes have instance_controller (mesh) child node or JOINT type attributes.
-            XElement[] allNodesNodes = allNodes.Where(s => s.Attribute("type").Value == "NODE").ToArray();
+            XElement[] allNodesNodes = allNodes.Where(s => s.Attribute("type").Value == "NODE")?.ToArray();
 
             foreach(XElement nodes in allNodesNodes)
             {
@@ -1522,6 +1522,12 @@ namespace FBRepacker.NUD
             vertexColorandUVOffsets.Add(0);
             vertexDataOffsets.Add(0);
 
+            foreach (var images in imageList)
+            {
+                materialDataOffsets.Add((int)materialStream.Position);
+                writeMaterials(materialStream);
+            }
+
             foreach (var primitiveDataSet in primitiveDataSetList)
             {
                 writeVertexIndices(primitiveDataSet, vertexIndicesStream, out int sizeWithoutPadding, out int stripNo);
@@ -1529,16 +1535,13 @@ namespace FBRepacker.NUD
                 vertexIndicesOffsets.Add(sizeWithoutPadding);
             }
 
-            foreach(var sourceDataset in sourceDatasetList)
+            if (!Properties.Settings.Default.outputSimpleNUD)
             {
-                writeVertexColorandUV(sourceDataset, vertexColorandUVStream, out int vertexColorandUVSizewithoutPadding);
-                vertexColorandUVOffsets.Add(vertexColorandUVSizewithoutPadding);
-            }
-
-            foreach (var images in imageList)
-            {
-                materialDataOffsets.Add((int)materialStream.Position);
-                writeMaterials(materialStream);
+                foreach (var sourceDataset in sourceDatasetList)
+                {
+                    writeVertexColorandUV(sourceDataset, vertexColorandUVStream, out int vertexColorandUVSizewithoutPadding);
+                    vertexColorandUVOffsets.Add(vertexColorandUVSizewithoutPadding);
+                }
             }
 
             for (int i = 0; i < numberofShapeKeys; i++)
@@ -1632,8 +1635,16 @@ namespace FBRepacker.NUD
             metadataSizeOffset = (int)headerStream.Position;
             appendUIntMemoryStream(headerStream, 0x00000000, true); // Placeholder offset for whole metadata section, we need to write it after knowing the true size of whole header.
             appendUIntMemoryStream(headerStream, (uint)vertexIndicesSize, true);
-            appendUIntMemoryStream(headerStream, (uint)vertexColorandUVStreamSize, true);
-            appendUIntMemoryStream(headerStream, (uint)vertexDataStreamSize, true);
+            if (Properties.Settings.Default.outputSimpleNUD)
+            {
+                appendUIntMemoryStream(headerStream, (uint)vertexDataStreamSize, true);
+                appendUIntMemoryStream(headerStream, (uint)0, true);
+            }
+            else
+            {
+                appendUIntMemoryStream(headerStream, (uint)vertexColorandUVStreamSize, true);
+                appendUIntMemoryStream(headerStream, (uint)vertexDataStreamSize, true);
+            }
 
             // TODO: calculate bounding spheres. 
             appendFloatMemoryStream(headerStream, 0, true);
@@ -2295,69 +2306,92 @@ namespace FBRepacker.NUD
 
                 vertexDataStream.Write(oneFloatBuffer, 0, oneFloatBuffer.Length);
 
-                for(int j = 0; j < 3; j++)
+                if (Properties.Settings.Default.outputSimpleNUD)
                 {
-                    byte[] floatBuffer = BitConverter.GetBytes((float)tangents[i][j]);
-                    Array.Reverse(floatBuffer);
-                    vertexDataStream.Write(floatBuffer, 0, floatBuffer.Length);
-                }
+                    appendUIntMemoryStream(vertexDataStream, 0xFFFFFFFF, true);
 
-                vertexDataStream.Write(oneFloatBuffer, 0, oneFloatBuffer.Length);
-
-                for (int j = 0; j < 3; j++)
-                {
-                    byte[] floatBuffer = BitConverter.GetBytes((float)bitangents[i][j]);
-                    Array.Reverse(floatBuffer);
-                    vertexDataStream.Write(floatBuffer, 0, floatBuffer.Length);
-                }
-
-                vertexDataStream.Write(oneFloatBuffer, 0, oneFloatBuffer.Length);
-
-                // Bone stuff, to be changed depends on source.
-
-                int[] boneWeightIndices = boneWeightIndiceList[i];
-                int[] boneVertexIndices = boneVertexIndiceList[i];
-
-                var weightandIndices = boneWeightIndices.Zip(boneVertexIndices, (s, p) => new { boneWeightIndices = s, boneVertexIndices = p });
-
-                float totalBoneWeight = 0f;
-                foreach (var boneWeightandVertexIndex in weightandIndices)
-                {
-                    int boneWeightIndex = boneWeightandVertexIndex.boneWeightIndices;
-                    // TODO: not use first.
-                    dynamic boneWeight = boneWeightIndex == -1? 0f : boneWeightList[boneWeightIndex].First();
-
-                    int boneVertexIndex = DAEjointIndexConvertDic[boneWeightandVertexIndex.boneVertexIndices];
-                    if (boneVertexIndex == 0 || boneVertexIndex == 1 || boneVertexIndex == 2)
+                    dynamic[] UVArr = UVDataset[i].ToArray();
+                    foreach (dynamic UV in UVArr)
                     {
-
+                        float UVValue = (float)UV;
+                        if (UVValue < 0) // For flipped UVs
+                            UVValue = 1f + UVValue;
+                        ///if (UVValue > 1) // For repeating UVs
+                        //    UVValue = UVValue - 1f;
+                        //if (UVValue < -1) 
+                        //    UVValue = 1f + UVValue;
+                        short halfFloat = (short)FromFloat(UVValue);
+                        byte[] convert = new byte[2];
+                        BinaryPrimitives.WriteInt16BigEndian(convert, halfFloat);
+                        vertexDataStream.Write(convert, 0, convert.Length);
+                    }
+                }
+                else
+                {
+                    for (int j = 0; j < 3; j++)
+                    {
+                        byte[] floatBuffer = BitConverter.GetBytes((float)tangents[i][j]);
+                        Array.Reverse(floatBuffer);
+                        vertexDataStream.Write(floatBuffer, 0, floatBuffer.Length);
                     }
 
-                    dynamic boneIndex = boneVertexIndex == -1 ? 0 : boneVertexIndex;
-                    if (boneIndex >= VBNjointIndexConvertDic.Count)
-                        boneIndex = 0; // is this ever called?
-                    //TODO: make warnings
+                    vertexDataStream.Write(oneFloatBuffer, 0, oneFloatBuffer.Length);
 
-                    int convertedVertexIndex = VBNjointIndexConvertDic[boneIndex];
-
-                    if(boneWeight > 0f && (convertedVertexIndex == 0 || convertedVertexIndex == 1 || convertedVertexIndex == 2))
+                    for (int j = 0; j < 3; j++)
                     {
-
+                        byte[] floatBuffer = BitConverter.GetBytes((float)bitangents[i][j]);
+                        Array.Reverse(floatBuffer);
+                        vertexDataStream.Write(floatBuffer, 0, floatBuffer.Length);
                     }
 
-                    appendIntMemoryStream(vertexDataStream, convertedVertexIndex, true);
-                    vertexDataStream.Seek(0x0C, SeekOrigin.Current);
+                    vertexDataStream.Write(oneFloatBuffer, 0, oneFloatBuffer.Length);
 
-                    appendFloatMemoryStream(vertexDataStream, boneWeight, true);
-                    vertexDataStream.Seek(-0x10, SeekOrigin.Current);
+                    // Bone stuff, to be changed depends on source.
 
-                    totalBoneWeight += boneWeight;
+                    int[] boneWeightIndices = boneWeightIndiceList[i];
+                    int[] boneVertexIndices = boneVertexIndiceList[i];
+
+                    var weightandIndices = boneWeightIndices.Zip(boneVertexIndices, (s, p) => new { boneWeightIndices = s, boneVertexIndices = p });
+
+                    float totalBoneWeight = 0f;
+                    foreach (var boneWeightandVertexIndex in weightandIndices)
+                    {
+                        int boneWeightIndex = boneWeightandVertexIndex.boneWeightIndices;
+                        // TODO: not use first.
+                        dynamic boneWeight = boneWeightIndex == -1 ? 0f : boneWeightList[boneWeightIndex].First();
+
+                        int boneVertexIndex = DAEjointIndexConvertDic[boneWeightandVertexIndex.boneVertexIndices];
+                        if (boneVertexIndex == 0 || boneVertexIndex == 1 || boneVertexIndex == 2)
+                        {
+
+                        }
+
+                        dynamic boneIndex = boneVertexIndex == -1 ? 0 : boneVertexIndex;
+                        if (boneIndex >= VBNjointIndexConvertDic.Count)
+                            boneIndex = 0; // is this ever called?
+                                           //TODO: make warnings
+
+                        int convertedVertexIndex = VBNjointIndexConvertDic[boneIndex];
+
+                        if (boneWeight > 0f && (convertedVertexIndex == 0 || convertedVertexIndex == 1 || convertedVertexIndex == 2))
+                        {
+
+                        }
+
+                        appendIntMemoryStream(vertexDataStream, convertedVertexIndex, true);
+                        vertexDataStream.Seek(0x0C, SeekOrigin.Current);
+
+                        appendFloatMemoryStream(vertexDataStream, boneWeight, true);
+                        vertexDataStream.Seek(-0x10, SeekOrigin.Current);
+
+                        totalBoneWeight += boneWeight;
+                    }
+
+                    if (Math.Round(totalBoneWeight, 1) != 1f)
+                        throw new Exception("Bone Weight != 1!");
+
+                    vertexDataStream.Seek(0x10, SeekOrigin.Current);
                 }
-
-                if (Math.Round(totalBoneWeight, 1) != 1f)
-                    throw new Exception("Bone Weight != 1!");
-
-                vertexDataStream.Seek(0x10, SeekOrigin.Current);
             }
 
             vertexSize = (int)vertexDataStream.Position;
@@ -2505,26 +2539,42 @@ namespace FBRepacker.NUD
         // TODO: add proper material support
         private void writeMaterials(MemoryStream materialStream)
         {
-            // This method is just used to fill the spaces so that the format is correct. Material hex editing needs to be done manually or else the file will not work.
-            appendUIntMemoryStream(materialStream, 0x12140000, true); // Flags is changing constantly. I have no idea, I will just 1214 fornow. 1245 makes it glow
-            appendZeroMemoryStream(materialStream, 4); // Unknown 0 bytes
-            appendZeroMemoryStream(materialStream, 2); // should be SrcFactor as per Smash Forge. 
-            appendUShortMemoryStream(materialStream, 0x0003, true); // number of texture files, set it to 3 as per default.
-            appendZeroMemoryStream(materialStream, 6); // check smash forge for the actual proper metadata. Most of them is 0 in FB
-            appendUShortMemoryStream(materialStream, 0x0405, true);
-            appendZeroMemoryStream(materialStream, 0x0C);
-
-            // Start of texture.
-            for (int i = 0; i < 3; i++)
+            if (!Properties.Settings.Default.outputSimpleNUD)
             {
-                appendUIntMemoryStream(materialStream, 0xFFFFFFFF, true); // Hash Name of the DDS file. Need manual hex editing.
-                appendZeroMemoryStream(materialStream, 8);
-                appendUIntMemoryStream(materialStream, 0x03030302, true);
-                appendUIntMemoryStream(materialStream, 0x06000400, true);
-                appendZeroMemoryStream(materialStream, 4);
-            }
+                // This method is just used to fill the spaces so that the format is correct. Material hex editing needs to be done manually or else the file will not work.
+                appendUIntMemoryStream(materialStream, 0x12140000, true); // Flags is changing constantly. I have no idea, I will just 1214 fornow. 1245 makes it glow
+                appendZeroMemoryStream(materialStream, 4); // Unknown 0 bytes
+                appendZeroMemoryStream(materialStream, 2); // should be SrcFactor as per Smash Forge. 
+                appendUShortMemoryStream(materialStream, 0x0003, true); // number of texture files, set it to 3 as per default.
+                appendZeroMemoryStream(materialStream, 6); // check smash forge for the actual proper metadata. Most of them is 0 in FB
+                appendUShortMemoryStream(materialStream, 0x0405, true);
+                appendZeroMemoryStream(materialStream, 0x0C);
 
-            appendZeroMemoryStream(materialStream, 0x10);
+                // Start of texture.
+                for (int i = 0; i < 3; i++)
+                {
+                    appendUIntMemoryStream(materialStream, 0xFFFFFFFF, true); // Hash Name of the DDS file. Need manual hex editing.
+                    appendZeroMemoryStream(materialStream, 8);
+                    appendUIntMemoryStream(materialStream, 0x03030302, true);
+                    appendUIntMemoryStream(materialStream, 0x06000400, true);
+                    appendZeroMemoryStream(materialStream, 4);
+                }
+
+                appendZeroMemoryStream(materialStream, 0x10);
+            }
+            else
+            {
+                appendUIntMemoryStream(materialStream, 0x3f000000, true);
+                appendZeroMemoryStream(materialStream, 4);
+                appendUIntMemoryStream(materialStream, 0x00050001, true);
+                appendUIntMemoryStream(materialStream, 0x00B10000, true);
+                appendZeroMemoryStream(materialStream, 0x10);
+                appendUIntMemoryStream(materialStream, 0x10000001, true);
+                appendZeroMemoryStream(materialStream, 8);
+                appendUIntMemoryStream(materialStream, 0x03010302, true);
+                appendUIntMemoryStream(materialStream, 0x02000000, true);
+                appendZeroMemoryStream(materialStream, 0x14);
+            }
         }
 
         // Utilities

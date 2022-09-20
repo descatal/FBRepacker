@@ -241,7 +241,9 @@
 
                         <DockPanel HorizontalAlignment="Right">
                             <CheckBox Content="Export new VBN file" IsChecked="{Binding exportVBN, Mode=TwoWay, Source={x:Static pro:Settings.Default}, UpdateSourceTrigger=PropertyChanged}" x:Name="exportNewVBNFile" Margin="0,10,0,0"/>
+                            <CheckBox Content="Export simple type NUD file" IsChecked="{Binding outputSimpleNUD, Mode=TwoWay, Source={x:Static pro:Settings.Default}, UpdateSourceTrigger=PropertyChanged}" x:Name="exportSimpleNUD" Margin="20,10,0,0"/>
                         </DockPanel>
+
 
                         <DockPanel IsEnabled="{Binding exportVBN, Converter={StaticResource InverseBooleanConverter}, Mode=TwoWay, Source={x:Static pro:Settings.Default}, UpdateSourceTrigger=PropertyChanged }">
                             <TextBlock Text="VBN File Path: " Width="100" Margin="10,0,10,0" TextAlignment="Right"/>
