@@ -1676,14 +1676,28 @@ namespace FBRepacker.NUD
             appendUIntMemoryStream(polySetMetadata, (uint)vertexColorandUVOffset, true);
             appendUIntMemoryStream(polySetMetadata, (uint)vertexDataOffset, true);
             appendUShortMemoryStream(polySetMetadata, (ushort)vertexCount, true);
-            polySetMetadata.WriteByte(0x13); // vertexFlag. Check the NUDtoDAE for different types. For now we only export type 13
+            if (Properties.Settings.Default.outputSimpleNUD)
+            {
+                polySetMetadata.WriteByte(0x1); // vertexFlag.
+            }
+            else
+            {
+                polySetMetadata.WriteByte(0x13); // vertexFlag. Check the NUDtoDAE for different types. For now we only export type 13
+            }
             polySetMetadata.WriteByte(0x12); // UVFlag
 
             materialStreamOffset = (int)polySetMetadata.Position;
             appendUIntMemoryStream(polySetMetadata, (uint)materialOffset, true); // Placeholder for offset, we need to get the real offset after writing the header since the offset is global.
             appendZeroMemoryStream(polySetMetadata, 0x0C);
             appendUShortMemoryStream(polySetMetadata, (ushort)vertexIndicesCount, true);
-            appendUShortMemoryStream(polySetMetadata, 0x0004, true);
+            if (Properties.Settings.Default.outputSimpleNUD)
+            {
+                appendUShortMemoryStream(polySetMetadata, 0x0000, true);
+            }
+            else
+            {
+                appendUShortMemoryStream(polySetMetadata, 0x0004, true);
+            }
             appendZeroMemoryStream(polySetMetadata, 0x0C);
         }
 
