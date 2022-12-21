@@ -1315,6 +1315,9 @@ namespace FBRepacker.NUD
             if (DAEjointHierarchy.Count != DAEjointPositionDic.Count)
                 throw new Exception("DAEjointHierarchy does not has the same count as DAEjointPositionDic");
 
+            var animatedBones = DAEjointHierarchy.Keys.Where(x => !x.Contains("ATH")).ToList();
+            var otherBones = DAEjointHierarchy.Keys.Where(x => x.Contains("ATH")).ToList();
+
             MemoryStream VBNStream = new MemoryStream();
             MemoryStream VBNHeaderStream = new MemoryStream();
             MemoryStream jointNameandPositionStream = new MemoryStream();
@@ -1326,8 +1329,9 @@ namespace FBRepacker.NUD
             appendIntMemoryStream(VBNHeaderStream, 0x00000001, true); // VBN Flags, no idea what are these. Either 0x190 or 0x191 or 0x1. 0x190 for T-Pose (non animation?) for guns and other parts.
             appendIntMemoryStream(VBNHeaderStream, DAEjointHierarchy.Count, true);
             // TODO: differentiate between bone type count. bone type 1 = animated (bones in OMO), bone type 2 = remaining. 
-            appendIntMemoryStream(VBNHeaderStream, DAEjointHierarchy.Count, true); // We need to change this manually.
-            appendZeroMemoryStream(VBNHeaderStream, 0x0C); // bone count for type 2 to 4.
+            appendIntMemoryStream(VBNHeaderStream, animatedBones.Count, true); // We need to change this manually.
+            appendIntMemoryStream(VBNHeaderStream, otherBones.Count, true); // bone count for type 2.
+            appendZeroMemoryStream(VBNHeaderStream, 0x08); // bone count for type 2 to 4.
 
             string[] DAEjoints = DAEjointHierarchy.Keys.ToArray();
 
@@ -1352,16 +1356,14 @@ namespace FBRepacker.NUD
 
                 jointNameandPositionStream.Write(encodedStringFixedSize, 0, encodedStringFixedSize.Length);
 
-                //if(properBone <= 0x18)
-                //{
-                    // TODO: research proper bone types. We use 0 for now.
+                if(otherBones.Contains(DAEjoint))
+                {
+                    appendIntMemoryStream(jointNameandPositionStream, 0x01, true);
+                }
+                else
+                {
                     appendIntMemoryStream(jointNameandPositionStream, 0x00, true);
-                //}
-                //else
-                //{
-                    //appendIntMemoryStream(jointNameandPositionStream, 0x01, true);
-                //}
-
+                }
 
                 string parentBoneName = DAEjointHierarchy[DAEjoint];
                 int parentIndex = parentBoneName == "null" ? 0x0FFFFFFF : DAEjointHierarchy.Keys.ToList().IndexOf(parentBoneName);

@@ -39,6 +39,26 @@
   <PropertyGroup>
     <ApplicationManifest>app.manifest</ApplicationManifest>
   </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x64'">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\x64\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DebugType>full</DebugType>
+    <PlatformTarget>x64</PlatformTarget>
+    <LangVersion>7.3</LangVersion>
+    <ErrorReport>prompt</ErrorReport>
+    <Prefer32Bit>true</Prefer32Bit>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x64'">
+    <OutputPath>bin\x64\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <Optimize>true</Optimize>
+    <DebugType>pdbonly</DebugType>
+    <PlatformTarget>x64</PlatformTarget>
+    <LangVersion>7.3</LangVersion>
+    <ErrorReport>prompt</ErrorReport>
+    <Prefer32Bit>true</Prefer32Bit>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="InvertedTomato.Crc, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\InvertedTomato.Crc.1.1.3\lib\netstandard1.0\InvertedTomato.Crc.dll</HintPath>
@@ -141,6 +161,7 @@
     <Compile Include="Data\DataTypes\Hitbox_Properties.cs" />
     <Compile Include="Data\DataTypes\LMB.cs" />
     <Compile Include="Data\DataTypes\Map_List.cs" />
+    <Compile Include="Data\DataTypes\Mobility.cs" />
     <Compile Include="Data\DataTypes\Model_Effects.cs" />
     <Compile Include="Data\DataTypes\Model_List.cs" />
     <Compile Include="Data\DataTypes\NTXB.cs" />
@@ -253,6 +274,7 @@
     <Compile Include="Tools\recompilescript.cs" />
     <Compile Include="Tools\ReimportAllMBON.cs" />
     <Compile Include="Tools\simpleExtract.cs" />
+    <Compile Include="V2\OMOSearch.cs" />
     <Page Include="Data\UI\Hit\HitEdit.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>

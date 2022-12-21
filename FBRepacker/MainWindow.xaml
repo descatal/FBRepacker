@@ -1151,6 +1151,57 @@
                     </StackPanel>
                 </TabItem>
 
+                <TabItem Header="Cosmetic Properties">
+                    <StackPanel Orientation="Vertical" Margin="0,10,0,10">
+                        <StackPanel.Resources>
+                            <Style TargetType="{x:Type DockPanel}">
+                                <Setter Property="Margin" Value="0,10,0,0"/>
+                            </Style>
+                        </StackPanel.Resources>
+
+                        <TextBlock Text="Parse Cosmetic Properties (.bin to JSON)" FontWeight="Bold" Margin="10,0,10,0" TextAlignment="Center"/>
+
+                        <DockPanel>
+                            <TextBlock Text="Cosmetic Properties Binary: " Width="200" Margin="10,0,10,0" TextAlignment="Right"/>
+                            <TextBlock Text="{Binding inputCosmeticListBinaryPath, Mode=TwoWay, Source={x:Static pro:Settings.Default}, UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Stretch" Margin="10,0,10,0" TextAlignment="Right"/>
+                            <Button Content="Open" Click="OpenCosmeticPropertiesBinary_Click" HorizontalAlignment="Right" Width="100"/>
+                        </DockPanel>
+
+                        <DockPanel>
+                            <TextBlock Text="Output Folder:" Width="200" Margin="10,0,10,0" TextAlignment="Right"/>
+                            <TextBlock Text="{Binding outputCosmeticListJSONPath, Mode=TwoWay, Source={x:Static pro:Settings.Default}, UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Stretch" Margin="10,0,10,0" TextAlignment="Right"/>
+                            <Button Content="Change" Click="change_CosmeticProperties_JSON_Output_Path_Click" HorizontalAlignment="Right" Width="100"/>
+                        </DockPanel>
+
+                        <DockPanel>
+                            <Button Content="Export JSON" Click="Cosmetic_Properties_Export_JSON_Click" Width="150"/>
+                        </DockPanel>
+
+                        <DockPanel>
+                            <Separator/>
+                        </DockPanel>
+
+                        <TextBlock Text="Serailize Cosmetic Properties JSON (JSON to .bin)" FontWeight="Bold" Margin="10,20,10,0" TextAlignment="Center"/>
+
+                        <DockPanel>
+                            <TextBlock Text="Cosmetic Properties JSON: " Width="200" Margin="10,0,10,0" TextAlignment="Right"/>
+                            <TextBlock Text="{Binding inputCosmeticListJSONPath, Mode=TwoWay, Source={x:Static pro:Settings.Default}, UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Stretch" Margin="10,0,10,0" TextAlignment="Right"/>
+                            <Button Content="Open" Click="OpenCosmeticPropertiesJSON_Click" HorizontalAlignment="Right" Width="100"/>
+                        </DockPanel>
+
+                        <DockPanel>
+                            <TextBlock Text="Output Folder:" Width="200" Margin="10,0,10,0" TextAlignment="Right"/>
+                            <TextBlock Text="{Binding outputCosmeticListBinaryPath, Mode=TwoWay, Source={x:Static pro:Settings.Default}, UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Stretch" Margin="10,0,10,0" TextAlignment="Right"/>
+                            <Button Content="Change" Click="change_CosmeticProperties_Binary_Output_Path_Click" HorizontalAlignment="Right" Width="100"/>
+                        </DockPanel>
+
+                        <DockPanel>
+                            <Button Content="Save JSON and Export Binary" Click="CosmeticProperties_Export_Binary_Click" Width="200"/>
+                        </DockPanel>
+
+                    </StackPanel>
+                </TabItem>
+
                 <TabItem Header="EFP (Permanent ALEO)">
                     <StackPanel Orientation="Vertical" Margin="0,10,0,10">
                         <StackPanel.Resources>

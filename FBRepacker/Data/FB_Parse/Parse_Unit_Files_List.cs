@@ -15,8 +15,8 @@ namespace FBRepacker.Data.FB_Parse
     {
         public Parse_Unit_Files_List() 
         {
-            List<Unit_Files_List> FB_List = parse_Unit_Files_List_FB(@"D:\Games\PS3\EXVSFB JPN\Pkg research\FB Repacker\Repack\PAC\Input\MBON Reimport Project\list_fb.bin");
-            List<Unit_Files_List> MBON_List = parse_Unit_Files_List_MBON(@"D:\Games\PS3\EXVSFB JPN\Pkg research\FB Repacker\Repack\PAC\Input\MBON Reimport Project\big_endian_list.bin");
+            List<Unit_Files_List> FB_List = parse_Unit_Files_List_FB(@"I:\Full Boost\MBON Reimport Project\list_fb.bin");
+            List<Unit_Files_List> MBON_List = parse_Unit_Files_List_MBON(@"I:\Full Boost\MBON Reimport Project\big_endian_list.bin");
             List<Unit_Files_List> Combined_List = new List<Unit_Files_List>();
 
             UnitIDList unitIDList = load_UnitID();
@@ -93,13 +93,13 @@ namespace FBRepacker.Data.FB_Parse
                 }
             }
 
-            StreamWriter streamWriter = File.CreateText(@"D:\Games\PS3\EXVSFB JPN\Pkg research\FB Repacker\Repack\PAC\Input\MBON Reimport Project\GeneratedMBONPACHashes.txt");
+            StreamWriter streamWriter = File.CreateText(@"I:\Full Boost\MBON Reimport Project\GeneratedMBONPACHashes.txt");
             streamWriter.Write(MBONlog.ToString());
 
             streamWriter.Close();
 
             string json = JsonConvert.SerializeObject(Combined_List, Formatting.Indented);
-            StreamWriter jsonSW = File.CreateText(@"D:\Games\PS3\EXVSFB JPN\Pkg research\FB Repacker\Repack\PAC\Input\MBON Reimport Project\AllUnitsPACHashes.json");
+            StreamWriter jsonSW = File.CreateText(@"I:\Full Boost\MBON Reimport Project\AllUnitsPACHashes.json");
             jsonSW.Write(json);
             jsonSW.Close();
         }

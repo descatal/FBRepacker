@@ -51,20 +51,20 @@ namespace FBRepacker.Tools
 
         public void combine_patch_05_00()
         {
-            List<string> newer = Directory.GetFiles(@"D:\Games\PS3\EXVSFB JPN\Pkg research\FB Repacker\Repack\PAC\Input\MBON Reimport Project\Total MBON Combined Psarc", "*.PAC", SearchOption.AllDirectories).ToList();
-            List<string> older = Directory.GetFiles(@"D:\Games\PS3\EXVSFB JPN\Pkg research\FB Repacker\Repack\PAC\Input\MBON Reimport Project\1.09_Ori", "*.PAC", SearchOption.AllDirectories).ToList();
+            List<string> newer = Directory.GetFiles(@"I:\Full Boost\MBON Reimport Project\Total MBON Combined Psarc", "*.PAC", SearchOption.AllDirectories).ToList();
+            List<string> older = Directory.GetFiles(@"I:\Full Boost\MBON Reimport Project\1.09_Ori", "*.PAC", SearchOption.AllDirectories).ToList();
         
-            Directory.CreateDirectory(@"D:\Games\PS3\EXVSFB JPN\Pkg research\FB Repacker\Repack\PAC\Input\MBON Reimport Project\Total MBON Combined Psarc\patch_05_00_Ori\");
+            Directory.CreateDirectory(@"I:\Full Boost\MBON Reimport Project\Total MBON Combined Psarc\patch_05_00_Ori\");
 
 
-            StreamReader newJSONsr = File.OpenText(@"D:\Games\PS3\EXVSFB JPN\Pkg research\FB Repacker\Repack\PAC\Input\MBON Reimport Project\Total MBON Combined Psarc\PATCH.json");
+            StreamReader newJSONsr = File.OpenText(@"I:\Full Boost\MBON Reimport Project\Total MBON Combined Psarc\PATCH.json");
             string newJSON = newJSONsr.ReadToEnd();
             newJSONsr.Close();
 
             TOCFileInfo newPACInfo = JsonConvert.DeserializeObject<TOCFileInfo>(newJSON);
 
 
-            StreamReader oldJSONsr = File.OpenText(@"D:\Games\PS3\EXVSFB JPN\Pkg research\FB Repacker\Repack\PAC\Input\MBON Reimport Project\1.09_Ori\PATCH.json");
+            StreamReader oldJSONsr = File.OpenText(@"I:\Full Boost\MBON Reimport Project\1.09_Ori\PATCH.json");
             string oldJSON = oldJSONsr.ReadToEnd();
             oldJSONsr.Close();
 
@@ -77,7 +77,7 @@ namespace FBRepacker.Tools
                 {
                     string oldPath = older.FirstOrDefault(s => Path.GetFileNameWithoutExtension(s) == old);
                     string PACName = Path.GetFileNameWithoutExtension(oldPath);
-                    string newPath = @"D:\Games\PS3\EXVSFB JPN\Pkg research\FB Repacker\Repack\PAC\Input\MBON Reimport Project\Total MBON Combined Psarc\patch_05_00_Ori\" + PACName + @".PAC";
+                    string newPath = @"I:\Full Boost\MBON Reimport Project\Total MBON Combined Psarc\patch_05_00_Ori\" + PACName + @".PAC";
 
                     File.Copy(oldPath, newPath, true);
 
@@ -90,7 +90,7 @@ namespace FBRepacker.Tools
                 }
             }
 
-            StreamWriter newJSONsw = File.CreateText(@"D:\Games\PS3\EXVSFB JPN\Pkg research\FB Repacker\Repack\PAC\Input\MBON Reimport Project\Total MBON Combined Psarc\PATCH.json");
+            StreamWriter newJSONsw = File.CreateText(@"I:\Full Boost\MBON Reimport Project\Total MBON Combined Psarc\PATCH.json");
             string combinedJSON = JsonConvert.SerializeObject(newPACInfo, Formatting.Indented);
             newJSONsw.Write(combinedJSON);
             newJSONsw.Close();
@@ -105,13 +105,13 @@ namespace FBRepacker.Tools
             ww.Close();
             List<Unit_Info_List> unit_Info_Lists = JsonConvert.DeserializeObject<List<Unit_Info_List>>(JSON);
 
-            string json = File.OpenText(@"D:\Games\PS3\EXVSFB JPN\Pkg research\FB Repacker\Repack\PAC\Input\MBON Reimport Project\AllUnitsPACHashes.json").ReadToEnd();
+            string json = File.OpenText(@"I:\Full Boost\MBON Reimport Project\AllUnitsPACHashes.json").ReadToEnd();
             List<Unit_Files_List> unit_Files_List = JsonConvert.DeserializeObject<List<Unit_Files_List>>(json);
 
-            json = File.OpenText(@"D:\Games\PS3\EXVSFB JPN\Pkg research\FB Repacker\Repack\PAC\Input\MBON Reimport Project\Unit List MBON.json").ReadToEnd();
+            json = File.OpenText(@"I:\Full Boost\MBON Reimport Project\Unit List MBON.json").ReadToEnd();
             List<Unit_Info_List> unit_Info_List = JsonConvert.DeserializeObject<List<Unit_Info_List>>(json);
 
-            List<string> allUnitFolders = Directory.GetDirectories(@"D:\Games\PS3\EXVSFB JPN\Pkg research\FB Repacker\Repack\PAC\Input\MBON Reimport Project\Total MBON Export", "*", SearchOption.TopDirectoryOnly).ToList();
+            List<string> allUnitFolders = Directory.GetDirectories(@"I:\Full Boost\MBON Reimport Project\Total MBON Export", "*", SearchOption.TopDirectoryOnly).ToList();
 
             foreach (string unitFolder in allUnitFolders)
             {
@@ -170,13 +170,13 @@ namespace FBRepacker.Tools
             ww.Close();
             List<Unit_Info_List> unit_Info_Lists = JsonConvert.DeserializeObject<List<Unit_Info_List>>(JSON);
 
-            string json = File.OpenText(@"D:\Games\PS3\EXVSFB JPN\Pkg research\FB Repacker\Repack\PAC\Input\MBON Reimport Project\AllUnitsPACHashes.json").ReadToEnd();
+            string json = File.OpenText(@"I:\Full Boost\MBON Reimport Project\AllUnitsPACHashes.json").ReadToEnd();
             List<Unit_Files_List> unit_Files_List = JsonConvert.DeserializeObject<List<Unit_Files_List>>(json);
 
-            json = File.OpenText(@"D:\Games\PS3\EXVSFB JPN\Pkg research\FB Repacker\Repack\PAC\Input\MBON Reimport Project\Unit List MBON.json").ReadToEnd();
+            json = File.OpenText(@"I:\Full Boost\MBON Reimport Project\Unit List MBON.json").ReadToEnd();
             List<Unit_Info_List> unit_Info_List = JsonConvert.DeserializeObject<List<Unit_Info_List>>(json);
 
-            List<string> allUnitFolders = Directory.GetDirectories(@"D:\Games\PS3\EXVSFB JPN\Pkg research\FB Repacker\Repack\PAC\Input\MBON Reimport Project\Total MBON Export", "*", SearchOption.TopDirectoryOnly).ToList();
+            List<string> allUnitFolders = Directory.GetDirectories(@"I:\Full Boost\MBON Reimport Project\Total MBON Export", "*", SearchOption.TopDirectoryOnly).ToList();
 
             foreach (string unitFolder in allUnitFolders)
             {
@@ -229,13 +229,13 @@ namespace FBRepacker.Tools
             ww.Close();
             List<Unit_Info_List> unit_Info_Lists = JsonConvert.DeserializeObject<List<Unit_Info_List>>(JSON);
 
-            string json = File.OpenText(@"D:\Games\PS3\EXVSFB JPN\Pkg research\FB Repacker\Repack\PAC\Input\MBON Reimport Project\AllUnitsPACHashes.json").ReadToEnd();
+            string json = File.OpenText(@"I:\Full Boost\MBON Reimport Project\AllUnitsPACHashes.json").ReadToEnd();
             List<Unit_Files_List> unit_Files_List = JsonConvert.DeserializeObject<List<Unit_Files_List>>(json);
 
-            json = File.OpenText(@"D:\Games\PS3\EXVSFB JPN\Pkg research\FB Repacker\Repack\PAC\Input\MBON Reimport Project\Unit List MBON.json").ReadToEnd();
+            json = File.OpenText(@"I:\Full Boost\MBON Reimport Project\Unit List MBON.json").ReadToEnd();
             List<Unit_Info_List> unit_Info_List = JsonConvert.DeserializeObject<List<Unit_Info_List>>(json);
 
-            List<string> allUnitFolders = Directory.GetDirectories(@"D:\Games\PS3\EXVSFB JPN\Pkg research\FB Repacker\Repack\PAC\Input\MBON Reimport Project\Total MBON Export", "*", SearchOption.TopDirectoryOnly).ToList();
+            List<string> allUnitFolders = Directory.GetDirectories(@"I:\Full Boost\MBON Reimport Project\Total MBON Export", "*", SearchOption.TopDirectoryOnly).ToList();
 
             foreach (string unitFolder in allUnitFolders)
             {
@@ -406,7 +406,7 @@ namespace FBRepacker.Tools
             ww.Close();
             List<Unit_Info_List> unit_Info_Lists = JsonConvert.DeserializeObject<List<Unit_Info_List>>(JSON);
 
-            List<string> totalMBONExport = Directory.GetDirectories(@"D:\Games\PS3\EXVSFB JPN\Pkg research\FB Repacker\Repack\PAC\Input\MBON Reimport Project\Total MBON Export", "*", SearchOption.TopDirectoryOnly).ToList();
+            List<string> totalMBONExport = Directory.GetDirectories(@"I:\Full Boost\MBON Reimport Project\Total MBON Export", "*", SearchOption.TopDirectoryOnly).ToList();
 
             StringBuilder sb = new StringBuilder();
 
@@ -434,18 +434,18 @@ namespace FBRepacker.Tools
                     string res_small_sprite = Directory.GetDirectories(exportfolder, "*", SearchOption.TopDirectoryOnly).FirstOrDefault(s => s.Contains("Result_Small_Sprite"));
                     string smallsprite = res_small_sprite + @"\free_selection_sprite.dds";
 
-                    File.Copy(smallsprite, @"D:\Games\PS3\EXVSFB JPN\Pkg research\FB Repacker\Repack\PAC\Input\MBON Reimport Project\Total MBON Common\test\" + (218 + count) + ".dds", true);
+                    File.Copy(smallsprite, @"I:\Full Boost\MBON Reimport Project\Total MBON Common\test\" + (218 + count) + ".dds", true);
                     count++;
                 }
             }
 
             GenerateSpritePACInfo generateSpritePACInfo = new GenerateSpritePACInfo();
 
-            string PACInfo = generateSpritePACInfo.writeSpritePACInfo(@"D:\Games\PS3\EXVSFB JPN\Pkg research\FB Repacker\Repack\PAC\Input\MBON Reimport Project\Total MBON Common\test\", 218, 1);
+            string PACInfo = generateSpritePACInfo.writeSpritePACInfo(@"I:\Full Boost\MBON Reimport Project\Total MBON Common\test\", 218, 1);
 
             sb.Append(PACInfo);
 
-            StreamWriter awe = File.CreateText(@"D:\Games\PS3\EXVSFB JPN\Pkg research\FB Repacker\Repack\PAC\Input\MBON Reimport Project\Total MBON Common\test\aww.txt");
+            StreamWriter awe = File.CreateText(@"I:\Full Boost\MBON Reimport Project\Total MBON Common\test\aww.txt");
             awe.Write(sb.ToString());
             awe.Close();
         }
@@ -670,7 +670,7 @@ namespace FBRepacker.Tools
 
         public void rename()
         {
-            List<string> files = Directory.GetFiles(@"D:\Games\PS3\EXVSFB JPN\Pkg research\FB Repacker\Repack\PAC\Input\MBON Reimport Project\Total MBON Export", "*.nus3bank", SearchOption.AllDirectories).ToList();
+            List<string> files = Directory.GetFiles(@"I:\Full Boost\MBON Reimport Project\Total MBON Export", "*.nus3bank", SearchOption.AllDirectories).ToList();
             foreach(string file in files)
             {
                 if(Path.GetFileName(file) == "Sound Effect.nus3bank")
@@ -686,21 +686,21 @@ namespace FBRepacker.Tools
         {
             resizeMBONLMB lmbrefactor = new resizeMBONLMB();
 
-            string totalMBONExportFolder = @"D:\Games\PS3\EXVSFB JPN\Pkg research\FB Repacker\Repack\PAC\Input\MBON Reimport Project\Total MBON Export";
+            string totalMBONExportFolder = @"I:\Full Boost\MBON Reimport Project\Total MBON Export";
             List<string> allUnitFolders = Directory.GetDirectories(totalMBONExportFolder, "*", SearchOption.TopDirectoryOnly).ToList();
 
-            string json = File.OpenText(@"D:\Games\PS3\EXVSFB JPN\Pkg research\FB Repacker\Repack\PAC\Input\MBON Reimport Project\AllUnitsPACHashes.json").ReadToEnd();
+            string json = File.OpenText(@"I:\Full Boost\MBON Reimport Project\AllUnitsPACHashes.json").ReadToEnd();
             List<Unit_Files_List> unit_Files_List = JsonConvert.DeserializeObject<List<Unit_Files_List>>(json);
 
-            json = File.OpenText(@"D:\Games\PS3\EXVSFB JPN\Pkg research\FB Repacker\Repack\PAC\Input\MBON Reimport Project\Unit List MBON.json").ReadToEnd();
+            json = File.OpenText(@"I:\Full Boost\MBON Reimport Project\Unit List MBON.json").ReadToEnd();
             List<Unit_Info_List> unit_Info_List = JsonConvert.DeserializeObject<List<Unit_Info_List>>(json);
 
-            StreamReader alreadyPackedSR = File.OpenText(@"D:\Games\PS3\EXVSFB JPN\Pkg research\FB Repacker\Repack\PAC\Input\MBON Reimport Project\temp_unit_list.json");
+            StreamReader alreadyPackedSR = File.OpenText(@"I:\Full Boost\MBON Reimport Project\temp_unit_list.json");
             string alreadyPackedJSON = alreadyPackedSR.ReadToEnd();
             alreadyPackedSR.Close();
             List<uint> already_repacked = JsonConvert.DeserializeObject<List<uint>>(alreadyPackedJSON);
 
-            List<string> convertedFromMBONFolders = Directory.GetDirectories(@"D:\Games\PS3\EXVSFB JPN\Pkg research\FB Repacker\Repack\PAC\Input\MBON Reimport Project\Total MBON Units", "*", SearchOption.TopDirectoryOnly).ToList();
+            List<string> convertedFromMBONFolders = Directory.GetDirectories(@"I:\Full Boost\MBON Reimport Project\Total MBON Units", "*", SearchOption.TopDirectoryOnly).ToList();
 
             uint voiceFileListStartIndex = 0x115;
             uint voiceFileListStartUnkEnumIndex = 0x5A6;
@@ -1032,8 +1032,8 @@ unit_string_info " + unitName + @"_inject_string();
 
                         unitHFile.Append(unitHTemplate);
 
-                        StreamWriter ctxt = File.CreateText(@"D:\Games\PS3\EXVSFB JPN\Pkg research\FB Repacker\Repack\PAC\Input\MBON Reimport Project\Total MBON New Unit List\" + unitName + @".cpp");
-                        StreamWriter htxt = File.CreateText(@"D:\Games\PS3\EXVSFB JPN\Pkg research\FB Repacker\Repack\PAC\Input\MBON Reimport Project\Total MBON New Unit List\" + unitName + @".h");
+                        StreamWriter ctxt = File.CreateText(@"I:\Full Boost\MBON Reimport Project\Total MBON New Unit List\" + unitName + @".cpp");
+                        StreamWriter htxt = File.CreateText(@"I:\Full Boost\MBON Reimport Project\Total MBON New Unit List\" + unitName + @".h");
 
                         ctxt.Write(unitCFile.ToString());
                         htxt.Write(unitHFile.ToString());
@@ -1044,7 +1044,7 @@ unit_string_info " + unitName + @"_inject_string();
                         /*
                         already_repacked.Add(unit_ID);
                         string updateJSON = JsonConvert.SerializeObject(already_repacked, Formatting.Indented);
-                        StreamWriter sw = File.CreateText(@"D:\Games\PS3\EXVSFB JPN\Pkg research\FB Repacker\Repack\PAC\Input\MBON Reimport Project\temp_unit_list.json");
+                        StreamWriter sw = File.CreateText(@"I:\Full Boost\MBON Reimport Project\temp_unit_list.json");
                         sw.Write(updateJSON);
                         sw.Close();
                         */
@@ -1084,19 +1084,19 @@ unit_string_info " + unitName + @"_inject_string();
                 }
             }
 
-            StreamWriter commonC1 = File.CreateText(@"D:\Games\PS3\EXVSFB JPN\Pkg research\FB Repacker\Repack\PAC\Input\MBON Reimport Project\Total MBON New Unit List\commonC1.txt");
-            StreamWriter commonC2 = File.CreateText(@"D:\Games\PS3\EXVSFB JPN\Pkg research\FB Repacker\Repack\PAC\Input\MBON Reimport Project\Total MBON New Unit List\commonC2.txt");
-            StreamWriter commonC3 = File.CreateText(@"D:\Games\PS3\EXVSFB JPN\Pkg research\FB Repacker\Repack\PAC\Input\MBON Reimport Project\Total MBON New Unit List\commonC3.txt");
-            StreamWriter commonC4 = File.CreateText(@"D:\Games\PS3\EXVSFB JPN\Pkg research\FB Repacker\Repack\PAC\Input\MBON Reimport Project\Total MBON New Unit List\commonC4.txt");
-            StreamWriter commonC5 = File.CreateText(@"D:\Games\PS3\EXVSFB JPN\Pkg research\FB Repacker\Repack\PAC\Input\MBON Reimport Project\Total MBON New Unit List\commonC5.txt");
-            StreamWriter commonC6 = File.CreateText(@"D:\Games\PS3\EXVSFB JPN\Pkg research\FB Repacker\Repack\PAC\Input\MBON Reimport Project\Total MBON New Unit List\commonC6.txt");
-            StreamWriter commonC7 = File.CreateText(@"D:\Games\PS3\EXVSFB JPN\Pkg research\FB Repacker\Repack\PAC\Input\MBON Reimport Project\Total MBON New Unit List\commonC7.txt");
-            StreamWriter commonC8 = File.CreateText(@"D:\Games\PS3\EXVSFB JPN\Pkg research\FB Repacker\Repack\PAC\Input\MBON Reimport Project\Total MBON New Unit List\commonC8.txt");
-            StreamWriter commonC9 = File.CreateText(@"D:\Games\PS3\EXVSFB JPN\Pkg research\FB Repacker\Repack\PAC\Input\MBON Reimport Project\Total MBON New Unit List\commonC9.txt");
-            StreamWriter commonC10 = File.CreateText(@"D:\Games\PS3\EXVSFB JPN\Pkg research\FB Repacker\Repack\PAC\Input\MBON Reimport Project\Total MBON New Unit List\commonC10.txt");
-            StreamWriter commonC11 = File.CreateText(@"D:\Games\PS3\EXVSFB JPN\Pkg research\FB Repacker\Repack\PAC\Input\MBON Reimport Project\Total MBON New Unit List\commonC11.txt");
-            StreamWriter commonC12 = File.CreateText(@"D:\Games\PS3\EXVSFB JPN\Pkg research\FB Repacker\Repack\PAC\Input\MBON Reimport Project\Total MBON New Unit List\commonC12.txt");
-            StreamWriter MBONUnitIDSW = File.CreateText(@"D:\Games\PS3\EXVSFB JPN\Pkg research\FB Repacker\Repack\PAC\Input\MBON Reimport Project\Total MBON New Unit List\MBONUnitIDs.txt");
+            StreamWriter commonC1 = File.CreateText(@"I:\Full Boost\MBON Reimport Project\Total MBON New Unit List\commonC1.txt");
+            StreamWriter commonC2 = File.CreateText(@"I:\Full Boost\MBON Reimport Project\Total MBON New Unit List\commonC2.txt");
+            StreamWriter commonC3 = File.CreateText(@"I:\Full Boost\MBON Reimport Project\Total MBON New Unit List\commonC3.txt");
+            StreamWriter commonC4 = File.CreateText(@"I:\Full Boost\MBON Reimport Project\Total MBON New Unit List\commonC4.txt");
+            StreamWriter commonC5 = File.CreateText(@"I:\Full Boost\MBON Reimport Project\Total MBON New Unit List\commonC5.txt");
+            StreamWriter commonC6 = File.CreateText(@"I:\Full Boost\MBON Reimport Project\Total MBON New Unit List\commonC6.txt");
+            StreamWriter commonC7 = File.CreateText(@"I:\Full Boost\MBON Reimport Project\Total MBON New Unit List\commonC7.txt");
+            StreamWriter commonC8 = File.CreateText(@"I:\Full Boost\MBON Reimport Project\Total MBON New Unit List\commonC8.txt");
+            StreamWriter commonC9 = File.CreateText(@"I:\Full Boost\MBON Reimport Project\Total MBON New Unit List\commonC9.txt");
+            StreamWriter commonC10 = File.CreateText(@"I:\Full Boost\MBON Reimport Project\Total MBON New Unit List\commonC10.txt");
+            StreamWriter commonC11 = File.CreateText(@"I:\Full Boost\MBON Reimport Project\Total MBON New Unit List\commonC11.txt");
+            StreamWriter commonC12 = File.CreateText(@"I:\Full Boost\MBON Reimport Project\Total MBON New Unit List\commonC12.txt");
+            StreamWriter MBONUnitIDSW = File.CreateText(@"I:\Full Boost\MBON Reimport Project\Total MBON New Unit List\MBONUnitIDs.txt");
 
             commonC1.Write(commonCFile1.ToString());
             commonC2.Write(commonCFile2.ToString());
@@ -1131,20 +1131,20 @@ unit_string_info " + unitName + @"_inject_string();
         {
             resizeMBONLMB lmbrefactor = new resizeMBONLMB();
 
-            string totalMBONExportFolder = @"D:\Games\PS3\EXVSFB JPN\Pkg research\FB Repacker\Repack\PAC\Input\MBON Reimport Project\Total MBON Export";
+            string totalMBONExportFolder = @"I:\Full Boost\MBON Reimport Project\Total MBON Export";
             List<string> allUnitFolders = Directory.GetDirectories(totalMBONExportFolder, "*", SearchOption.TopDirectoryOnly).ToList();
 
-            string json = File.OpenText(@"D:\Games\PS3\EXVSFB JPN\Pkg research\FB Repacker\Repack\PAC\Input\MBON Reimport Project\AllUnitsPACHashes.json").ReadToEnd();
+            string json = File.OpenText(@"I:\Full Boost\MBON Reimport Project\AllUnitsPACHashes.json").ReadToEnd();
             List<Unit_Files_List> unit_Files_List = JsonConvert.DeserializeObject<List<Unit_Files_List>>(json);
 
-            json = File.OpenText(@"D:\Games\PS3\EXVSFB JPN\Pkg research\FB Repacker\Repack\PAC\Input\MBON Reimport Project\Unit List MBON.json").ReadToEnd();
+            json = File.OpenText(@"I:\Full Boost\MBON Reimport Project\Unit List MBON.json").ReadToEnd();
             List<Unit_Info_List> unit_Info_List = JsonConvert.DeserializeObject<List<Unit_Info_List>>(json);
 
             List<string> allunitimagesfolder = Directory.GetDirectories(@"D:\Games\PS3\EXVSFB JPN\Pkg research\FB Repacker\Extract\Output\MBON\v2\All Playable Unit Image & Sound Effects", "*", SearchOption.TopDirectoryOnly).ToList();
 
             List<string> allpilotimagesfolder = Directory.GetDirectories(@"D:\Games\PS3\EXVSFB JPN\Pkg research\FB Repacker\Extract\Output\MBON\v2\All Pilot Image", "*", SearchOption.TopDirectoryOnly).ToList();
 
-            StreamReader alreadyPackedSR = File.OpenText(@"D:\Games\PS3\EXVSFB JPN\Pkg research\FB Repacker\Repack\PAC\Input\MBON Reimport Project\temp_unit_list.json");
+            StreamReader alreadyPackedSR = File.OpenText(@"I:\Full Boost\MBON Reimport Project\temp_unit_list.json");
             string alreadyPackedJSON = alreadyPackedSR.ReadToEnd();
             alreadyPackedSR.Close();
             List<uint> already_repacked = JsonConvert.DeserializeObject<List<uint>>(alreadyPackedJSON);
@@ -1297,7 +1297,7 @@ unit_string_info " + unitName + @"_inject_string();
                         scale_dds_precise(rightPilotSprite, extractedExportLoadingEnemyTargetPilotFolder + @"\loading_enemy_target_pilot.dds", 0, false, 280, 180);
 
                         scale_dds_precise(rightUnitSprite, extractedExportResultSmallSpriteFolder + @"\temp_copy_unit.dds", 0, false, 140, 112);
-                        selection_sprite_macro(@"D:\Games\PS3\EXVSFB JPN\Pkg research\FB Repacker\Repack\PAC\Input\MBON Reimport Project\Sprite Templates\select_sprite_template_working.xcf", extractedExportResultSmallSpriteFolder + @"\temp_copy_unit.dds", extractedExportResultSmallSpriteFolder + @"\free_selection_sprite.dds", 0, false);
+                        selection_sprite_macro(@"I:\Full Boost\MBON Reimport Project\Sprite Templates\select_sprite_template_working.xcf", extractedExportResultSmallSpriteFolder + @"\temp_copy_unit.dds", extractedExportResultSmallSpriteFolder + @"\free_selection_sprite.dds", 0, false);
                         scale_dds_precise(extractedExportResultSmallSpriteFolder + @"\free_selection_sprite.dds", extractedExportResultSmallSpriteFolder + @"\free_selection_sprite.dds", 0, false, 136, 68);
                         resize_dds_canvas(extractedExportResultSmallSpriteFolder + @"\free_selection_sprite.dds", extractedExportResultSmallSpriteFolder + @"\free_selection_sprite.dds", 0, false, 144, 80, 4, 6);
 
@@ -1332,7 +1332,7 @@ unit_string_info " + unitName + @"_inject_string();
 
                         already_repacked.Add(unit_ID);
                         string updateJSON = JsonConvert.SerializeObject(already_repacked, Formatting.Indented);
-                        StreamWriter sw = File.CreateText(@"D:\Games\PS3\EXVSFB JPN\Pkg research\FB Repacker\Repack\PAC\Input\MBON Reimport Project\temp_unit_list.json");
+                        StreamWriter sw = File.CreateText(@"I:\Full Boost\MBON Reimport Project\temp_unit_list.json");
                         sw.Write(updateJSON);
                         sw.Close();
                     }
@@ -1344,20 +1344,20 @@ unit_string_info " + unitName + @"_inject_string();
         {
             resizeMBONLMB lmbrefactor = new resizeMBONLMB();
 
-            string totalMBONExportFolder = @"D:\Games\PS3\EXVSFB JPN\Pkg research\FB Repacker\Repack\PAC\Input\MBON Reimport Project\Total MBON Export";
+            string totalMBONExportFolder = @"I:\Full Boost\MBON Reimport Project\Total MBON Export";
             List<string> allUnitFolders = Directory.GetDirectories(totalMBONExportFolder, "*", SearchOption.TopDirectoryOnly).ToList();
 
-            string json = File.OpenText(@"D:\Games\PS3\EXVSFB JPN\Pkg research\FB Repacker\Repack\PAC\Input\MBON Reimport Project\AllUnitsPACHashes.json").ReadToEnd();
+            string json = File.OpenText(@"I:\Full Boost\MBON Reimport Project\AllUnitsPACHashes.json").ReadToEnd();
             List<Unit_Files_List> unit_Files_List = JsonConvert.DeserializeObject<List<Unit_Files_List>>(json);
 
-            json = File.OpenText(@"D:\Games\PS3\EXVSFB JPN\Pkg research\FB Repacker\Repack\PAC\Input\MBON Reimport Project\Unit List MBON.json").ReadToEnd();
+            json = File.OpenText(@"I:\Full Boost\MBON Reimport Project\Unit List MBON.json").ReadToEnd();
             List<Unit_Info_List> unit_Info_List = JsonConvert.DeserializeObject<List<Unit_Info_List>>(json);
 
             List<string> allbossunitimagesfolder = Directory.GetDirectories(@"D:\Games\PS3\EXVSFB JPN\Pkg research\FB Repacker\Extract\Output\MBON\v2\All Boss Unit Image & Sound Effects", "*", SearchOption.TopDirectoryOnly).ToList();
 
             List<string> allbosspilotimagesfolder = Directory.GetDirectories(@"D:\Games\PS3\EXVSFB JPN\Pkg research\FB Repacker\Extract\Output\MBON\v2\All Pilot Image", "*", SearchOption.TopDirectoryOnly).ToList();
 
-            StreamReader alreadyPackedSR = File.OpenText(@"D:\Games\PS3\EXVSFB JPN\Pkg research\FB Repacker\Repack\PAC\Input\MBON Reimport Project\temp_unit_list.json");
+            StreamReader alreadyPackedSR = File.OpenText(@"I:\Full Boost\MBON Reimport Project\temp_unit_list.json");
             string alreadyPackedJSON = alreadyPackedSR.ReadToEnd();
             alreadyPackedSR.Close();
             List<uint> already_repacked = JsonConvert.DeserializeObject<List<uint>>(alreadyPackedJSON);
@@ -1493,7 +1493,7 @@ unit_string_info " + unitName + @"_inject_string();
                         scale_dds_precise(rightPilotSprite, extractedExportLoadingEnemyTargetPilotFolder + @"\loading_enemy_target_pilot.dds", 0, false, 280, 180);
 
                         scale_dds_precise(rightUnitSprite, extractedExportResultSmallSpriteFolder + @"\temp_copy_unit.dds", 0, false, 140, 112);
-                        selection_sprite_macro(@"D:\Games\PS3\EXVSFB JPN\Pkg research\FB Repacker\Repack\PAC\Input\MBON Reimport Project\Sprite Templates\select_sprite_template_working.xcf", extractedExportResultSmallSpriteFolder + @"\temp_copy_unit.dds", extractedExportResultSmallSpriteFolder + @"\free_selection_sprite.dds", 0, false);
+                        selection_sprite_macro(@"I:\Full Boost\MBON Reimport Project\Sprite Templates\select_sprite_template_working.xcf", extractedExportResultSmallSpriteFolder + @"\temp_copy_unit.dds", extractedExportResultSmallSpriteFolder + @"\free_selection_sprite.dds", 0, false);
                         scale_dds_precise(extractedExportResultSmallSpriteFolder + @"\free_selection_sprite.dds", extractedExportResultSmallSpriteFolder + @"\free_selection_sprite.dds", 0, false, 136, 68);
                         resize_dds_canvas(extractedExportResultSmallSpriteFolder + @"\free_selection_sprite.dds", extractedExportResultSmallSpriteFolder + @"\free_selection_sprite.dds", 0, false, 144, 80, 4, 6);
 
@@ -1529,7 +1529,7 @@ unit_string_info " + unitName + @"_inject_string();
                         /*
                         already_repacked.Add(unit_ID);
                         string updateJSON = JsonConvert.SerializeObject(already_repacked, Formatting.Indented);
-                        StreamWriter sw = File.CreateText(@"D:\Games\PS3\EXVSFB JPN\Pkg research\FB Repacker\Repack\PAC\Input\MBON Reimport Project\temp_unit_list.json");
+                        StreamWriter sw = File.CreateText(@"I:\Full Boost\MBON Reimport Project\temp_unit_list.json");
                         sw.Write(updateJSON);
                         sw.Close();
                         */
@@ -1540,10 +1540,10 @@ unit_string_info " + unitName + @"_inject_string();
 
         public void extractNPCSounds()
         {
-            string totalMBONExportFolder = @"D:\Games\PS3\EXVSFB JPN\Pkg research\FB Repacker\Repack\PAC\Input\MBON Reimport Project\Total MBON Export";
+            string totalMBONExportFolder = @"I:\Full Boost\MBON Reimport Project\Total MBON Export";
             List<string> allUnitFolders = Directory.GetDirectories(totalMBONExportFolder, "*", SearchOption.TopDirectoryOnly).ToList();
 
-            string json = File.OpenText(@"D:\Games\PS3\EXVSFB JPN\Pkg research\FB Repacker\Repack\PAC\Input\MBON Reimport Project\AllUnitsPACHashes.json").ReadToEnd();
+            string json = File.OpenText(@"I:\Full Boost\MBON Reimport Project\AllUnitsPACHashes.json").ReadToEnd();
             List<Unit_Files_List> unit_Files_List = JsonConvert.DeserializeObject<List<Unit_Files_List>>(json);
 
             List<string> allbossunitsoundeffectsfolder = Directory.GetDirectories(@"D:\Games\PS3\EXVSFB JPN\Pkg research\FB Repacker\Extract\Output\MBON\v2\All Boss Unit Image & Sound Effects", "*", SearchOption.TopDirectoryOnly).ToList();

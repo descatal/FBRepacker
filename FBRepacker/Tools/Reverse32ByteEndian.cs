@@ -12,7 +12,7 @@ namespace FBRepacker.Tools
     {
         public Reverse32ByteEndian()
         {
-            FileStream fs = File.OpenRead(@"D:\Games\PS3\EXVSFB JPN\Pkg research\FB Repacker\Repack\PAC\Input\MBON Reimport Project\Total MBON Small patches\Untitled10.bin");
+            FileStream fs = File.OpenRead(@"I:\Full Boost\MBON Reimport Project\Total MBON Small patches\Untitled10.bin");
             changeStreamFile(fs);
 
             Stream.Seek(0, SeekOrigin.Begin);
@@ -23,7 +23,7 @@ namespace FBRepacker.Tools
 
             fs.Close();
 
-            FileStream ofs = File.Create(@"D:\Games\PS3\EXVSFB JPN\Pkg research\FB Repacker\Repack\PAC\Input\MBON Reimport Project\Total MBON Small patches\Untitled11.bin");
+            FileStream ofs = File.Create(@"I:\Full Boost\MBON Reimport Project\Total MBON Small patches\Untitled11.bin");
             ofs.Write(fso, 0, fso.Length);
             ofs.Close();
         }

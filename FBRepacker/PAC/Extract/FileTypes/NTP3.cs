@@ -394,7 +394,7 @@ namespace FBRepacker.PAC.Extract.FileTypes
             /* New way: 
             * https://docs.microsoft.com/en-us/windows/win32/direct3ddds/dx-graphics-dds-pguide
             * For block-compressed formats, compute the pitch as:
-              max( 1, ((width+3)/4) ) * block-size // Althought it says this, from what I seen from GIMP the formula includes height too. Possible wrong stuff?
+              max( 1, ((width+3)/4) ) * block-size // Although it says this, from what I seen from GIMP the formula includes height too. Possible wrong stuff?
               The block-size is 8 bytes for DXT1, BC1, and BC4 formats, and 16 bytes for other block-compressed formats.
             * For R8G8_B8G8, G8R8_G8B8, legacy UYVY-packed, and legacy YUY2-packed formats, compute the pitch as: (Very old format, not implemented for now)
               ((width+1) >> 1) * 4

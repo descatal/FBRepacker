@@ -19,7 +19,7 @@ namespace FBRepacker.Tools
         public void resizeLMB(string inputLMBPath, string outputLMBPath, float multiplier)
         {
             FileStream fs = File.OpenRead(inputLMBPath);
-            //@"D:\Games\PS3\EXVSFB JPN\Pkg research\FB Repacker\Repack\PAC\Input\MBON Reimport Project\MBON Units\Bael\Files to Repack\Awakening Sprite\001-FHM\002-FHM\009-FHM\010.LMB");
+            //@"I:\Full Boost\MBON Reimport Project\MBON Units\Bael\Files to Repack\Awakening Sprite\001-FHM\002-FHM\009-FHM\010.LMB");
 
             MemoryStream ms = new MemoryStream();
             fs.CopyTo(ms);
@@ -127,7 +127,7 @@ namespace FBRepacker.Tools
             }
 
             FileStream ofs = File.Create(outputLMBPath);
-            //@"D:\Games\PS3\EXVSFB JPN\Pkg research\FB Repacker\Repack\PAC\Input\MBON Reimport Project\MBON Units\Bael\Files to Repack\Awakening Sprite\001-FHM\002-FHM\003-FHM\aa.bin");
+            //@"I:\Full Boost\MBON Reimport Project\MBON Units\Bael\Files to Repack\Awakening Sprite\001-FHM\002-FHM\003-FHM\aa.bin");
             fs.Seek(0, SeekOrigin.Begin);
             fs.CopyTo(ofs);
             fs.Close();

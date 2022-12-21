@@ -3,10 +3,14 @@ using FBRepacker.Data.FB_Parse.DataTypes;
 using FBRepacker.PAC;
 using FBRepacker.PAC.Repack;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
 using System;
+using System.Buffers.Binary;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
@@ -15,17 +19,22 @@ namespace FBRepacker.Tools
 {
     internal class recompilescript : Internals
     {
-        string totalMBONExportFolder = @"D:\Games\PS3\EXVSFB JPN\Pkg research\FB Repacker\Repack\PAC\Input\MBON Reimport Project\Total MBON Export";
-        string XBScriptFolder = @"D:\Games\PS3\EXVSFB JPN\Pkg research\FB Repacker\Repack\PAC\Input\MBON Reimport Project\XB Project\XB Script";
-        string XBCombinedPsarcFolder = @"D:\Games\PS3\EXVSFB JPN\Pkg research\FB Repacker\Repack\PAC\Input\MBON Reimport Project\XB Project\XB Combined Psarc";
-        string XBReimportFolder = @"D:\Games\PS3\EXVSFB JPN\Pkg research\FB Repacker\Repack\PAC\Input\MBON Reimport Project\XB Project\XB Units";
-        string repackTemplates = @"D:\Games\PS3\EXVSFB JPN\Pkg research\FB Repacker\Repack\PAC\Input\MBON Reimport Project\Repack Templates";
+        string totalMBONExportFolder = @"I:\Full Boost\MBON Reimport Project\Total MBON Export";
+        string XBScriptFolder = @"I:\Full Boost\MBON Reimport Project\XB Project\XB Script";
+        string XBCombinedPsarcFolder = @"I:\Full Boost\MBON Reimport Project\XB Project\XB Combined Psarc";
+        string XBReimportFolder = @"I:\Full Boost\MBON Reimport Project\XB Project\XB Units";
+        string repackTemplates = @"I:\Full Boost\MBON Reimport Project\Repack Templates";
 
         public recompilescript()
         {
+
+        }
+
+        public void recompile()
+        {
             List<string> allUnitFolders = Directory.GetDirectories(totalMBONExportFolder, "*", SearchOption.TopDirectoryOnly).ToList();
 
-            string json = File.OpenText(@"D:\Games\PS3\EXVSFB JPN\Pkg research\FB Repacker\Repack\PAC\Input\MBON Reimport Project\AllUnitsPACHashes.json").ReadToEnd();
+            string json = File.OpenText(@"I:\Full Boost\MBON Reimport Project\AllUnitsPACHashes.json").ReadToEnd();
             List<Unit_Files_List> unit_Files_List = JsonConvert.DeserializeObject<List<Unit_Files_List>>(json);
 
             foreach (string unitFolder in allUnitFolders)
@@ -51,7 +60,8 @@ namespace FBRepacker.Tools
                 uint unit_ID = Convert.ToUInt32(unit_ID_str);
                 Unit_Files_List unit_Files = unit_Files_List.FirstOrDefault(x => x.Unit_ID == unit_ID);
 
-                if (unit_ID < 59900 && unit_Files != null && unit_ID == 16111)
+                // UNIT ID
+                if (unit_ID < 59900 && unit_Files != null && unit_ID == 17011)
                 {
                     Directory.CreateDirectory(reimportFolder);
                     Directory.CreateDirectory(reimportConvertedfromMBONFolder);
@@ -90,7 +100,67 @@ namespace FBRepacker.Tools
                         reimportConvertedfromMBONFolder,
                         unit_Files
                         );
+
+                    string data_folder_path = reimportFilestoRepack + @"\Data - " + unit_Files.data_and_script_PAC_hash.ToString("X8");
+
+                    Directory.CreateDirectory(data_folder_path);
+
+                    string data_001FHM_path = data_folder_path + @"\001-FHM\";
+
+                    FileStream fs006 = File.OpenRead(data_001FHM_path + @"\006.bin");
+                    MemoryStream ms = new MemoryStream();
+
+                    fs006.Seek(0, SeekOrigin.Begin);
+                    fs006.CopyTo(ms);
+                    fs006.Close();
+
+                    replaceRPCS3BABB(ms.ToArray());
                 }
+            }
+        }
+
+        const int PROCESS_WM_READ = 0x1F0FFF;
+
+        [DllImport("kernel32.dll")]
+        public static extern IntPtr OpenProcess(int dwDesiredAccess, bool bInheritHandle, int dwProcessId);
+
+        [DllImport("kernel32.dll")]
+        public static extern bool ReadProcessMemory(int hProcess,
+            long lpBaseAddress, byte[] lpBuffer, int dwSize, ref int lpNumberOfBytesRead);
+
+        [DllImport("kernel32.dll", SetLastError = true)]
+        static extern bool WriteProcessMemory(int hProcess, 
+            long lpBaseAddress, byte[] lpBuffer, int dwSize, ref int lpNumberOfBytesWritten);
+
+        public uint readUint32(IntPtr processHandle, long address, bool isBigEndian = true)
+        {
+            byte[] buffer = new byte[4];
+            var bufBytesRead = 0;
+            ReadProcessMemory((int)processHandle, address, buffer, buffer.Length, ref bufBytesRead);
+
+            var read = BitConverter.ToUInt32(buffer, 0);
+
+            return isBigEndian ? BinaryPrimitives.ReverseEndianness(read) : read;
+        }
+
+        public bool writeBuffer(IntPtr processHandle, long address, byte[] buffer)
+        {
+            var bufBytesWrote = 0;
+            return WriteProcessMemory((int)processHandle, address, buffer, buffer.Length, ref bufBytesWrote);
+        }
+
+        public void replaceRPCS3BABB(byte[] buffer)
+        {
+            var rpcs3exe = Process.GetProcessesByName("rpcs3").FirstOrDefault();
+
+            if (rpcs3exe != null)
+            {
+                IntPtr processHandle = OpenProcess(PROCESS_WM_READ, false, rpcs3exe.Id);
+
+                var unitPtr = readUint32(processHandle, 0x340091000);
+                var BABBPtr = readUint32(processHandle, 0x300000000 + unitPtr + 0x17358);
+
+                writeBuffer(processHandle, 0x300000000 + BABBPtr, buffer);
             }
         }
 

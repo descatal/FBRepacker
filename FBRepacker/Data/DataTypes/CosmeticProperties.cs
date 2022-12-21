@@ -6,6 +6,15 @@ using System.Threading.Tasks;
 
 namespace FBRepacker.Data.DataTypes
 {
+    class CosmeticList
+    {
+        public uint magic { get; set; }
+        public uint version { get; set; }
+        public uint unk_0x8 { get; set; }
+        public uint unk_0xC { get; set; }
+        public Dictionary<uint, CosmeticProperties> properties { get; set; } = new Dictionary<uint, CosmeticProperties>();
+    }
+
     class CosmeticProperties
     {
         // 0x48 in length

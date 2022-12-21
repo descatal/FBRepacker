@@ -91,17 +91,18 @@ namespace FBRepacker.Data.MBON_Parse
                 proj.hash = projectile_hash;
                 proj.projectile_Type = readUIntBigEndian();
 
-                if(Properties.Settings.Default.convertMBONProjecitle)
+                if (proj.projectile_Type > 0xFF && Properties.Settings.Default.truncateProjectileType)
+                {
+                    string projectileTypeStr = proj.projectile_Type.ToString();
+                    string removedProjectiles = projectileTypeStr.Remove(projectileTypeStr.Length - 4, 1);
+                    proj.projectile_Type = uint.Parse(removedProjectiles);
+                }
+
+                if (Properties.Settings.Default.convertMBONProjecitle)
                 {
                     if (convertAssistProjectileType.ContainsKey(proj.projectile_Type))
                     {
                         proj.projectile_Type = convertAssistProjectileType[proj.projectile_Type];
-                    }
-                    else if (proj.projectile_Type > 0xFF && Properties.Settings.Default.truncateProjectileType)
-                    {
-                        string projectileTypeStr = proj.projectile_Type.ToString();
-                        string removedProjectiles = projectileTypeStr.Remove(projectileTypeStr.Length - 4, 1);
-                        proj.projectile_Type = uint.Parse(removedProjectiles);
                     }
                     else if (proj.projectile_Type < 0xFF && proj.projectile_Type != 1 && proj.projectile_Type != 6)
                     {

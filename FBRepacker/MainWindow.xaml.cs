@@ -587,6 +587,19 @@ namespace FBRepacker
             Properties.Settings.Default.Save();
         }
 
+        private void OpenCosmeticPropertiesBinary_Click(object sender, RoutedEventArgs e)
+        {
+            OpenFileDialog openFileDialog = new OpenFileDialog();
+            string inputCosmeticPropertiesBinaryFilePath = System.IO.Path.GetDirectoryName(Properties.Settings.Default.inputCosmeticListBinaryPath);
+            openFileDialog.InitialDirectory = inputCosmeticPropertiesBinaryFilePath;
+            openFileDialog.RestoreDirectory = true;
+            openFileDialog.ShowDialog();
+
+            inputCosmeticPropertiesBinaryFilePath = openFileDialog.FileName;
+            Properties.Settings.Default.inputCosmeticListBinaryPath = File.Exists(inputCosmeticPropertiesBinaryFilePath) ? inputCosmeticPropertiesBinaryFilePath : Properties.Settings.Default.inputCosmeticListBinaryPath;
+            Properties.Settings.Default.Save();
+        }
+
         private void OpenFBSeriesInfoListBinary_Click(object sender, RoutedEventArgs e)
         {
             OpenFileDialog openFileDialog = new OpenFileDialog();
@@ -700,6 +713,16 @@ namespace FBRepacker
             }
         }
 
+        private void change_CosmeticProperties_JSON_Output_Path_Click(object sender, RoutedEventArgs e)
+        {
+            string outputCosmeticPropertiesJSONFolderPath = openFolderDialog(Properties.Settings.Default.outputCosmeticListJSONPath);
+            if (outputCosmeticPropertiesJSONFolderPath != string.Empty)
+            {
+                Properties.Settings.Default.outputCosmeticListJSONPath = outputCosmeticPropertiesJSONFolderPath;
+                Properties.Settings.Default.Save();
+            }
+        }
+
         private void change_FB_Series_Info_List_JSON_Output_Path_Click(object sender, RoutedEventArgs e)
         {
             string outputFBSeriesInfoListJSONFolderPath = openFolderDialog(Properties.Settings.Default.outputFBSeriesInfoListJSONFolder);
@@ -808,6 +831,19 @@ namespace FBRepacker
 
             HitboxPropertiesJSONFilePath = openFileDialog.FileName;
             Properties.Settings.Default.inputHitboxPropertiesJSONPath = File.Exists(HitboxPropertiesJSONFilePath) ? HitboxPropertiesJSONFilePath : Properties.Settings.Default.inputHitboxPropertiesJSONPath;
+            Properties.Settings.Default.Save();
+        }
+
+        private void OpenCosmeticPropertiesJSON_Click(object sender, RoutedEventArgs e)
+        {
+            OpenFileDialog openFileDialog = new OpenFileDialog();
+            string CosmeticPropertiesJSONFilePath = System.IO.Path.GetDirectoryName(Properties.Settings.Default.inputCosmeticListJSONPath);
+            openFileDialog.InitialDirectory = CosmeticPropertiesJSONFilePath;
+            openFileDialog.RestoreDirectory = true;
+            openFileDialog.ShowDialog();
+
+            CosmeticPropertiesJSONFilePath = openFileDialog.FileName;
+            Properties.Settings.Default.inputCosmeticListJSONPath = File.Exists(CosmeticPropertiesJSONFilePath) ? CosmeticPropertiesJSONFilePath : Properties.Settings.Default.inputCosmeticListJSONPath;
             Properties.Settings.Default.Save();
         }
 
@@ -1084,6 +1120,16 @@ namespace FBRepacker
             if (outputHitboxPropertiesFolderPath != string.Empty)
             {
                 Properties.Settings.Default.outputHitboxPropertiesBinaryPath = outputHitboxPropertiesFolderPath;
+                Properties.Settings.Default.Save();
+            }
+        }
+
+        private void change_CosmeticProperties_Binary_Output_Path_Click(object sender, RoutedEventArgs e)
+        {
+            string outputCosmeticPropertiesFolderPath = openFolderDialog(Properties.Settings.Default.outputCosmeticListBinaryPath);
+            if (outputCosmeticPropertiesFolderPath != string.Empty)
+            {
+                Properties.Settings.Default.outputCosmeticListBinaryPath = outputCosmeticPropertiesFolderPath;
                 Properties.Settings.Default.Save();
             }
         }
@@ -1411,6 +1457,26 @@ namespace FBRepacker
             debugMessageBox.AppendText("Hitbox Properties JSON Export Complete!");
         }
 
+        private void Cosmetic_Properties_Export_JSON_Click(object sender, RoutedEventArgs e)
+        {
+            debugMessageBox.AppendText(Environment.NewLine);
+            debugMessageBox.AppendText("Starting Cosmetic Properties JSON Export");
+
+            new ParseCosmeticProperties().deserializeCosmeticList();
+
+            try
+            {
+
+            }
+            catch (Exception exp)
+            {
+                debugMessageBox.AppendText(Environment.NewLine);
+                debugMessageBox.AppendText("Error: " + exp + "." + @"\n Please restart the application.");
+            }
+            debugMessageBox.AppendText(Environment.NewLine);
+            debugMessageBox.AppendText("Cosmetic Properties JSON Export Complete!");
+        }
+
         private void FB_Series_Info_List_Export_JSON_Click(object sender, RoutedEventArgs e)
         {
             debugMessageBox.AppendText(Environment.NewLine);
@@ -1537,6 +1603,25 @@ namespace FBRepacker
 
                 debugMessageBox.AppendText(Environment.NewLine);
                 debugMessageBox.AppendText("Hitbox Properties Binary Export Complete!");
+            }
+            catch (Exception exp)
+            {
+                debugMessageBox.AppendText(Environment.NewLine);
+                debugMessageBox.AppendText("Error: " + exp + "." + @"\n Please restart the application.");
+            }
+            debugMessageBox.AppendText(Environment.NewLine);
+        }
+
+        private void CosmeticProperties_Export_Binary_Click(object sender, RoutedEventArgs e)
+        {
+            debugMessageBox.AppendText(Environment.NewLine);
+            debugMessageBox.AppendText("Starting Cosmetic Properties Binary Export");
+            new ParseCosmeticProperties().serializeCosmeticList();
+            try
+            {
+
+                debugMessageBox.AppendText(Environment.NewLine);
+                debugMessageBox.AppendText("Cosmetic Properties Binary Export Complete!");
             }
             catch (Exception exp)
             {
@@ -1946,7 +2031,7 @@ namespace FBRepacker
 
         private void Debug_Click_2(object sender, RoutedEventArgs e)
         {
-            new OMOSearch().getAllOMOMap();
+            //new OMOSearch().getAllOMOMap();
         }
 
         private void Debug_Click(object sender, RoutedEventArgs e)
@@ -1955,7 +2040,8 @@ namespace FBRepacker
             //new ParseEFP();
             //new Parse_Unit_Data().combineDataHashSchema();
 
-            new Tools.recompilescript();
+            //new Tools.recompilescript();
+            new Tools.recompilescript().recompile();
             // new Tools.Reverse32ByteEndian();
             //new Tools.ReimportAllMBON();
             //new Tools.MBONExport();
