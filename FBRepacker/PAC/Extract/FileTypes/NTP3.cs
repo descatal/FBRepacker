@@ -13,6 +13,7 @@ namespace FBRepacker.PAC.Extract.FileTypes
     {
         // TODO make all these global var gone.
         short numberofDDS = 0, widthResolution = 0, heightResolution = 0;
+        bool isCubeMap = false;
         // PixelFormats (for uncompressed)
         // https://docs.microsoft.com/en-us/windows/win32/direct3ddds/dds-pixelformat
         // dwSize = Constant 0x20
@@ -135,7 +136,13 @@ namespace FBRepacker.PAC.Extract.FileTypes
             int Caps2 = readIntBigEndian(Stream.Position);
 
             if (Caps2 != 0)
-                throw new Exception("Does not support cube map yet!");
+            {
+                Stream.Seek(0x10, SeekOrigin.Current);
+                isCubeMap = true;
+                //throw new Exception("Does not support cube map yet!");
+            }
+
+
 
             Stream.Seek(0x10, SeekOrigin.Current);
             mipmapsSizeList = new List<int>();
@@ -313,7 +320,17 @@ namespace FBRepacker.PAC.Extract.FileTypes
             DDSHeaderChunk = appendUIntArrayBuffer(DDSHeaderChunk, dwABitMask, false);
             DDSHeaderChunk = appendUIntArrayBuffer(DDSHeaderChunk, dwCaps, false);
             // TODO: Placeholder for caps2, 3, 4 and reserved 2 (all 0 for now).
-            DDSHeaderChunk = appendZeroArrayBuffer(DDSHeaderChunk, 0x10);
+
+            if (isCubeMap)
+            {
+                DDSHeaderChunk = appendUIntArrayBuffer(DDSHeaderChunk, 0xfe00, false);
+                DDSHeaderChunk = appendZeroArrayBuffer(DDSHeaderChunk, 0xc);
+            }
+            else
+            {
+                DDSHeaderChunk = appendZeroArrayBuffer(DDSHeaderChunk, 0x10);
+            }
+            
         }
 
         private string createDDSExtractFilePath(int fileNumber)
