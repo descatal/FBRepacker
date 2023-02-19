@@ -1537,19 +1537,16 @@ namespace FBRepacker.NUD
                 vertexIndicesOffsets.Add(sizeWithoutPadding);
             }
 
-            if (!Properties.Settings.Default.outputSimpleNUD)
+            foreach (var sourceDataset in sourceDatasetList)
             {
-                foreach (var sourceDataset in sourceDatasetList)
-                {
-                    writeVertexColorandUV(sourceDataset, vertexColorandUVStream, out int vertexColorandUVSizewithoutPadding);
-                    vertexColorandUVOffsets.Add(vertexColorandUVSizewithoutPadding);
-                }
+                writeVertexColorandUV(sourceDataset, vertexColorandUVStream, out int vertexColorandUVSizewithoutPadding);
+                vertexColorandUVOffsets.Add(vertexColorandUVSizewithoutPadding);
             }
 
             for (int i = 0; i < numberofShapeKeys; i++)
             {
                 writeVertex(sourceDatasetList[i], primitiveDataSetList[i], contSourceDatasetList[i], contPrimitiveDataSetList[i], vertexDataStream, VBNjointHierarchy, DAEjointHierarchy, 
-                    out int vertexSizewithoutPadding);
+                    out int vertexSizewithoutPadding, i);
                 vertexDataOffsets.Add(vertexSizewithoutPadding);
 
                 writePolySetMetadata(polySetMetadataStream, sourceDatasetList[i][FixedSemantics.GEO_POSITION].Count, stripNoList[i],
@@ -1599,7 +1596,10 @@ namespace FBRepacker.NUD
             NUDStream.Write(polySetMetadataStream.GetBuffer(), 0, polySetMetadataStreamSize);
             NUDStream.Write(materialStream.GetBuffer(), 0, materialStreamSize);
             NUDStream.Write(vertexIndicesStream.GetBuffer(), 0, vertexIndicesStreamSize);
-            NUDStream.Write(vertexColorandUVStream.GetBuffer(), 0, vertexColorandUVStreamSize);
+            if (!Properties.Settings.Default.outputSimpleNUD)
+            {
+                NUDStream.Write(vertexColorandUVStream.GetBuffer(), 0, vertexColorandUVStreamSize);
+            }
             NUDStream.Write(vertexDataStream.GetBuffer(), 0, vertexDataStreamSize);
             NUDStream.Write(shapeNameBuffer, 0, shapeNameBuffer.Length);
 
@@ -1675,17 +1675,24 @@ namespace FBRepacker.NUD
             out int materialStreamOffset)
         {
             appendUIntMemoryStream(polySetMetadata, (uint)vertexIndicesOffset, true);
-            appendUIntMemoryStream(polySetMetadata, (uint)vertexColorandUVOffset, true);
-            appendUIntMemoryStream(polySetMetadata, (uint)vertexDataOffset, true);
-            appendUShortMemoryStream(polySetMetadata, (ushort)vertexCount, true);
-            if (Properties.Settings.Default.outputSimpleNUD)
+            if (!Properties.Settings.Default.outputSimpleNUD)
             {
-                polySetMetadata.WriteByte(0x1); // vertexFlag.
-            }
-            else
-            {
+                appendUIntMemoryStream(polySetMetadata, (uint)vertexColorandUVOffset, true);
+                appendUIntMemoryStream(polySetMetadata, (uint)vertexDataOffset, true);
+                appendUShortMemoryStream(polySetMetadata, (ushort)vertexCount, true);
                 polySetMetadata.WriteByte(0x13); // vertexFlag. Check the NUDtoDAE for different types. For now we only export type 13
             }
+            else if(Properties.Settings.Default.outputSimpleNUD)
+            {
+                //appendUIntMemoryStream(polySetMetadata, (uint)vertexColorandUVOffset, true);
+                appendUIntMemoryStream(polySetMetadata, (uint)vertexDataOffset, true);
+                appendZeroMemoryStream(polySetMetadata, 0x4);
+                
+                appendUShortMemoryStream(polySetMetadata, (ushort)vertexCount, true);
+                
+                polySetMetadata.WriteByte(0x7); // vertexFlag.
+            }
+
             polySetMetadata.WriteByte(0x12); // UVFlag
 
             materialStreamOffset = (int)polySetMetadata.Position;
@@ -2239,7 +2246,7 @@ namespace FBRepacker.NUD
 
         private void writeVertex(Dictionary<FixedSemantics, List<dynamic[]>> sourceDataset, Dictionary<FixedSemantics, List<uint>> primitiveDataSet, 
             Dictionary<FixedSemantics, List<dynamic[]>> contSourceDataset, Dictionary<FixedSemantics, List<int[]>> contPrimitiveDataSet, MemoryStream vertexDataStream, 
-            Dictionary<string, int> VBNjointHierarchy, Dictionary<string, string> DAEjointHierarchy, out int vertexSize)
+            Dictionary<string, int> VBNjointHierarchy, Dictionary<string, string> DAEjointHierarchy, out int vertexSize, int shapeIndex)
         {
             List<dynamic[]> posDataset = sourceDataset[FixedSemantics.GEO_POSITION];
             List<dynamic[]> nrmDataset = sourceDataset[FixedSemantics.GEO_NORMAL];
@@ -2311,20 +2318,49 @@ namespace FBRepacker.NUD
                     vertexDataStream.Write(floatBuffer, 0, floatBuffer.Length);
                 }
 
-                vertexDataStream.Write(oneFloatBuffer, 0, oneFloatBuffer.Length);
-
-                foreach (dynamic nrm in nrmDataset[i])
+                
+                if (!Properties.Settings.Default.outputSimpleNUD)
                 {
-                    byte[] floatBuffer = BitConverter.GetBytes((float)nrm);
-                    Array.Reverse(floatBuffer);
-                    vertexDataStream.Write(floatBuffer, 0, floatBuffer.Length);
+                    vertexDataStream.Write(oneFloatBuffer, 0, oneFloatBuffer.Length);
+                    foreach (dynamic nrm in nrmDataset[i])
+                    {
+                        byte[] floatBuffer = BitConverter.GetBytes((float)nrm);
+                        Array.Reverse(floatBuffer);
+                        vertexDataStream.Write(floatBuffer, 0, floatBuffer.Length);
+                    }
+                    vertexDataStream.Write(oneFloatBuffer, 0, oneFloatBuffer.Length);
                 }
 
-                vertexDataStream.Write(oneFloatBuffer, 0, oneFloatBuffer.Length);
+
+
+
 
                 if (Properties.Settings.Default.outputSimpleNUD)
                 {
-                    appendUIntMemoryStream(vertexDataStream, 0xFFFFFFFF, true);
+                    if(shapeIndex < 1)
+                    {
+                        foreach (dynamic nrm in nrmDataset[i])
+                        {
+                            byte[] floatBuffer = BitConverter.GetBytes((float)nrm);
+                            Array.Reverse(floatBuffer);
+                            vertexDataStream.Write(floatBuffer, 0, floatBuffer.Length);
+                        }
+
+                        //tangents
+                        for (int j = 0; j < 3; j++)
+                        {
+                            byte[] floatBuffer = BitConverter.GetBytes((float)tangents[i][j]);
+                            //Console.WriteLine("floatBuffer : " + tangents[i][j]);
+                            vertexDataStream.Write(floatBuffer, 0, floatBuffer.Length);
+
+                        }
+                    }
+                    else
+                    {
+                        appendUIntMemoryStream(vertexDataStream, 0x3f800000, true);
+                    }
+
+                    appendUIntMemoryStream(vertexDataStream, 0x7F7F7F80, true);
 
                     dynamic[] UVArr = UVDataset[i].ToArray();
                     foreach (dynamic UV in UVArr)
@@ -2580,16 +2616,46 @@ namespace FBRepacker.NUD
             }
             else
             {
-                appendUIntMemoryStream(materialStream, 0x3f000000, true);
+                //type 11 54 lenght 0x48 not done
+                //appendUIntMemoryStream(materialStream, 0x11540000, true);
+                //appendZeroMemoryStream(materialStream, 4);
+                //appendUIntMemoryStream(materialStream, 0x00000001, true);
+                //appendUIntMemoryStream(materialStream, 0x00000000, true);
+
+                //appendUIntMemoryStream(materialStream, 0x00000405, true);
+                //appendZeroMemoryStream(materialStream, 0xc);
+
+                //appendUIntMemoryStream(materialStream, 0x07000000, true);
+                //appendZeroMemoryStream(materialStream, 0x8);
+                //appendUIntMemoryStream(materialStream, 0x01010302, true);
+
+                //appendUIntMemoryStream(materialStream, 0x06000400, true);
+                //appendZeroMemoryStream(materialStream, 0x14);
+
+                //type 11 54 length 0x60
+                appendUIntMemoryStream(materialStream, 0x11540000, true);
                 appendZeroMemoryStream(materialStream, 4);
-                appendUIntMemoryStream(materialStream, 0x00050001, true);
-                appendUIntMemoryStream(materialStream, 0x00B10000, true);
+                appendUIntMemoryStream(materialStream, 0x00000002, true);
+                appendZeroMemoryStream(materialStream, 4);
+
+                appendUIntMemoryStream(materialStream, 0x00000405, true);
+                appendZeroMemoryStream(materialStream, 0xc);
+
+                appendUIntMemoryStream(materialStream, 0x07000000, true);
+                appendZeroMemoryStream(materialStream, 0x8);
+                appendUIntMemoryStream(materialStream, 0x01010302, true);
+
+                appendUIntMemoryStream(materialStream, 0x06000400, true);
+                appendZeroMemoryStream(materialStream, 0x4);
+                appendUIntMemoryStream(materialStream, 0x07000000, true);
+                appendZeroMemoryStream(materialStream, 0x4);
+
+                appendZeroMemoryStream(materialStream, 0x4);
+                appendUIntMemoryStream(materialStream, 0x01010302, true);
+                appendUIntMemoryStream(materialStream, 0x06000400, true);
+                appendZeroMemoryStream(materialStream, 0x4);
+
                 appendZeroMemoryStream(materialStream, 0x10);
-                appendUIntMemoryStream(materialStream, 0x10000001, true);
-                appendZeroMemoryStream(materialStream, 8);
-                appendUIntMemoryStream(materialStream, 0x03010302, true);
-                appendUIntMemoryStream(materialStream, 0x02000000, true);
-                appendZeroMemoryStream(materialStream, 0x14);
             }
         }
 
