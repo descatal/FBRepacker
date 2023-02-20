@@ -260,6 +260,10 @@
                         <DockPanel>
                             <Button Content="Convert DAE to NUD" Click="DAEtoNUD_Click" Width="150"/>
                         </DockPanel>
+
+                        <DockPanel>
+                            <Button Content="TEST" Click="OpenTextureEdit_Click" Width="150"/>
+                        </DockPanel>
                     </StackPanel>
                 </TabItem>
 

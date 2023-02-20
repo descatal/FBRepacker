@@ -197,6 +197,10 @@
     <Compile Include="Data\MBON_Parse\Parse_Reload.cs" />
     <Compile Include="Data\ParseEFP.cs" />
     <Compile Include="Data\Parse_NTXB.cs" />
+    <Compile Include="ModelTextureEditUI\ModelTextureEditUI_Main.xaml.cs">
+      <DependentUpon>ModelTextureEditUI_Main.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="ModelTextureEditUI\NUDconvertModel.cs" />
     <Compile Include="Tools\Reverse32ByteEndian.cs" />
     <Compile Include="Data\UI\Hit\HitEdit.xaml.cs">
       <DependentUpon>HitEdit.xaml</DependentUpon>
@@ -314,6 +318,10 @@
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+    <Page Include="ModelTextureEditUI\ModelTextureEditUI_Main.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="PACInfoUI\FileSpecific\NTP3FileInfoWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -357,6 +365,7 @@
       <SubType>Designer</SubType>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
+    <Resource Include="ModelTextureEditUI\image\geometrical-shape.png" />
     <Content Include="rocco.bin">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>

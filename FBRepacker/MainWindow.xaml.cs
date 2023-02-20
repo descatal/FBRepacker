@@ -29,6 +29,7 @@ using static FBRepacker.Data.MBON_Parse.nus3AudioNameHash;
 using FBRepacker.Psarc.V2;
 using FBRepacker.Tools;
 using FBRepacker.V2;
+using FBRepacker.ModelTextureEditUI;
 
 namespace FBRepacker
 {
@@ -2019,6 +2020,24 @@ namespace FBRepacker
             {
                 new GenerateAudioPACInfo((audioFormatEnum)Properties.Settings.Default.audioPACInfoNus3SoundHashFormat);
                 //((audioFormatEnum)Properties.Settings.Default.Nus3SoundHashFormat, Properties.Settings.Default.soundHashMainTitle);
+            }
+            catch (Exception exp)
+            {
+                debugMessageBox.AppendText(Environment.NewLine);
+                debugMessageBox.AppendText("Error: " + exp + "." + @"\n Please restart the application.");
+            }
+            debugMessageBox.AppendText(Environment.NewLine);
+            debugMessageBox.AppendText("Audio PAC Info export complete");
+        }
+
+        private void OpenTextureEdit_Click(object sender, RoutedEventArgs e)
+        {
+            debugMessageBox.AppendText(Environment.NewLine);
+            debugMessageBox.AppendText("Exporting Audio PAC Info");
+            try
+            {
+                ModelTextureEditUI_Main modelTextureEditUI = new ModelTextureEditUI_Main();
+                modelTextureEditUI.ShowDialog();
             }
             catch (Exception exp)
             {

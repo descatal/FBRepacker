@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -12,73 +13,84 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 
+
+enum vertexType
+{
+    NoNormals = 0,
+    NormalsFloat = 1,
+    NormalsTanBiTanFloat = 2,
+    NormalsHalfFloat = 3,
+    NormalsTanBiTanHalfFloat = 4
+}
+
+
 namespace FBRepacker.ModelTextureEditUI
 {
-    /// <summary>
-    /// ModelTextureEditUI_Main.xaml 的交互逻辑
-    /// </summary>
+
     public partial class ModelTextureEditUI_Main : Window
     {
 
-        List<User> items = new List<User>();
+        private ObservableCollection<NUDconvertModel> ItemsSource = new ObservableCollection<NUDconvertModel>();
+
+
 
         public ModelTextureEditUI_Main()
         {
             InitializeComponent();
-            items.Add(new User() { Name = "John Doe", Age = 42 });
-            items.Add(new User() { Name = "Jane Doe", Age = 39 });
-            items.Add(new User() { Name = "Sammy Doe", Age = 13 });
-            lvDataBinding.ItemsSource = items;
-
-
-        }
-
-        public class User
-        {
-            public string Name { get; set; }
-
-            public int Age { get; set; }
-
-            public override string ToString()
+            for(int i = 0; i < 1; i++)
             {
-                return this.Name + ", " + this.Age + " years old";
+                ItemsSource.Add(new NUDconvertModel(id: i));
             }
-        }
-
-        private bool handle = true;
-        private void ComboBox_DropDownClosed(object sender, EventArgs e)
-        {
-            if (handle) Handle();
-            handle = true;
-        }
-
-        private void ComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
-            ComboBox cmb = sender as ComboBox;
-            handle = !cmb.IsDropDownOpen;
-            Handle();
-        }
-
-        private void Handle()
-        {
-            switch (cmbSelect.SelectedItem.ToString().Split(new string[] { ": " }, StringSplitOptions.None).Last())
-            {
-                case "1":
-                    //Handle for the first combobox
-                    break;
-                case "2":
-                    //Handle for the second combobox
-                    break;
-                case "3":
-                    //Handle for the third combobox
-                    break;
-            }
+            lvDataBinding.ItemsSource = ItemsSource;
         }
 
         private void Button_Click(object sender, RoutedEventArgs e)
         {
-            items.Add(new User() { Name = "Sammy Doe", Age = 13 });
             lvDataBinding.Items.Refresh();
+
+        }
+
+        private void NUDconvertVertexComboBoxOnChanged(object sender, SelectionChangedEventArgs e)
+        {
+
+            //for (int i = 0; i < ItemsSource.Count; i++)
+            //{
+            //    Console.WriteLine(ItemsSource[i].id);
+            //    Console.WriteLine(ItemsSource[i].selectdVertexType);
+            //    Console.WriteLine("//");
+            //}
+
+
+
+            //List<string> myList = new List<string>() { "鼠", "牛", "虎", "兔", "龍", "蛇", "馬", "羊", "猴", "雞", "狗", "豬" };
+            //List<NUDTextureConvertModel> NTCMList = new List<NUDTextureConvertModel>();
+            //NTCMList.Add(new NUDTextureConvertModel(1, myList));
+
+            Console.WriteLine(ItemsSource[0].onSelectdVertexType);
+        }
+
+        private void NUDconvertTextureComboBoxOnChanged(object sender, SelectionChangedEventArgs e)
+        {
+            Console.WriteLine(ItemsSource[0].onSelectdTextureType);
+
+        }
+    }
+
+
+
+
+
+    public class NUDTextureConvertModel
+    {
+        private int vertexType;
+        private int weightType;
+        private List<string> textureList;
+
+        public NUDTextureConvertModel(int vertexType, List<string> textureList)
+        {
+            this.vertexType = vertexType;
+            this.textureList = textureList;
         }
     }
 }
+

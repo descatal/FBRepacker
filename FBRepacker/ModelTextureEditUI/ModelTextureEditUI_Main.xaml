@@ -11,29 +11,48 @@
             <Label Content="Label"/>
         </DockPanel>
         <DockPanel>
-            <ListView Margin="10,33,10,0" MaxHeight="500" DockPanel.Dock="Top" x:Name="lvDataBinding" d:ItemsSource="{d:SampleData ItemCount=5}" VerticalAlignment="Top" >
+            <ListView Margin="10,33,10,0" MaxHeight="500" DockPanel.Dock="Top" x:Name="lvDataBinding" d:ItemsSource="{d:SampleData ItemCount=1}" VerticalAlignment="Top"  >
                 <ListView.ItemTemplate>
                     <DataTemplate>
                         <WrapPanel>
-                            <DockPanel HorizontalAlignment="Stretch" Margin="0,10,0,10">
+                            <DockPanel HorizontalAlignment="Stretch" Margin="10">
                                 <Image Height="20">
                                     <Image.Source>
                                         <BitmapImage 
                                             UriSource="/ModelTextureEditUI/image/geometrical-shape.png" />
                                     </Image.Source>
                                 </Image>
-                                <TextBlock Text="Shape 1" Margin="10,0,10,0" FontWeight="Bold" HorizontalAlignment="Stretch" />
+                                <TextBlock Text="Shape 1" Margin="10" FontWeight="Bold" VerticalAlignment="Center" />
+                                <!--<TextBlock Text="{Binding Mode=OneWay}" Margin="10,0,10,0" FontWeight="Bold" HorizontalAlignment="Stretch" />-->
                                 <!--<TextBlock Text="{Binding Name}" Margin="10,0,10,0" />-->
                                 <TextBlock Text="" Margin="10,0,10,0" FontWeight="Bold" HorizontalAlignment="Stretch"/>
-                                <ComboBox  Name="cmbSelect" SelectionChanged="ComboBox_SelectionChanged" DropDownClosed="ComboBox_DropDownClosed" Width="150">
-                                    <ComboBoxItem Content="Coffie" IsSelected="True"></ComboBoxItem>
-                                    <ComboBoxItem Content="Tea"></ComboBoxItem>
-                                    <ComboBoxItem Content="Orange Juice"></ComboBoxItem>
-                                    <ComboBoxItem Content="Milk"></ComboBoxItem>
-                                    <ComboBoxItem Content="Iced Tea"></ComboBoxItem>
-                                    <ComboBoxItem Content="Mango Shake"></ComboBoxItem>
-                                </ComboBox>
-                                <TextBlock Text="hi" Margin="10,0,10,0" />
+                                <ComboBox 
+                                    ItemsSource="{Binding selectVertexTypeList, Mode=TwoWay}" 
+                                    SelectedItem="{Binding onSelectdVertexType, Mode=TwoWay,  UpdateSourceTrigger=PropertyChanged}"
+                                    SelectedIndex="0"
+                                    SelectionChanged="NUDconvertVertexComboBoxOnChanged"
+                                    Width="100"
+                                    Margin="10"/>
+
+                                <ComboBox 
+                                    ItemsSource="{Binding selectTextureTypeList, Mode=TwoWay}" 
+                                    SelectedItem="{Binding onSelectdTextureType, Mode=TwoWay,  UpdateSourceTrigger=PropertyChanged}"
+                                    SelectedIndex="0"
+                                    SelectionChanged="NUDconvertTextureComboBoxOnChanged"
+                                    Width="100"
+                                    Margin="10"/>
+                                
+                                <TextBox Text="{Binding name}"  
+                                         Width="100"
+                                         Margin="10"/>
+
+                                <TextBox Text="{Binding name}"  
+                                         Width="100"
+                                         Margin="10" IsEnabled="False"/>
+
+                                <TextBox Text="{Binding name}"  
+                                         Width="100"
+                                         Margin="10"/>
                             </DockPanel>
                         </WrapPanel>
                     </DataTemplate>
