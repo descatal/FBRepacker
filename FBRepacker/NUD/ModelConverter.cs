@@ -20,6 +20,8 @@ using SFGraphics.Utils;
 using System.Security.Policy;
 using SharpGLTF.Schema2;
 using System.Windows.Forms;
+using FBRepacker.ModelTextureEditUI;
+using System.Collections.ObjectModel;
 
 namespace FBRepacker.NUD
 {
@@ -30,6 +32,8 @@ namespace FBRepacker.NUD
         {
 
         }
+
+        private ObservableCollection<NUDconvertModel> modelTextureEditItemsSource = new ObservableCollection<NUDconvertModel>();
 
         XNamespace ns;
 
@@ -124,7 +128,7 @@ namespace FBRepacker.NUD
                 changeStreamFile(NUD);
 
                 NUD.Seek(polyMetaDataOffset + (0x30 * i), SeekOrigin.Begin); // Seek to the start of poly metadata
-                parsePolyMetadata(NUD, out int tiranglesDataOffset, out int vertexColorandUVDataOffset, out int vertexDataOffset, out ushort vertexCount, 
+                parsePolyMetadata(NUD, out int tiranglesDataOffset, out int vertexColorandUVDataOffset, out int vertexDataOffset, out ushort vertexCount,
                     out byte boneTypeandVertexType, out byte UVSizeandVertexColorType, out int[] materialDataOffset, out ushort polyCount);
 
                 NUD.Seek(trianglesDataEntryOffset, SeekOrigin.Begin);
@@ -135,12 +139,12 @@ namespace FBRepacker.NUD
                     vertexColorandUVDataOffset, vertexDataOffset,
                     nonRiggedBoneIndex,
                     out vertexColorList, out UVList,
-                    out verticePositionList, out verticeNormalList, 
+                    out verticePositionList, out verticeNormalList,
                     out boneIndicesandWeightsList);
 
                 parseVBN(VBN, out Dictionary<string, int> boneNamesandParentIndexDic, out List<Matrix4> boneTransformMatList);
 
-                writeDAE(DAE, geometry[i], controller[i], DAEPath, primitiveIndiceValueList, vertexColorList, UVList, 
+                writeDAE(DAE, geometry[i], controller[i], DAEPath, primitiveIndiceValueList, vertexColorList, UVList,
                     verticePositionList, verticeNormalList, boneIndicesandWeightsList, boneNamesandParentIndexDic, boneTransformMatList);
             }
 
@@ -211,7 +215,7 @@ namespace FBRepacker.NUD
                     boneIndicesandWeightsList.Add(boneIndicesandWeights);
                 }
             }
-                
+
         }
 
         private void parseNUDMetadata(FileStream NUD, out int dataSetCount, out int metaDataChunkSize, out int triangleDataChunkSize, out int vertexColorandUVDataChunkSize, out int vertexDataChunkSize)
@@ -249,7 +253,7 @@ namespace FBRepacker.NUD
             if (readIntBigEndian(NUD.Position) != 0)
                 throw new Exception("Unexpected polysetmetadata: First 4 byte is not 0.");
 
-            if(readShort(NUD.Position, true) != 0)
+            if (readShort(NUD.Position, true) != 0)
                 throw new Exception("Unexpected polysetmetadata: byte 5 & 6 is not 0.");
 
             boneFlag = readShort(NUD.Position, true);
@@ -258,7 +262,7 @@ namespace FBRepacker.NUD
             polyDataOffset = readIntBigEndian(NUD.Position);
         }
 
-        private void parsePolyMetadata(FileStream NUD, out int tiranglesDataOffset, out int vertexColorandUVDataOffset, out int vertexDataOffset, 
+        private void parsePolyMetadata(FileStream NUD, out int tiranglesDataOffset, out int vertexColorandUVDataOffset, out int vertexDataOffset,
             out ushort vertexCount, out byte boneTypeandVertexType, out byte UVSizeandVertexColorType, out int[] materialDataOffset, out ushort polyCount)
         {
             tiranglesDataOffset = readIntBigEndian(NUD.Position);
@@ -267,11 +271,11 @@ namespace FBRepacker.NUD
 
             vertexCount = readUShort(NUD.Position, true);
             boneTypeandVertexType = (byte)NUD.ReadByte(); // Determines which type of data type is stored. 
-            UVSizeandVertexColorType = (byte)NUD.ReadByte(); 
+            UVSizeandVertexColorType = (byte)NUD.ReadByte();
 
             List<int> materialDataOffsetList = new List<int>();
 
-            for(int i = 0; i < 4; i++)
+            for (int i = 0; i < 4; i++)
             {
                 materialDataOffsetList.Add(readIntBigEndian(NUD.Position));
             }
@@ -329,7 +333,7 @@ namespace FBRepacker.NUD
                     throw new Exception("vertex color Type not found!");
             }
 
-            for(int j = 0; j < UVCount; j++)
+            for (int j = 0; j < UVCount; j++)
             {
                 // Freakin Half Floats, I have no idea how to convert, I will just use Smash Forge's converter
                 float UVx = ToFloat(readShort(NUD.Position, true));
@@ -345,7 +349,7 @@ namespace FBRepacker.NUD
             float VPz = readFloat(NUD.Position, true);
             verticePosition = new float[] { VPx, VPy, VPz };
 
-            if((vertexNormalTypes)vertexNormalType != vertexNormalTypes.NoNormals)
+            if ((vertexNormalTypes)vertexNormalType != vertexNormalTypes.NoNormals)
             {
                 float Nx, Ny, Nz;
                 // Since we don't need tan bitans, we can just skip the parts, but the size of the section is different.
@@ -397,7 +401,7 @@ namespace FBRepacker.NUD
             else
             {
                 NUD.Seek(0x04, SeekOrigin.Current);
-                verticeNormal = new float[] {  };
+                verticeNormal = new float[] { };
             }
         }
 
@@ -473,7 +477,7 @@ namespace FBRepacker.NUD
             VBN.Seek(0x10, SeekOrigin.Current);
 
             // get the names of each bones, string with max 0x10 encoding length.
-            for(int boneCount = 0; boneCount < numberofBones; boneCount++)
+            for (int boneCount = 0; boneCount < numberofBones; boneCount++)
             {
                 long initialPos = VBN.Position;
                 string boneName = readString(VBN.Position, 0x10);
@@ -543,7 +547,7 @@ namespace FBRepacker.NUD
             ushort face1 = (primitiveIndiceValueList.ElementAt(0));
             ushort face2 = (primitiveIndiceValueList.ElementAt(1));
 
-            for(int i = 2; i < primitiveIndiceValueList.Count; i++)
+            for (int i = 2; i < primitiveIndiceValueList.Count; i++)
             {
                 if (i == 2000)
                 {
@@ -551,16 +555,16 @@ namespace FBRepacker.NUD
                 }
 
                 ushort face3 = (primitiveIndiceValueList[i]);
-                if(face3 == 0)
+                if (face3 == 0)
                 {
 
                 }
 
-                if(primitiveIndiceValueList[i] == 0xFFFF)
+                if (primitiveIndiceValueList[i] == 0xFFFF)
                 {
                     face1 = (primitiveIndiceValueList[i + 1]);
                     face2 = (primitiveIndiceValueList[i + 2]);
-                    if(face2 == 0 || face1 == 0)
+                    if (face2 == 0 || face1 == 0)
                     {
 
                     }
@@ -570,9 +574,9 @@ namespace FBRepacker.NUD
                 else
                 {
                     faceDirection *= -1;
-                    if(!face1.Equals(face2) && !face2.Equals(face3) && !face3.Equals(face1))
+                    if (!face1.Equals(face2) && !face2.Equals(face3) && !face3.Equals(face1))
                     {
-                        if(faceDirection > 0)
+                        if (faceDirection > 0)
                         {
                             sortedPrimitiveIndiceValueList.Add(face3);
                             sortedPrimitiveIndiceValueList.Add(face2);
@@ -618,7 +622,7 @@ namespace FBRepacker.NUD
             DAE.Save(DAEPath);
         }
 
-        private void writeDAEGeometryLibrary(XElement mesh, string geometryName, List<ushort> primitiveIndiceValueList, List<float[]> vertexColorList, 
+        private void writeDAEGeometryLibrary(XElement mesh, string geometryName, List<ushort> primitiveIndiceValueList, List<float[]> vertexColorList,
             List<float[]> UVList, List<float[]> verticePositionList, List<float[]> verticeNormalList)
         {
             mesh.Elements().Remove();
@@ -644,7 +648,7 @@ namespace FBRepacker.NUD
             mesh.Add(posGeo, nrmGeo, UVGeo, verClrGeo, verticesGeo, trianglesGeo);
         }
 
-        private XElement writeGeometrySource<T> (string geometryName, string geometryType, List<T[]> geoArray, string[] paramName, int stride)
+        private XElement writeGeometrySource<T>(string geometryName, string geometryType, List<T[]> geoArray, string[] paramName, int stride)
         {
             if (geoArray.Any(element => !element.Length.Equals(stride)))
                 throw new Exception("Array length not same with stride!");
@@ -656,8 +660,8 @@ namespace FBRepacker.NUD
             int totalArrayCount = geoArray.Count() * stride;
 
             StringBuilder expandedArray = new StringBuilder();
-            
-            foreach(T element in geoArray.SelectMany(e => e))
+
+            foreach (T element in geoArray.SelectMany(e => e))
             {
                 expandedArray.Append(element);
                 expandedArray.Append(" ");
@@ -681,7 +685,7 @@ namespace FBRepacker.NUD
             XAttribute accStride = new XAttribute("stride", stride);
             accessor.Add(accSource, accCount, accStride);
 
-            for(int i = 0; i < stride; i++)
+            for (int i = 0; i < stride; i++)
             {
                 XElement param = new XElement(ns + "param");
                 XAttribute name = new XAttribute("name", paramName[i]);
@@ -703,7 +707,7 @@ namespace FBRepacker.NUD
             XAttribute verticesID = new XAttribute("id", geometryName + "_verts");
             vertices.Add(verticesID);
 
-            foreach(KeyValuePair<string, string> e in semanticList)
+            foreach (KeyValuePair<string, string> e in semanticList)
             {
                 XElement input = new XElement(ns + "input");
                 XAttribute inputSemantic = new XAttribute("semantic", e.Key);
@@ -741,7 +745,7 @@ namespace FBRepacker.NUD
                 offset++;
             }
 
-            foreach(ushort triangle in primitiveIndices)
+            foreach (ushort triangle in primitiveIndices)
             {
                 primitiveDataExpanded.Append(triangle.ToString());
                 primitiveDataExpanded.Append(" ");
@@ -754,7 +758,7 @@ namespace FBRepacker.NUD
             return triangles;
         }
 
-        private void writeDAEControllerLibrary(XElement controller, string controllerName, List<Dictionary<int, float>> boneIndicesandWeightsList, 
+        private void writeDAEControllerLibrary(XElement controller, string controllerName, List<Dictionary<int, float>> boneIndicesandWeightsList,
             Dictionary<string, int> boneNamesandParentIndexDic, List<Matrix4> boneTransformMatList)
         {
             // TODO: add / change source for skin
@@ -766,7 +770,7 @@ namespace FBRepacker.NUD
 
             // Turn the bone name dic to list with array to comply with the method param.
             List<string[]> boneNameList = new List<string[]>();
-            foreach(KeyValuePair<string, int> bone in boneNamesandParentIndexDic)
+            foreach (KeyValuePair<string, int> bone in boneNamesandParentIndexDic)
             {
                 boneNameList.Add(new string[] { bone.Key });
             }
@@ -780,7 +784,7 @@ namespace FBRepacker.NUD
                 int index = 0;
                 for (int column = 0; column < 4; column++)
                 {
-                    for(int row = 0; row < 4; row++)
+                    for (int row = 0; row < 4; row++)
                     {
                         boneMat[index] = boneTransformMatList[i][row, column];
                         index++;
@@ -791,7 +795,7 @@ namespace FBRepacker.NUD
 
             List<float[]> boneWeightList = new List<float[]>();
             // Find common weight and make a list of weights.
-            foreach(Dictionary<int, float> boneIndicesandWeights in boneIndicesandWeightsList)
+            foreach (Dictionary<int, float> boneIndicesandWeights in boneIndicesandWeightsList)
             {
                 // Since writeControllerSource required arrayed types, we need to force the weights to be arrayed, hence only one item in the array. 
                 float[] newWeight = boneIndicesandWeights.Where(s =>
@@ -801,7 +805,7 @@ namespace FBRepacker.NUD
                     }
                 ).Select(e => e.Value).ToArray();
 
-                foreach(float w in newWeight)
+                foreach (float w in newWeight)
                 {
                     boneWeightList.Add(new float[] { w });
                 }
@@ -811,7 +815,7 @@ namespace FBRepacker.NUD
             foreach (Dictionary<int, float> boneIndicesandWeights in boneIndicesandWeightsList)
             {
                 Dictionary<int, int> boneIndicesandBoneWeightIndices = new Dictionary<int, int>();
-                foreach(var boneIndexandWeight in boneIndicesandWeights)
+                foreach (var boneIndexandWeight in boneIndicesandWeights)
                 {
                     int boneID = boneIndexandWeight.Key;
                     float boneWeight = boneIndexandWeight.Value;
@@ -841,7 +845,7 @@ namespace FBRepacker.NUD
         }
 
         private XElement writeControllerSource<T>(string controllerName, string controllerType, string paramTypeName, string accessorParamType, List<T[]> controllerArray, string[] paramName, int stride)
-        { 
+        {
             if (controllerArray.Any(element => !element.Length.Equals(stride)))
                 throw new Exception("Array length not same with stride!");
 
@@ -946,16 +950,16 @@ namespace FBRepacker.NUD
                 offset++;
             }
 
-            
+
             StringBuilder vcountVal = new StringBuilder();
 
-            foreach(var boneIndicesandBoneWeightIndices in boneIndicesandBoneWeightIndicesList)
+            foreach (var boneIndicesandBoneWeightIndices in boneIndicesandBoneWeightIndicesList)
             {
                 int numberofBones = boneIndicesandBoneWeightIndices.Count;
                 vcountVal.Append(numberofBones);
                 vcountVal.Append(" ");
 
-                foreach(var boneIndexandBoneWeightIndex in boneIndicesandBoneWeightIndices)
+                foreach (var boneIndexandBoneWeightIndex in boneIndicesandBoneWeightIndices)
                 {
                     primitiveDataExpanded.Append(boneIndexandBoneWeightIndex.Key);
                     primitiveDataExpanded.Append(" ");
@@ -1056,7 +1060,7 @@ namespace FBRepacker.NUD
             foreach (string instanceController in instanceControllerList)
             {
                 XElement controller = libraryControllers.FirstOrDefault(s => s.Attribute("id").Value.Equals(instanceController));
-                if(controller != null)
+                if (controller != null)
                 {
                     string controllerName = controller.Attributes().FirstOrDefault(attr => attr.Name.LocalName.Equals("id")).Value;
                     XElement skin = controller.Elements().First();
@@ -1136,7 +1140,7 @@ namespace FBRepacker.NUD
             if (libraryGeometries.Length != images.Length)
             {
                 //throw new Exception("Number of Geometry Library does not match Images Library!");
-                foreach(var number in libraryGeometries)
+                foreach (var number in libraryGeometries)
                 {
                     imageList.Add(new XElement("a")); // temporary placeholder, this list is only used for count.
                 }
@@ -1221,6 +1225,7 @@ namespace FBRepacker.NUD
             if (geoPrimitiveDataSetList.Count != numberOfShapeKeys || contSourceDatasetList.Count != numberOfShapeKeys || contPrimitiveDataSetList.Count != numberOfShapeKeys)
                 throw new Exception("number of shape keys mismatch between data sources");
 
+
             writeNUD(geoSourceDatasetList, geoPrimitiveDataSetList, contSourceDatasetList, contPrimitiveDataSetList, imageList, VBNjointHierarchy, DAEjointHierarchy);
         }
 
@@ -1229,10 +1234,10 @@ namespace FBRepacker.NUD
             // We only care about if the nodes have instance_controller (mesh) child node or JOINT type attributes.
             XElement[] allNodesNodes = allNodes.Where(s => s.Attribute("type").Value == "NODE")?.ToArray();
 
-            foreach(XElement nodes in allNodesNodes)
+            foreach (XElement nodes in allNodesNodes)
             {
                 XElement instanceController = nodes.Element(ns + "instance_controller");
-                if(instanceController != null)
+                if (instanceController != null)
                 {
                     string instanceControllerUrl = instanceController.Attribute("url").Value.Remove(0, 1);
                     instanceControllerList.Add(instanceControllerUrl);
@@ -1250,7 +1255,7 @@ namespace FBRepacker.NUD
         private void parseInstanceControllers(XElement parentNodes, XElement instanceController, Dictionary<string, string> DAEjointHierarchy, Dictionary<string, Matrix4> DAEjointPositionDic)
         {
             XElement[] skeletons = instanceController.Elements(ns + "skeleton").ToArray();
-            foreach(XElement skeleton in skeletons)
+            foreach (XElement skeleton in skeletons)
             {
                 // Find the node with the same url id attr.
                 string urlwithoutHashtag = skeleton.Value.Remove(0, 1);
@@ -1288,7 +1293,7 @@ namespace FBRepacker.NUD
 
                 var bindMatrixandJointsNameList = bindMatrixList.Zip(jointsNameList, (s, p) => new { bindMatrix = s, jointsName = p });
 
-                foreach(var bindMatandJointsName in bindMatrixandJointsNameList)
+                foreach (var bindMatandJointsName in bindMatrixandJointsNameList)
                 {
                     float[] bindMatrixArr = bindMatandJointsName.bindMatrix.Cast<float>().ToArray();
                     string jointsName = bindMatandJointsName.jointsName.First();
@@ -1345,10 +1350,10 @@ namespace FBRepacker.NUD
                 encodedString = encodedString.Skip(encodedString.Length - 0x0F).Take(0x0F).ToArray();
                 byte[] encodedStringFixedSize = new byte[0x10];
 
-                for(int i = 0; i < 0x0F; i++)
+                for (int i = 0; i < 0x0F; i++)
                 {
                     // To fill the array if the size is < 0x10;
-                    if(i < encodedString.Length)
+                    if (i < encodedString.Length)
                     {
                         encodedStringFixedSize[i] = encodedString[i];
                     }
@@ -1356,7 +1361,7 @@ namespace FBRepacker.NUD
 
                 jointNameandPositionStream.Write(encodedStringFixedSize, 0, encodedStringFixedSize.Length);
 
-                if(otherBones.Contains(DAEjoint))
+                if (otherBones.Contains(DAEjoint))
                 {
                     appendIntMemoryStream(jointNameandPositionStream, 0x01, true);
                 }
@@ -1436,7 +1441,7 @@ namespace FBRepacker.NUD
                 // TransformMatrix
                 Matrix4 transformMatrix = DAEjointBindMatrix[DAEjoint];
                 transformMatrix = Matrix4.Invert(transformMatrix);
-                
+
                 for (int i = 0; i < 4; i++)
                 {
                     appendFloatMemoryStream(jointTransformandInverseBindMatrixStream, transformMatrix.Row0[i], true);
@@ -1499,12 +1504,36 @@ namespace FBRepacker.NUD
             List<Dictionary<FixedSemantics, List<dynamic[]>>> contSourceDatasetList, List<Dictionary<FixedSemantics, List<int[]>>> contPrimitiveDataSetList, List<XElement> imageList,
             Dictionary<string, int> VBNjointHierarchy, Dictionary<string, string> DAEjointHierarchy)
         {
+
+
             MemoryStream NUDStream = new MemoryStream();
 
             // Wrong concept? (Maybe check if primitive indice count > vertex count
             //Dictionary<FixedSemantics, List<dynamic[]>> dataset = convertPolySourcestoVertex(sourceDataset, primitiveDataSet);
 
             int numberofShapeKeys = sourceDatasetList.Count;
+
+            //------------
+            //new add
+            if (Properties.Settings.Default.outputSimpleNUD)
+            {
+                ModelTextureEditUI_Main modelTextureEditUI = new ModelTextureEditUI_Main(numberofShapeKeys);
+                modelTextureEditUI.ShowDialog();
+                if (!modelTextureEditUI.isCancel)
+                {
+                    Console.WriteLine(modelTextureEditUI.getItemsSource().Count);
+                    modelTextureEditItemsSource = modelTextureEditUI.getItemsSource();
+                }
+            }
+            else
+            {
+                //not done
+                for (int i = 0; i < imageList.Count; i++)
+                {
+                    modelTextureEditItemsSource.Add(new NUDconvertModel());
+                }
+            }
+            //------------
 
             List<int> stripNoList = new List<int>();
             List<int> vertexIndicesOffsets = new List<int>();
@@ -1524,10 +1553,12 @@ namespace FBRepacker.NUD
             vertexColorandUVOffsets.Add(0);
             vertexDataOffsets.Add(0);
 
-            foreach (var images in imageList)
+
+
+            for(int i = 0; i < imageList.Count; i ++)
             {
                 materialDataOffsets.Add((int)materialStream.Position);
-                writeMaterials(materialStream);
+                writeMaterials(materialStream, modelTextureEditItemsSource[i]);
             }
 
             foreach (var primitiveDataSet in primitiveDataSetList)
@@ -1537,27 +1568,26 @@ namespace FBRepacker.NUD
                 vertexIndicesOffsets.Add(sizeWithoutPadding);
             }
 
-            if (!Properties.Settings.Default.outputSimpleNUD)
+            foreach (var sourceDataset in sourceDatasetList)
             {
-                foreach (var sourceDataset in sourceDatasetList)
-                {
-                    writeVertexColorandUV(sourceDataset, vertexColorandUVStream, out int vertexColorandUVSizewithoutPadding);
-                    vertexColorandUVOffsets.Add(vertexColorandUVSizewithoutPadding);
-                }
+                writeVertexColorandUV(sourceDataset, vertexColorandUVStream, out int vertexColorandUVSizewithoutPadding);
+                vertexColorandUVOffsets.Add(vertexColorandUVSizewithoutPadding);
             }
+
+
 
             for (int i = 0; i < numberofShapeKeys; i++)
             {
-                writeVertex(sourceDatasetList[i], primitiveDataSetList[i], contSourceDatasetList[i], contPrimitiveDataSetList[i], vertexDataStream, VBNjointHierarchy, DAEjointHierarchy, 
-                    out int vertexSizewithoutPadding);
+                writeVertex(sourceDatasetList[i], primitiveDataSetList[i], contSourceDatasetList[i], contPrimitiveDataSetList[i], vertexDataStream, VBNjointHierarchy, DAEjointHierarchy,
+                    out int vertexSizewithoutPadding, modelTextureEditItemsSource[i].onSelectdVertexType);
                 vertexDataOffsets.Add(vertexSizewithoutPadding);
 
                 writePolySetMetadata(polySetMetadataStream, sourceDatasetList[i][FixedSemantics.GEO_POSITION].Count, stripNoList[i],
                     materialDataOffsets[i], vertexIndicesOffsets[i], vertexColorandUVOffsets[i], vertexDataOffsets[i],
-                    out int materialStreamOffset);
+                    out int materialStreamOffset, modelTextureEditItemsSource[i].onSelectdVertexType);
                 polysetMetadataMaterialOffsets.Add(materialStreamOffset);
             }
-            
+
             addPaddingStream(vertexIndicesStream);
             addPaddingStream(vertexColorandUVStream);
             addPaddingStream(vertexDataStream);
@@ -1571,7 +1601,7 @@ namespace FBRepacker.NUD
             int polySetMetadataStreamSize = (int)polySetMetadataStream.Length;
 
             // TODO: add loop for more than 1 dataSet. 
-            writeNUDHeader(headerStream, 1, numberofShapeKeys, contSourceDatasetList, 
+            writeNUDHeader(headerStream, 1, numberofShapeKeys, contSourceDatasetList,
                 polySetMetadataStreamSize, materialStreamSize, vertexIndicesStreamSize, vertexColorandUVStreamSize, vertexDataStreamSize,
                 out int metadataSizeOffet);
 
@@ -1599,12 +1629,15 @@ namespace FBRepacker.NUD
             NUDStream.Write(polySetMetadataStream.GetBuffer(), 0, polySetMetadataStreamSize);
             NUDStream.Write(materialStream.GetBuffer(), 0, materialStreamSize);
             NUDStream.Write(vertexIndicesStream.GetBuffer(), 0, vertexIndicesStreamSize);
-            NUDStream.Write(vertexColorandUVStream.GetBuffer(), 0, vertexColorandUVStreamSize);
+            if (!Properties.Settings.Default.outputSimpleNUD)
+            {
+                NUDStream.Write(vertexColorandUVStream.GetBuffer(), 0, vertexColorandUVStreamSize);
+            }
             NUDStream.Write(vertexDataStream.GetBuffer(), 0, vertexDataStreamSize);
             NUDStream.Write(shapeNameBuffer, 0, shapeNameBuffer.Length);
 
             string DAEfileName = Path.GetFileNameWithoutExtension(Properties.Settings.Default.DAEPathDAEtoNUD);
-           
+
             string NUDPath = Path.Combine(Properties.Settings.Default.OutputPathDAEtoNUD, DAEfileName + " Converted.nud");
             Stream writeStream = File.Open(NUDPath, FileMode.Create);
             NUDStream.WriteTo(writeStream);
@@ -1624,7 +1657,7 @@ namespace FBRepacker.NUD
                 boneNumber += (ushort)bone.Length;
             }
             boneNumber -= 1;
-            
+
             // TODO: make this header part another method if we have more than 1 datasets.
             appendUIntMemoryStream(headerStream, 0x4E445033, true); // NDP3 header.
             appendUIntMemoryStream(headerStream, 0x00000000, true); // the size of the whole file. This is just a placeholder, we will write the actual file size.
@@ -1670,22 +1703,49 @@ namespace FBRepacker.NUD
         }
 
         private void writePolySetMetadata(MemoryStream polySetMetadata,
-            int vertexCount, int vertexIndicesCount, 
+            int vertexCount, int vertexIndicesCount,
             int materialOffset, int vertexIndicesOffset, int vertexColorandUVOffset, int vertexDataOffset,
-            out int materialStreamOffset)
+            out int materialStreamOffset,
+            string vertexType)
         {
             appendUIntMemoryStream(polySetMetadata, (uint)vertexIndicesOffset, true);
-            appendUIntMemoryStream(polySetMetadata, (uint)vertexColorandUVOffset, true);
-            appendUIntMemoryStream(polySetMetadata, (uint)vertexDataOffset, true);
-            appendUShortMemoryStream(polySetMetadata, (ushort)vertexCount, true);
-            if (Properties.Settings.Default.outputSimpleNUD)
+            if (!Properties.Settings.Default.outputSimpleNUD)
             {
-                polySetMetadata.WriteByte(0x1); // vertexFlag.
-            }
-            else
-            {
+                appendUIntMemoryStream(polySetMetadata, (uint)vertexColorandUVOffset, true);
+                appendUIntMemoryStream(polySetMetadata, (uint)vertexDataOffset, true);
+                appendUShortMemoryStream(polySetMetadata, (ushort)vertexCount, true);
                 polySetMetadata.WriteByte(0x13); // vertexFlag. Check the NUDtoDAE for different types. For now we only export type 13
             }
+            else if (Properties.Settings.Default.outputSimpleNUD)
+            {
+                //appendUIntMemoryStream(polySetMetadata, (uint)vertexColorandUVOffset, true);
+                appendUIntMemoryStream(polySetMetadata, (uint)vertexDataOffset, true);
+                appendZeroMemoryStream(polySetMetadata, 0x4);
+                appendUShortMemoryStream(polySetMetadata, (ushort)vertexCount, true);
+                
+                switch (vertexType)
+                {
+                    case "No Normals":
+                        polySetMetadata.WriteByte(0); // vertexFlag.
+                        break;
+                    case "Normals (Float)":
+                        polySetMetadata.WriteByte(0x1); // vertexFlag.
+                        break;
+                    case "Normals, Tan, Bi-Tan (Float)":
+                        polySetMetadata.WriteByte(0x3); // vertexFlag.
+                        break;
+                    case "Normals (Half Float)":
+                        polySetMetadata.WriteByte(0x6); // vertexFlag.
+                        break;
+                    case "Normals, Tan, Bi-Tan (Half Float)":
+                        polySetMetadata.WriteByte(0x7); // vertexFlag.
+                        break;
+                    default:
+                        polySetMetadata.WriteByte(0x7); // vertexFlag.
+                        break;
+                }
+            }
+
             polySetMetadata.WriteByte(0x12); // UVFlag
 
             materialStreamOffset = (int)polySetMetadata.Position;
@@ -1724,7 +1784,7 @@ namespace FBRepacker.NUD
 
                 if (source != FixedSemantics.GEO_VERTEX)
                 {
-                    foreach(uint vertexID in primitiveData)
+                    foreach (uint vertexID in primitiveData)
                     {
                         if (vertexID > data.Count)
                             throw new Exception("vertexID is larger than sourceDataset!");
@@ -1732,12 +1792,12 @@ namespace FBRepacker.NUD
                         convertedSourceData.Add(data[(int)vertexID]);
                     }
                 }
-                else if(source == FixedSemantics.GEO_VERTEX)
+                else if (source == FixedSemantics.GEO_VERTEX)
                 {
                     uint[] primitiveArr = primitiveData.ToArray();
                     List<uint[]> primitiveList = new List<uint[]>();
                     primitiveList.Add(primitiveArr);
-                    
+
                     convertedSourceData = primitiveList as dynamic;
                 }
                 else
@@ -1766,7 +1826,7 @@ namespace FBRepacker.NUD
             Dictionary<FixedSemantics, List<dynamic[]>> sourceData = new Dictionary<FixedSemantics, List<dynamic[]>>();
             foreach (FixedSemantics sourceType in Enum.GetValues(typeof(FixedSemantics)).OfType<FixedSemantics>().Where(s => s.ToString().StartsWith("GEO")).Select(s => s).ToArray())
             {
-                if(sourceType != FixedSemantics.GEO_VERTEX)
+                if (sourceType != FixedSemantics.GEO_VERTEX)
                 {
                     if (!sourcebyIDDict.ContainsKey(sourceType) && sourceType != FixedSemantics.GEO_COLOR)
                         throw new Exception(Enum.GetName(typeof(FixedSemantics), sourceType) + " source not found!");
@@ -1792,7 +1852,7 @@ namespace FBRepacker.NUD
                 string semantic = fixedSemanticAffix + input.Attribute("semantic").Value;
                 if (!FixedSemantics.TryParse(semantic, out FixedSemantics res))
                     throw new Exception("Semantic parse failed!");
-                
+
                 if (!res.Equals(null))
                 {
                     string sourceName = input.Attribute("source").Value != null ? input.Attribute("source").Value : throw new Exception("No attribute found with source attribute!");
@@ -1803,11 +1863,11 @@ namespace FBRepacker.NUD
                     if (source == null)
                         throw new Exception("No source found with same id attribute!");
 
-                    if(res != FixedSemantics.GEO_VERTEX)
+                    if (res != FixedSemantics.GEO_VERTEX)
                     {
                         sourcebyIDDict[res] = source;
                     }
-                    
+
                     // For primitives 
                     XAttribute offset = input.Attribute("offset");
                     if (offset != null)
@@ -1839,14 +1899,14 @@ namespace FBRepacker.NUD
                 int.TryParse(accessor.Attribute("stride").Value, out stride);
             }
 
-            foreach(XElement param in accessor.Elements(ns + "param"))
+            foreach (XElement param in accessor.Elements(ns + "param"))
             {
                 string type = param.Attribute("type").Value.ToLower();
                 Type valType = type != "name" ? Aliases.FirstOrDefault(t => t.Value.Equals(type)).Key : typeof(string);
 
                 if (valType == typeof(Matrix4))
                 {
-                    for(int u = 0; u < 16; u++)
+                    for (int u = 0; u < 16; u++)
                     {
                         strideTypeList.Add(typeof(float));
                     }
@@ -1892,13 +1952,13 @@ namespace FBRepacker.NUD
 
             Dictionary<FixedSemantics, List<uint>> polygonPrimitiveDataSets = new Dictionary<FixedSemantics, List<uint>>();
 
-            foreach(KeyValuePair<int, FixedSemantics> trianglesSources in trianglesSourceDic)
+            foreach (KeyValuePair<int, FixedSemantics> trianglesSources in trianglesSourceDic)
             {
                 polygonPrimitiveDataSets[trianglesSources.Value] = new List<uint>();
             }
 
             int i = 0;
-            foreach(string valueStr in allValues)
+            foreach (string valueStr in allValues)
             {
                 if (i >= trianglesSourceDic.Count)
                     i = 0;
@@ -1986,7 +2046,7 @@ namespace FBRepacker.NUD
             int currentPos = 0;
             foreach (int count in allCount)
             {
-                if(count > 1)
+                if (count > 1)
                 {
 
                 }
@@ -1999,7 +2059,7 @@ namespace FBRepacker.NUD
                     if (tempIndices.Length >= 5)
                         throw new Exception("Cannot have more than 4 bone Indices with weights!");
 
-                    for(int i = 0; i < tempIndices.Length; i++)
+                    for (int i = 0; i < tempIndices.Length; i++)
                     {
                         indices[i] = tempIndices[i];
                     }
@@ -2102,7 +2162,7 @@ namespace FBRepacker.NUD
             StreamReader sr = new StreamReader(outputPath);
 
             string fline = sr.ReadLine();
-            if(fline != null)
+            if (fline != null)
             {
                 int.TryParse(fline.Split(':')[1], out int stripNo);
 
@@ -2149,19 +2209,19 @@ namespace FBRepacker.NUD
             else
             {
                 // If no vertex color info, create own.
-                foreach(var s in UVDataset)
+                foreach (var s in UVDataset)
                 {
                     dynamic[] createdColorSet = new dynamic[] { 127, 127, 127, -128 };
                     colorDataset.Add(createdColorSet);
                 }
             }
-            
+
             if (colorDataset.Count != UVDataset.Count)
                 throw new NotImplementedException("Does not support different color & UV set count");
 
             var colorandUVDataset = colorDataset.Zip(UVDataset, (n, w) => new { colorDataset = n, UVDataset = w });
 
-            foreach(var colorandUV in colorandUVDataset)
+            foreach (var colorandUV in colorandUVDataset)
             {
                 dynamic[] colorArr = colorandUV.colorDataset;
                 var type = colorArr.First().GetType();
@@ -2182,7 +2242,7 @@ namespace FBRepacker.NUD
                 }
 
                 dynamic[] UVArr = colorandUV.UVDataset;
-                foreach(dynamic UV in UVArr)
+                foreach (dynamic UV in UVArr)
                 {
                     float UVValue = (float)UV;
                     if (UVValue < 0) // For flipped UVs
@@ -2214,9 +2274,9 @@ namespace FBRepacker.NUD
         private dynamic[] convertColorFloatArraytoUShort(dynamic[] color)
         {
             List<dynamic> converted = new List<dynamic>();
-            foreach(float cl in color)
+            foreach (float cl in color)
             {
-                if(cl < 1)
+                if (cl < 1)
                 {
                     uint mul = (uint)Math.Round(cl * 255, 0);
                     if (mul > 255)
@@ -2237,9 +2297,9 @@ namespace FBRepacker.NUD
             return converted.ToArray();
         }
 
-        private void writeVertex(Dictionary<FixedSemantics, List<dynamic[]>> sourceDataset, Dictionary<FixedSemantics, List<uint>> primitiveDataSet, 
-            Dictionary<FixedSemantics, List<dynamic[]>> contSourceDataset, Dictionary<FixedSemantics, List<int[]>> contPrimitiveDataSet, MemoryStream vertexDataStream, 
-            Dictionary<string, int> VBNjointHierarchy, Dictionary<string, string> DAEjointHierarchy, out int vertexSize)
+        private void writeVertex(Dictionary<FixedSemantics, List<dynamic[]>> sourceDataset, Dictionary<FixedSemantics, List<uint>> primitiveDataSet,
+            Dictionary<FixedSemantics, List<dynamic[]>> contSourceDataset, Dictionary<FixedSemantics, List<int[]>> contPrimitiveDataSet, MemoryStream vertexDataStream,
+            Dictionary<string, int> VBNjointHierarchy, Dictionary<string, string> DAEjointHierarchy, out int vertexSize,string vertexType)
         {
             List<dynamic[]> posDataset = sourceDataset[FixedSemantics.GEO_POSITION];
             List<dynamic[]> nrmDataset = sourceDataset[FixedSemantics.GEO_NORMAL];
@@ -2279,7 +2339,7 @@ namespace FBRepacker.NUD
             // To iterate through both dic at once. 
             // https://stackoverflow.com/questions/1955766/iterate-two-lists-or-arrays-with-one-foreach-statement-in-c-sharp/1955780
             var posandnrm = posDataset.Zip(nrmDataset, (s, p) => new { posDataset = s, nrmDataset = p });
-            var UVandposandnrm = posandnrm.Zip(UVDataset, (s, p) => new { posandnrm = s, UVDataset = p});
+            var UVandposandnrm = posandnrm.Zip(UVDataset, (s, p) => new { posandnrm = s, UVDataset = p });
 
             foreach (var data in UVandposandnrm)
             {
@@ -2294,37 +2354,143 @@ namespace FBRepacker.NUD
                 UVDatasetVec.Add(new Vector2(UVArr[0], UVArr[1]));
             }
 
-            foreach(uint data in trianglesDataset)
+            foreach (uint data in trianglesDataset)
             {
                 trianglesDatasetInt.Add((int)data);
             }
 
             TriangleListUtils.CalculateTangentsBitangents(posDatasetVec, nrmDatasetVec, UVDatasetVec, trianglesDatasetInt, out Vector3[] tangents, out Vector3[] bitangents);
 
-            for(int i = 0; i < posDataset.Count; i++)
+            for (int i = 0; i < posDataset.Count; i++)
             {
-                foreach(dynamic pos in posDataset[i])
+
+
+                if (!Properties.Settings.Default.outputSimpleNUD)
                 {
-                    byte[] floatBuffer = BitConverter.GetBytes((float)pos);
-                    if(floatBuffer.Length != 4) { }
-                    Array.Reverse(floatBuffer);
-                    vertexDataStream.Write(floatBuffer, 0, floatBuffer.Length);
+
+                    foreach (dynamic pos in posDataset[i])
+                    {
+                        byte[] floatBuffer = BitConverter.GetBytes((float)pos);
+                        if (floatBuffer.Length != 4) { }
+                        Array.Reverse(floatBuffer);
+                        vertexDataStream.Write(floatBuffer, 0, floatBuffer.Length);
+                    }
+
+
+                    vertexDataStream.Write(oneFloatBuffer, 0, oneFloatBuffer.Length);
+                    foreach (dynamic nrm in nrmDataset[i])
+                    {
+                        byte[] floatBuffer = BitConverter.GetBytes((float)nrm);
+                        Array.Reverse(floatBuffer);
+                        vertexDataStream.Write(floatBuffer, 0, floatBuffer.Length);
+                    }
+                    vertexDataStream.Write(oneFloatBuffer, 0, oneFloatBuffer.Length);
                 }
 
-                vertexDataStream.Write(oneFloatBuffer, 0, oneFloatBuffer.Length);
 
-                foreach (dynamic nrm in nrmDataset[i])
-                {
-                    byte[] floatBuffer = BitConverter.GetBytes((float)nrm);
-                    Array.Reverse(floatBuffer);
-                    vertexDataStream.Write(floatBuffer, 0, floatBuffer.Length);
-                }
 
-                vertexDataStream.Write(oneFloatBuffer, 0, oneFloatBuffer.Length);
 
                 if (Properties.Settings.Default.outputSimpleNUD)
                 {
-                    appendUIntMemoryStream(vertexDataStream, 0xFFFFFFFF, true);
+                    
+                    switch (vertexType)
+                    {
+                        case "No Normals":
+                            //00 No Normals
+                            foreach (dynamic pos in posDataset[i])
+                            {
+                                byte[] floatBuffer = BitConverter.GetBytes((float)pos);
+                                if (floatBuffer.Length != 4) { }
+                                Array.Reverse(floatBuffer);
+                                vertexDataStream.Write(floatBuffer, 0, floatBuffer.Length);
+                            }
+                            appendUIntMemoryStream(vertexDataStream, 0x3f800000, true);
+                            break;
+                        case "Normals (Float)":
+                            //01 Normals (Float)
+                            foreach (dynamic pos in posDataset[i])
+                            {
+                                byte[] floatBuffer = BitConverter.GetBytes((float)pos);
+                                if (floatBuffer.Length != 4) { }
+                                Array.Reverse(floatBuffer);
+                                vertexDataStream.Write(floatBuffer, 0, floatBuffer.Length);
+                            }
+                            foreach (dynamic nrm in nrmDataset[i])
+                            {
+                                byte[] floatBuffer = BitConverter.GetBytes((float)nrm);
+                                Array.Reverse(floatBuffer);
+                                vertexDataStream.Write(floatBuffer, 0, floatBuffer.Length);
+                            }
+                            appendUIntMemoryStream(vertexDataStream, 0x3f800000, true);
+                            appendUIntMemoryStream(vertexDataStream, 0x3f800000, true);
+                            break;
+                        case "Normals, Tan, Bi-Tan (Float)":
+                            //03 Normals, Tan, Bi-Tan (Float)
+                            foreach (dynamic pos in posDataset[i])
+                            {
+                                byte[] floatBuffer = BitConverter.GetBytes((float)pos);
+                                if (floatBuffer.Length != 4) { }
+                                Array.Reverse(floatBuffer);
+                                vertexDataStream.Write(floatBuffer, 0, floatBuffer.Length);
+                            }
+                            appendUIntMemoryStream(vertexDataStream, 0x3f800000, true);
+                            foreach (dynamic nrm in nrmDataset[i])
+                            {
+                                byte[] floatBuffer = BitConverter.GetBytes((float)nrm);
+                                Array.Reverse(floatBuffer);
+                                vertexDataStream.Write(floatBuffer, 0, floatBuffer.Length);
+                            }
+                            appendUIntMemoryStream(vertexDataStream, 0x3f800000, true);
+                            for (int j = 0; j < 3; j++)
+                            {
+                                byte[] floatBuffer = BitConverter.GetBytes((float)bitangents[i][j]);
+                                Array.Reverse(floatBuffer);
+                                vertexDataStream.Write(floatBuffer, 0, floatBuffer.Length);
+                            }
+                            appendUIntMemoryStream(vertexDataStream, 0x3f800000, true);
+                            break;
+                        case "Normals (Half Float)":
+                            //06 Normals (Half Float)
+                            foreach (dynamic pos in posDataset[i])
+                            {
+                                byte[] floatBuffer = BitConverter.GetBytes((float)pos);
+                                if (floatBuffer.Length != 4) { }
+                                Array.Reverse(floatBuffer);
+                                vertexDataStream.Write(floatBuffer, 0, floatBuffer.Length);
+                            }
+                            List<uint> array = WriteHalfFloat(1);
+                            appendUIntMemoryStream(vertexDataStream, array[0], true);
+                            appendUIntMemoryStream(vertexDataStream, array[1], true);
+                            break;
+                        case "Normals, Tan, Bi-Tan (Half Float)":
+                            //07 Normals, Tan, Bi-Tan (Half Float)
+                            foreach (dynamic pos in posDataset[i])
+                            {
+                                byte[] floatBuffer = BitConverter.GetBytes((float)pos);
+                                if (floatBuffer.Length != 4) { }
+                                Array.Reverse(floatBuffer);
+                                vertexDataStream.Write(floatBuffer, 0, floatBuffer.Length);
+                            }
+                            foreach (dynamic nrm in nrmDataset[i])
+                            {
+                                byte[] floatBuffer = BitConverter.GetBytes((float)nrm);
+                                Array.Reverse(floatBuffer);
+                                vertexDataStream.Write(floatBuffer, 0, floatBuffer.Length);
+                            }
+                            for (int j = 0; j < 3; j++)
+                            {
+                                byte[] floatBuffer = BitConverter.GetBytes((float)tangents[i][j]);
+                                vertexDataStream.Write(floatBuffer, 0, floatBuffer.Length);
+                            }
+                            break;
+                        default:
+                            break;
+                    }
+
+
+
+
+                    appendUIntMemoryStream(vertexDataStream, 0xB0B0B07f, true);
 
                     dynamic[] UVArr = UVDataset[i].ToArray();
                     foreach (dynamic UV in UVArr)
@@ -2421,7 +2587,7 @@ namespace FBRepacker.NUD
             if (controllerJointsNameList.Count != nodeHierarcyJointsName.Count)
                 throw new Exception("DAE Controller bone count mismatch with Node Hierarchy bone count!");
 
-            for(int i = 0; i < controllerJointsNameList.Count; i++)
+            for (int i = 0; i < controllerJointsNameList.Count; i++)
             {
                 dynamic controllerJointsName = controllerJointsNameList[i].First();
 
@@ -2439,10 +2605,10 @@ namespace FBRepacker.NUD
                 throw new Exception("DAE bone count mismatch with VBN bone count!");
 
             jointConvertDic = new Dictionary<int, int>();
-            for(int i = 0; i < VBNBoneNameList.Count; i++)
+            for (int i = 0; i < VBNBoneNameList.Count; i++)
             {
                 string DAEBoneName = nodeHierarchyJointName[i];
-                
+
                 if (!VBNBoneNameList.Contains(DAEBoneName))
                     throw new Exception("Can't find DAE bone name in VBN Bone Name List!");
 
@@ -2545,7 +2711,7 @@ namespace FBRepacker.NUD
 
                 XElement[] childNodes = jointNode.Elements(ns + "node").ToArray();
 
-                if(!isRootJoint)
+                if (!isRootJoint)
                     jointHierarchy[jointName] = jointNode.Parent.Attribute("sid").Value;
 
                 parseVisualScenetypeJoint(childNodes, jointHierarchy, jointPosDic, false);
@@ -2553,7 +2719,7 @@ namespace FBRepacker.NUD
         }
 
         // TODO: add proper material support
-        private void writeMaterials(MemoryStream materialStream)
+        private void writeMaterials(MemoryStream materialStream, NUDconvertModel nudconvertModelData)
         {
             if (!Properties.Settings.Default.outputSimpleNUD)
             {
@@ -2580,16 +2746,401 @@ namespace FBRepacker.NUD
             }
             else
             {
-                appendUIntMemoryStream(materialStream, 0x3f000000, true);
-                appendZeroMemoryStream(materialStream, 4);
-                appendUIntMemoryStream(materialStream, 0x00050001, true);
-                appendUIntMemoryStream(materialStream, 0x00B10000, true);
-                appendZeroMemoryStream(materialStream, 0x10);
-                appendUIntMemoryStream(materialStream, 0x10000001, true);
-                appendZeroMemoryStream(materialStream, 8);
-                appendUIntMemoryStream(materialStream, 0x03010302, true);
-                appendUIntMemoryStream(materialStream, 0x02000000, true);
-                appendZeroMemoryStream(materialStream, 0x14);
+                switch (nudconvertModelData.onSelectdTextureType)
+                {
+                    case "1110":
+                        settingTexture(materialStream, 0x11100000,
+                            nudconvertModelData.TextureName_One,
+                            nudconvertModelData.TextureName_Two,
+                            nudconvertModelData.TextureName_Three);
+                        break;
+                    case "1111":
+                        settingTexture(materialStream, 0x11110000,
+                            nudconvertModelData.TextureName_One,
+                            nudconvertModelData.TextureName_Two,
+                            nudconvertModelData.TextureName_Three);
+                        break;
+                    case "1120":
+                        settingTexture(materialStream, 0x11200000,
+                            nudconvertModelData.TextureName_One,
+                            nudconvertModelData.TextureName_Two,
+                            nudconvertModelData.TextureName_Three);
+                        break;
+                    case "113001":
+                        settingTexture(materialStream, 0x11300100,
+                            nudconvertModelData.TextureName_One,
+                            nudconvertModelData.TextureName_Two,
+                            nudconvertModelData.TextureName_Three);
+                        break;
+                    case "1141":
+                        settingTexture(materialStream, 0x11410000,
+                            nudconvertModelData.TextureName_One,
+                            nudconvertModelData.TextureName_Two,
+                            nudconvertModelData.TextureName_Three);
+                        break;
+                    case "1142":
+                        settingTexture(materialStream, 0x11420000,
+                            nudconvertModelData.TextureName_One,
+                            nudconvertModelData.TextureName_Two,
+                            nudconvertModelData.TextureName_Three);
+                        break;
+                    case "1144":
+                        settingTexture(materialStream, 0x11440000,
+                            nudconvertModelData.TextureName_One,
+                            nudconvertModelData.TextureName_Two,
+                            nudconvertModelData.TextureName_Three);
+                        break;
+                    case "1148":
+                        settingTexture(materialStream, 0x11480000,
+                            nudconvertModelData.TextureName_One,
+                            nudconvertModelData.TextureName_Two,
+                            nudconvertModelData.TextureName_Three);
+                        break;
+                    case "1150":
+                        settingTexture(materialStream, 0x11500000,
+                            nudconvertModelData.TextureName_One,
+                            nudconvertModelData.TextureName_Two,
+                            nudconvertModelData.TextureName_Three);
+                        break;
+                    case "1154":
+                        settingTexture(materialStream, 0x11540000,
+                            nudconvertModelData.TextureName_One,
+                            nudconvertModelData.TextureName_Two,
+                            nudconvertModelData.TextureName_Three);
+                        break;
+                    case "1160":
+                        settingTexture(materialStream, 0x11600000,
+                            nudconvertModelData.TextureName_One,
+                            nudconvertModelData.TextureName_Two,
+                            nudconvertModelData.TextureName_Three);
+                        break;
+                    case "1214":
+                        settingTexture(materialStream, 0x12140000,
+                            nudconvertModelData.TextureName_One,
+                            nudconvertModelData.TextureName_Two,
+                            nudconvertModelData.TextureName_Three);
+                        break;
+                    case "2210":
+                        settingTexture(materialStream, 0x22100000,
+                            nudconvertModelData.TextureName_One,
+                            nudconvertModelData.TextureName_Two,
+                            nudconvertModelData.TextureName_Three);
+                        break;
+                    default:
+                        throw new Exception("Not support");
+                }
+            }
+        }
+
+        public void settingTexture(MemoryStream materialStream,Int32 textureType ,string texOneName, string TexTwoName, string TexThreeName)
+        {
+            if(texOneName == "")
+            {
+                texOneName = "FFFFFFFF";
+            }
+            if (TexTwoName == "")
+            {
+                TexTwoName = "FFFFFFFF";
+            }
+            if (TexThreeName == "")
+            {
+                TexThreeName = "FFFFFFFF";
+            }
+            switch (textureType)
+            {
+                case 0x11100000:
+                    appendUIntMemoryStream(materialStream, 0x11100000, true);
+                    appendZeroMemoryStream(materialStream, 4);
+                    appendUIntMemoryStream(materialStream, 0x00010001, true);
+                    appendUIntMemoryStream(materialStream, 0x00010000, true);
+
+                    appendUIntMemoryStream(materialStream, 0x00000405, true);
+                    appendZeroMemoryStream(materialStream, 0xc);
+
+                    appendUIntMemoryStream(materialStream, Convert.ToUInt32(texOneName.Trim().Replace(" ", ""), 16), true);
+                    appendZeroMemoryStream(materialStream, 0x8);
+                    appendUIntMemoryStream(materialStream, 0x01010302, true);
+
+                    appendUIntMemoryStream(materialStream, 0x06000400, true);
+                    appendZeroMemoryStream(materialStream, 0x4);
+                    appendZeroMemoryStream(materialStream, 0x8);
+
+                    appendZeroMemoryStream(materialStream, 0x8);
+                    break;
+
+                case 0x11110000:
+                    appendUIntMemoryStream(materialStream, 0x11110000, true);
+                    appendZeroMemoryStream(materialStream, 4);
+                    appendUIntMemoryStream(materialStream, 0x00050001, true);
+                    appendUIntMemoryStream(materialStream, 0x00010204, true);
+
+                    appendUIntMemoryStream(materialStream, 0x00000405, true);
+                    appendZeroMemoryStream(materialStream, 0xc);
+
+                    appendUIntMemoryStream(materialStream, Convert.ToUInt32(texOneName.Trim().Replace(" ", ""), 16), true);
+                    appendZeroMemoryStream(materialStream, 0x8);
+                    appendUIntMemoryStream(materialStream, 0x03030302, true);
+
+                    appendUIntMemoryStream(materialStream, 0x06000400, true);
+                    appendZeroMemoryStream(materialStream, 0x4);
+                    appendZeroMemoryStream(materialStream, 0x8);
+
+                    appendZeroMemoryStream(materialStream, 0x8);
+                    break;
+
+                case 0x11200000:
+                    appendUIntMemoryStream(materialStream, 0x11200000, true);
+                    appendZeroMemoryStream(materialStream, 4);
+                    appendUIntMemoryStream(materialStream, 0x00000001, true);
+                    appendUIntMemoryStream(materialStream, 0x00000000, true);
+
+                    appendUIntMemoryStream(materialStream, 0x00000405, true);
+                    appendZeroMemoryStream(materialStream, 0xc);
+
+                    appendUIntMemoryStream(materialStream, Convert.ToUInt32(texOneName.Trim().Replace(" ", ""), 16), true);
+                    appendZeroMemoryStream(materialStream, 0x8);
+                    appendUIntMemoryStream(materialStream, 0x01010302, true);
+
+                    appendUIntMemoryStream(materialStream, 0x06000400, true);
+                    appendZeroMemoryStream(materialStream, 0x4);
+                    appendZeroMemoryStream(materialStream, 0x8);
+
+                    appendZeroMemoryStream(materialStream, 0x8);
+                    break;
+
+                case 0x11300100:
+                    appendUIntMemoryStream(materialStream, 0x11300100, true);
+                    appendZeroMemoryStream(materialStream, 4);
+                    appendUIntMemoryStream(materialStream, 0x00010001, true);
+                    appendUIntMemoryStream(materialStream, 0x00010000, true);
+
+                    appendUIntMemoryStream(materialStream, 0x00000405, true);
+                    appendZeroMemoryStream(materialStream, 0xc);
+
+                    appendUIntMemoryStream(materialStream, Convert.ToUInt32(texOneName.Trim().Replace(" ", ""), 16), true);
+                    appendZeroMemoryStream(materialStream, 0x8);
+                    appendUIntMemoryStream(materialStream, 0x01010302, true);
+
+                    appendUIntMemoryStream(materialStream, 0x06000400, true);
+                    appendZeroMemoryStream(materialStream, 0x4);
+                    appendZeroMemoryStream(materialStream, 0x8);
+
+                    appendZeroMemoryStream(materialStream, 0x8);
+                    break;
+
+                case 0x11400000:
+                    appendUIntMemoryStream(materialStream, 0x11400000, true);
+                    appendZeroMemoryStream(materialStream, 4);
+                    appendUIntMemoryStream(materialStream, 0x00000001, true);
+                    appendUIntMemoryStream(materialStream, 0x00000000, true);
+
+                    appendUIntMemoryStream(materialStream, 0x00000405, true);
+                    appendZeroMemoryStream(materialStream, 0xc);
+
+                    appendUIntMemoryStream(materialStream, Convert.ToUInt32(texOneName.Trim().Replace(" ", ""), 16), true);
+                    appendZeroMemoryStream(materialStream, 0x8);
+                    appendUIntMemoryStream(materialStream, 0x01010302, true);
+
+                    appendUIntMemoryStream(materialStream, 0x06000400, true);
+                    appendZeroMemoryStream(materialStream, 0x4);
+                    appendZeroMemoryStream(materialStream, 0x8);
+
+                    appendZeroMemoryStream(materialStream, 0x8);
+                    break;
+
+                case 0x11410000:
+                    appendUIntMemoryStream(materialStream, 0x11410000, true);
+                    appendZeroMemoryStream(materialStream, 4);
+                    appendUIntMemoryStream(materialStream, 0x00000001, true);
+                    appendUIntMemoryStream(materialStream, 0x00000000, true);
+
+                    appendUIntMemoryStream(materialStream, 0x00000405, true);
+                    appendZeroMemoryStream(materialStream, 0xc);
+
+                    appendUIntMemoryStream(materialStream, Convert.ToUInt32(texOneName.Trim().Replace(" ", ""), 16), true);
+                    appendZeroMemoryStream(materialStream, 0x8);
+                    appendUIntMemoryStream(materialStream, 0x01010302, true);
+
+                    appendUIntMemoryStream(materialStream, 0x06000400, true);
+                    appendZeroMemoryStream(materialStream, 0x4);
+                    appendZeroMemoryStream(materialStream, 0x8);
+
+                    appendZeroMemoryStream(materialStream, 0x8);
+                    break;
+
+                case 0x11420000:
+                    appendUIntMemoryStream(materialStream, 0x11420000, true);
+                    appendZeroMemoryStream(materialStream, 4);
+                    appendUIntMemoryStream(materialStream, 0x00000001, true);
+                    appendUIntMemoryStream(materialStream, 0x00000000, true);
+
+                    appendUIntMemoryStream(materialStream, 0x00000405, true);
+                    appendZeroMemoryStream(materialStream, 0xc);
+
+                    appendUIntMemoryStream(materialStream, Convert.ToUInt32(texOneName.Trim().Replace(" ", ""), 16), true);
+                    appendZeroMemoryStream(materialStream, 0x8);
+                    appendUIntMemoryStream(materialStream, 0x01010302, true);
+
+                    appendUIntMemoryStream(materialStream, 0x06000400, true);
+                    appendZeroMemoryStream(materialStream, 0x4);
+                    appendZeroMemoryStream(materialStream, 0x8);
+
+                    appendZeroMemoryStream(materialStream, 0x8);
+                    break;
+                case 0x11440000:
+                    appendUIntMemoryStream(materialStream, 0x11440000, true);
+                    appendZeroMemoryStream(materialStream, 4);
+                    appendUIntMemoryStream(materialStream, 0x00010001, true);
+                    appendUIntMemoryStream(materialStream, 0x00010000, true);
+
+                    appendUIntMemoryStream(materialStream, 0x00000405, true);
+                    appendZeroMemoryStream(materialStream, 0xc);
+
+                    appendUIntMemoryStream(materialStream, Convert.ToUInt32(texOneName.Trim().Replace(" ", ""), 16), true);
+                    appendZeroMemoryStream(materialStream, 0x8);
+                    appendUIntMemoryStream(materialStream, 0x01010302, true);
+
+                    appendUIntMemoryStream(materialStream, 0x06000400, true);
+                    appendZeroMemoryStream(materialStream, 0x4);
+                    appendZeroMemoryStream(materialStream, 0x8);
+
+                    appendZeroMemoryStream(materialStream, 0x8);
+                    break;
+
+                case 0x11500000:
+                    appendUIntMemoryStream(materialStream, 0x11500000, true);
+                    appendZeroMemoryStream(materialStream, 4);
+                    appendUIntMemoryStream(materialStream, 0x00000002, true);
+                    appendZeroMemoryStream(materialStream, 4);
+
+                    appendUIntMemoryStream(materialStream, 0x00000405, true);
+                    appendZeroMemoryStream(materialStream, 0xc);
+
+                    appendUIntMemoryStream(materialStream, Convert.ToUInt32(texOneName.Trim().Replace(" ", ""), 16), true);
+                    appendZeroMemoryStream(materialStream, 0x8);
+                    appendUIntMemoryStream(materialStream, 0x03010302, true);
+
+                    appendUIntMemoryStream(materialStream, 0x06000400, true);
+                    appendZeroMemoryStream(materialStream, 0x4);
+                    appendUIntMemoryStream(materialStream, Convert.ToUInt32(TexTwoName.Trim().Replace(" ", ""), 16), true);
+                    appendZeroMemoryStream(materialStream, 0x4);
+
+                    appendZeroMemoryStream(materialStream, 0x4);
+                    appendUIntMemoryStream(materialStream, 0x03010302, true);
+                    appendUIntMemoryStream(materialStream, 0x06000400, true);
+                    appendZeroMemoryStream(materialStream, 0x4);
+
+                    appendZeroMemoryStream(materialStream, 0x10);
+                    break;
+                case 0x11540000:
+                    appendUIntMemoryStream(materialStream, 0x11540000, true);
+                    appendZeroMemoryStream(materialStream, 4);
+                    appendUIntMemoryStream(materialStream, 0x00000002, true);
+                    appendZeroMemoryStream(materialStream, 4);
+
+                    appendUIntMemoryStream(materialStream, 0x00000405, true);
+                    appendZeroMemoryStream(materialStream, 0xc);
+
+                    appendUIntMemoryStream(materialStream, Convert.ToUInt32(texOneName.Trim().Replace(" ", ""), 16), true);
+                    appendZeroMemoryStream(materialStream, 0x8);
+                    appendUIntMemoryStream(materialStream, 0x01010302, true);
+
+                    appendUIntMemoryStream(materialStream, 0x06000400, true);
+                    appendZeroMemoryStream(materialStream, 0x4);
+                    appendUIntMemoryStream(materialStream, Convert.ToUInt32(TexTwoName.Trim().Replace(" ", ""), 16), true);
+                    appendZeroMemoryStream(materialStream, 0x4);
+
+                    appendZeroMemoryStream(materialStream, 0x4);
+                    appendUIntMemoryStream(materialStream, 0x01010302, true);
+                    appendUIntMemoryStream(materialStream, 0x06000400, true);
+                    appendZeroMemoryStream(materialStream, 0x4);
+
+                    appendZeroMemoryStream(materialStream, 0x10);
+                    break;
+
+                case 0x12140000:
+                    appendUIntMemoryStream(materialStream, 0x12140000, true);
+                    appendZeroMemoryStream(materialStream, 4);
+                    appendUIntMemoryStream(materialStream, 0x00000003, true);
+                    appendZeroMemoryStream(materialStream, 4);
+
+                    appendUIntMemoryStream(materialStream, 0x00000405, true);
+                    appendZeroMemoryStream(materialStream, 0xc);
+
+                    appendUIntMemoryStream(materialStream, Convert.ToUInt32(texOneName.Trim().Replace(" ", ""), 16), true);
+                    appendZeroMemoryStream(materialStream, 0x8);
+                    appendUIntMemoryStream(materialStream, 0x03030302, true);
+
+                    appendUIntMemoryStream(materialStream, 0x06000400, true);
+                    appendZeroMemoryStream(materialStream, 0x4);
+                    appendUIntMemoryStream(materialStream, Convert.ToUInt32(TexTwoName.Trim().Replace(" ", ""), 16), true);
+                    appendZeroMemoryStream(materialStream, 0x4);
+
+                    appendZeroMemoryStream(materialStream, 0x4);
+                    appendUIntMemoryStream(materialStream, 0x03030302, true);
+                    appendUIntMemoryStream(materialStream, 0x06000400, true);
+                    appendZeroMemoryStream(materialStream, 0x4);
+
+                    appendUIntMemoryStream(materialStream, Convert.ToUInt32(TexThreeName.Trim().Replace(" ", ""), 16), true);
+                    appendZeroMemoryStream(materialStream, 0x8);
+                    appendUIntMemoryStream(materialStream, 0x03030302, true);
+
+                    appendUIntMemoryStream(materialStream, 0x06000400, true);
+                    appendZeroMemoryStream(materialStream, 0xc);
+
+                    appendZeroMemoryStream(materialStream, 0x8);
+                    break;
+
+                case 0x22100000:
+                    appendUIntMemoryStream(materialStream, 0x22100000, true);
+                    appendZeroMemoryStream(materialStream, 4);
+                    appendUIntMemoryStream(materialStream, 0x00000003, true);
+                    appendZeroMemoryStream(materialStream, 4);
+
+                    appendUIntMemoryStream(materialStream, 0x00000405, true);
+                    appendZeroMemoryStream(materialStream, 0xc);
+
+                    appendUIntMemoryStream(materialStream, Convert.ToUInt32(texOneName.Trim().Replace(" ", ""), 16), true);
+                    appendZeroMemoryStream(materialStream, 0x8);
+                    appendUIntMemoryStream(materialStream, 0x03030302, true);
+
+                    appendUIntMemoryStream(materialStream, 0x06000400, true);
+                    appendZeroMemoryStream(materialStream, 0x4);
+                    appendUIntMemoryStream(materialStream, Convert.ToUInt32(TexTwoName.Trim().Replace(" ", ""), 16), true);
+                    appendZeroMemoryStream(materialStream, 0x4);
+
+                    appendZeroMemoryStream(materialStream, 0x4);
+                    appendUIntMemoryStream(materialStream, 0x03030302, true);
+                    appendUIntMemoryStream(materialStream, 0x06000400, true);
+                    appendZeroMemoryStream(materialStream, 0x4);
+
+                    appendUIntMemoryStream(materialStream, Convert.ToUInt32(TexThreeName.Trim().Replace(" ", ""), 16), true);
+                    appendZeroMemoryStream(materialStream, 0x8);
+                    appendUIntMemoryStream(materialStream, 0x03030302, true);
+
+                    appendUIntMemoryStream(materialStream, 0x06000400, true);
+                    appendZeroMemoryStream(materialStream, 0x4);
+                    appendUIntMemoryStream(materialStream, 0x00000020, true);
+                    appendUIntMemoryStream(materialStream, 0x00000100, true);
+
+                    appendUIntMemoryStream(materialStream, 0x00000004, true);
+                    appendZeroMemoryStream(materialStream, 0x4);
+                    appendUIntMemoryStream(materialStream, 0x3f800000, true);
+                    appendUIntMemoryStream(materialStream, 0x3f800000, true);
+
+                    appendUIntMemoryStream(materialStream, 0x3f800000, true);
+                    appendZeroMemoryStream(materialStream, 0x8);
+                    appendUIntMemoryStream(materialStream, 0x00000020, true);
+
+                    appendUIntMemoryStream(materialStream, 0x00000004, true);
+                    appendUIntMemoryStream(materialStream, 0x00000000, true);
+                    appendUIntMemoryStream(materialStream, 0x40000000, true);
+                    appendUIntMemoryStream(materialStream, 0x3dcccccd, true);
+                    appendZeroMemoryStream(materialStream, 0x8);
+                    break;
+                default:
+                    throw new Exception("Not support");
+                    break;
             }
         }
 
@@ -2602,13 +3153,13 @@ namespace FBRepacker.NUD
             foreach (string value in data)
             {
                 float.TryParse(value, out float result);
-                if(count < 4)
+                if (count < 4)
                 {
                     column[count] = result;
                     count++;
                 }
-                
-                if(count >= 4)
+
+                if (count >= 4)
                 {
                     count = 0;
                     switch (columnCount)
@@ -2856,5 +3407,18 @@ namespace FBRepacker.NUD
         }
 
         #endregion NUDtoDAE
+
+        public List<uint> WriteHalfFloat(float f)
+        {
+            return WriteShort(FromFloat(f));
+        }
+
+        public List<uint> WriteShort(int i)
+        {
+            List<uint> data = new List<uint>();
+            data.Add(((byte)((i >> 8) & 0xFF)));
+            data.Add(((byte)((i) & 0xFF)));
+            return data;
+        }
     }
 }
