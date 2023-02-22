@@ -5,16 +5,23 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:FBRepacker.ModelTextureEditUI"
         mc:Ignorable="d"
-        Title="ModelTextureEditUI_Main" Height="450" Width="800">
+        Title="ModelTextureEditUI_Main" Width="800">
     <DockPanel>
-        <DockPanel DockPanel.Dock="Top">
-            <Label Content="Label"/>
+        <DockPanel DockPanel.Dock="Top" Margin="10">
+            <Label Content="Index" Margin="30, 0, 0,0"/>
+            <Label Content="Vertex Type" Margin="20, 0, 0,0"/>
+            <Label Content="Texture Type" Margin="30, 0, 0,0"/>
+            <Label Content="Texture 1" Margin="50, 0, 0,0"/>
+            <Label Content="Texture 2" Margin="50, 0, 0,0"/>
+            <Label Content="Texture 3" Margin="50, 0, 0,0"/>
         </DockPanel>
         <DockPanel>
-            <ListView Margin="10,33,10,0" MaxHeight="500" DockPanel.Dock="Top" x:Name="lvDataBinding" d:ItemsSource="{d:SampleData ItemCount=1}" VerticalAlignment="Top"  >
+            <ListView Margin="10,0,10,0" MaxHeight="500" DockPanel.Dock="Top" x:Name="lvDataBinding" d:ItemsSource="{d:SampleData ItemCount=1}" VerticalAlignment="Top"  >
                 <ListView.ItemTemplate>
                     <DataTemplate>
+                            
                         <WrapPanel>
+                            
                             <DockPanel HorizontalAlignment="Stretch" Margin="10">
                                 <Image Height="20">
                                     <Image.Source>
@@ -22,14 +29,12 @@
                                             UriSource="/ModelTextureEditUI/image/geometrical-shape.png" />
                                     </Image.Source>
                                 </Image>
-                                <TextBlock Text="Shape 1" Margin="10" FontWeight="Bold" VerticalAlignment="Center" />
+                                <TextBlock Text="{Binding id}" Margin="10" FontWeight="Bold" VerticalAlignment="Center" />
                                 <!--<TextBlock Text="{Binding Mode=OneWay}" Margin="10,0,10,0" FontWeight="Bold" HorizontalAlignment="Stretch" />-->
                                 <!--<TextBlock Text="{Binding Name}" Margin="10,0,10,0" />-->
-                                <TextBlock Text="" Margin="10,0,10,0" FontWeight="Bold" HorizontalAlignment="Stretch"/>
                                 <ComboBox 
                                     ItemsSource="{Binding selectVertexTypeList, Mode=TwoWay}" 
                                     SelectedItem="{Binding onSelectdVertexType, Mode=TwoWay,  UpdateSourceTrigger=PropertyChanged}"
-                                    SelectedIndex="0"
                                     SelectionChanged="NUDconvertVertexComboBoxOnChanged"
                                     Width="100"
                                     Margin="10"/>
@@ -37,30 +42,35 @@
                                 <ComboBox 
                                     ItemsSource="{Binding selectTextureTypeList, Mode=TwoWay}" 
                                     SelectedItem="{Binding onSelectdTextureType, Mode=TwoWay,  UpdateSourceTrigger=PropertyChanged}"
-                                    SelectedIndex="0"
                                     SelectionChanged="NUDconvertTextureComboBoxOnChanged"
                                     Width="100"
                                     Margin="10"/>
                                 
-                                <TextBox Text="{Binding name}"  
+                                <TextBox Text="{Binding TextureName_One}"
+                                         x:Name="TextureName_One"
                                          Width="100"
-                                         Margin="10"/>
+                                         Margin="10"
+                                         IsEnabled="{Binding TextureName_One_Enable , Mode=TwoWay,  UpdateSourceTrigger=PropertyChanged}"/>
 
-                                <TextBox Text="{Binding name}"  
+                                <TextBox Text="{Binding TextureName_Two}"  
+                                         x:Name="TextureName_Two"
                                          Width="100"
-                                         Margin="10" IsEnabled="False"/>
+                                         Margin="10"
+                                         IsEnabled="{Binding TextureName_Two_Enable , Mode=TwoWay,  UpdateSourceTrigger=PropertyChanged}"/>
 
-                                <TextBox Text="{Binding name}"  
+                                <TextBox Text="{Binding TextureName_Three}"  
+                                         x:Name="TextureName_Three"
                                          Width="100"
-                                         Margin="10"/>
+                                         Margin="10"
+                                         IsEnabled="{Binding TextureName_Three_Enable , Mode=TwoWay,  UpdateSourceTrigger=PropertyChanged}"/>
                             </DockPanel>
                         </WrapPanel>
                     </DataTemplate>
                 </ListView.ItemTemplate>
             </ListView>
-            <DockPanel DockPanel.Dock="Bottom">
-                <Button Content="Add File" HorizontalAlignment="Left" Margin="10" Width="100" Height="33" Click="Button_Click"/>
-                <Button Content="Export TBL" HorizontalAlignment="Right" Margin="10" Width="100" Height="33"/>
+            <DockPanel DockPanel.Dock="Bottom" MaxHeight="200">
+                <Button Content="Cancel" HorizontalAlignment="Left" Margin="10" Width="100" Height="33" Click="CancelBtn_Click"/>
+                <Button Content="Done" HorizontalAlignment="Right" Margin="10" Width="100" Height="33" Click="DoneBtn_Click"/>
             </DockPanel>
         </DockPanel>
     </DockPanel>

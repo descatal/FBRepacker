@@ -2036,8 +2036,15 @@ namespace FBRepacker
             debugMessageBox.AppendText("Exporting Audio PAC Info");
             try
             {
-                ModelTextureEditUI_Main modelTextureEditUI = new ModelTextureEditUI_Main();
+                //Console.WriteLine(Convert.ToUInt32("17 54 94 1F".Trim().Replace(" ", ""), 16));
+                
+                ModelTextureEditUI_Main modelTextureEditUI = new ModelTextureEditUI_Main(2);
                 modelTextureEditUI.ShowDialog();
+                if (!modelTextureEditUI.isCancel)
+                {
+                    //Console.WriteLine(modelTextureEditUI.getItemsSource().Count);
+                    //Console.WriteLine(modelTextureEditUI.getItemsSource()[0].TextureName_One == "");
+                }
             }
             catch (Exception exp)
             {
